@@ -80,7 +80,7 @@ void InitPlayer(void)
 	g_player.nGaugeNo = NOMORE_GAUGE;			// ゲージの使用状態を初期化
 	g_player.nCounterBullPlayer = 0;			// 弾の速度の初期化
 	g_player.nCounterBulletCharge = 0;			// ゲージの初期化
-	g_player.nCounterBarrier = 0;
+	g_player.nCounterBarrier = 0;				// 初期化
 	g_player.nCounterBarrierTime = 0;
 	g_player.nBarrierNo = NOMORE_GAUGE;
 	g_player.nBlockStockID = 0;
