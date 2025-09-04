@@ -1,0 +1,18 @@
+#ifndef _ANYTHING_H_
+#define _ANYTHING_H_
+
+#include "main.h"
+
+InitAnything();
+UninitAnything();
+UpdateAnything();
+DrawAnything();
+
+#endif
+
+// txt -> .cpp,.h 可能
+// .cpp,.h -> .txt 可能
+// A B C D E F G H I H J K L M N O P Q R U S V W X Y Z
+// 文字列を16進数に変換後、時刻と偶数奇数により決められた決まりの中で値をずらし、最後に書き込む
+// 最初に時刻を書き込む（時刻を基に復元するため）
+// 予定 : 現在時刻の秒数（一桁目）が偶数ならその分足し、奇数ならその分引く
