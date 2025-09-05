@@ -130,7 +130,7 @@ END_SETBLOCK
 START_SETBLOCK
 
 POS = 890.0 460.0 0.0
-TYPE = 0
+TYPE = 10
 
 END_SETBLOCK
 #========================================

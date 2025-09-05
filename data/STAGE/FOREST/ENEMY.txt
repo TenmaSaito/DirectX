@@ -98,11 +98,11 @@ END_SETENEMY
 #========================================
 START_SETENEMY
 
-POS = -310.0 110.0 0.0
+POS = -110.0 110.0 0.0
 TYPE = 2
 BULLET = 1
 TEX = 3
-MOVE = 10.0 0.0 0.0
+MOVE = -5.0 0.0 0.0
 LIFE = 15
 
 END_SETENEMY
@@ -117,7 +117,7 @@ POS = 1590.0 610.0 0.0
 TYPE = 2
 BULLET = 1
 TEX = 3
-MOVE = -10.0 0.0 0.0
+MOVE = 5.0 0.0 0.0
 LIFE = 15
 
 END_SETENEMY
@@ -128,7 +128,7 @@ END_SETENEMY
 #========================================
 START_SETENEMY
 
-POS = 1090.0 810.0 0.0
+POS = 1090.0 710.0 0.0
 TYPE = 2
 BULLET = 1
 TEX = 3

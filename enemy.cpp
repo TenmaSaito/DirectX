@@ -243,8 +243,8 @@ void UpdateEnemy(void)
 						pEnemy->move.y *= -1.0f;
 					}
 
-					pEnemy->pos.x += sinf(pEnemy->fLength) * pEnemy->move.x;
-					pEnemy->pos.y += cosf(pEnemy->fLength) * pEnemy->move.y;
+					pEnemy->pos.x += pEnemy->move.x;
+					pEnemy->pos.y += pEnemy->move.y;
 				}
 				else if (pEnemy->type == ENEMYTYPE_BOSS
 					&& (pEnemy->state == ENEMYSTATE_NORMAL || pEnemy->state == ENEMYSTATE_DAMAGE))

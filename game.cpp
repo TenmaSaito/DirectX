@@ -378,6 +378,9 @@ void DrawGame(void)
 	// Mage
 	DrawMage();
 
+	// Item
+	DrawItem();
+
 	// ’e‚Ì•`‰æˆ—
 	DrawBullet();
 

@@ -350,6 +350,9 @@ void SetStage(STAGE stage)
 		// 現在配置されているブロックをすべて消去
 		ResetBlock();
 
+		// 現在配置中のアイテムを消去
+		DestroyItem();
+
 		// 現在生きている弾丸をすべてKill
 		BombBullet();
 
@@ -382,7 +385,7 @@ void SetStage(STAGE stage)
 			LoadBlock(&g_aFileName[0]);
 
 			// もしクリア済みでなければ
-			if (g_aTurn[STAGE_GRASS] != ALREADY_CLEARED)
+			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_GRASS] = 0;
 			}
@@ -395,7 +398,7 @@ void SetStage(STAGE stage)
 			LoadBlock(&g_aFileName[0]);
 
 			// もしクリア済みでなければ
-			if (g_aTurn[STAGE_DESERT] != ALREADY_CLEARED)
+			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_DESERT] = 0;
 				SetItem(ITEMTYPE_KEY, D3DXVECTOR3(-110.0f, 710.0, 0.0));
@@ -413,7 +416,7 @@ void SetStage(STAGE stage)
 			LoadBlock(&g_aFileName[0]);
 
 			// もしクリア済みでなければ
-			if (g_aTurn[STAGE_ICE] != ALREADY_CLEARED)
+			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_ICE] = 0;
 				SetItem(ITEMTYPE_ULTIMATE_COIN, D3DXVECTOR3(1590.0f, 610.0, 0.0));
@@ -427,7 +430,7 @@ void SetStage(STAGE stage)
 			LoadBlock(&g_aFileName[0]);
 
 			// もしクリア済みでなければ
-			if (g_aTurn[STAGE_FOREST] != ALREADY_CLEARED)
+			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_FOREST] = 0;
 			}
@@ -440,7 +443,7 @@ void SetStage(STAGE stage)
 			LoadBlock(&g_aFileName[0]);
 
 			// もしクリア済みでなければ
-			if (g_aTurn[STAGE_VOLCANO] != ALREADY_CLEARED)
+			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_VOLCANO] = 0;
 			}
@@ -453,7 +456,7 @@ void SetStage(STAGE stage)
 			LoadBlock(&g_aFileName[0]);
 
 			// もしクリア済みでなければ
-			if (g_aTurn[STAGE_SEA] != ALREADY_CLEARED)
+			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_SEA] = 0;
 				SetItem(ITEMTYPE_ULTIMATE_COIN, D3DXVECTOR3(1490.0f, 350.0f, 0.0f));
