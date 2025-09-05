@@ -230,15 +230,15 @@ void UpdateStage(void)
 			break;
 		}
 		
-		if (g_stageExac < STAGE_GRASS || g_stageExac > STAGE_MAX)
+		if (g_stageExac < STAGE_GRASS || g_stageExac >= STAGE_MAX)
 		{
 			if (SUCCEEDED(GetHandleWindow(&hWnd)))
 			{
 				MessageBox(hWnd, "ヤバイ","え？",MB_ICONWARNING);
+				return;
 			}
 		}
 			
-
 		if (g_aStageMap[g_stageExac].nTurn < MAX_TURN)
 		{
 			g_aStageMap[g_stageExac].nTurn++;
@@ -325,7 +325,17 @@ void DrawStage(void)
 void SetStage(STAGE stage)
 {
 	PLAYER *pPlayer = GetPlayer();
+	HWND hWnd = NULL;
 	int nID;
+
+	if (g_stageExac < STAGE_GRASS || g_stageExac >= STAGE_MAX)
+	{
+		if (SUCCEEDED(GetHandleWindow(&hWnd)))
+		{
+			MessageBox(hWnd, "ヤバイ", "え？", MB_ICONWARNING);
+			return;
+		}
+	}
 
 	g_aStageMap[g_stageExac].bUse = false;
 

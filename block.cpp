@@ -367,7 +367,7 @@ int SetBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
 	HWND hWnd = NULL;
 	int nCntBlock;
 
-	if (type < BLOCKTYPE_WALL || type > BLOCKTYPE_MAX)
+	if (type < BLOCKTYPE_WALL || type >= BLOCKTYPE_MAX)
 	{
 		if (SUCCEEDED(GetHandleWindow(&hWnd)))
 		{
