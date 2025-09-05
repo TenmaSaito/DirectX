@@ -160,7 +160,6 @@ void UninitTutorial(void)
 //================================================================================================================
 void UpdateTutorial(void)
 {
-	//後で書く
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 	PLAYER* pPlayer = GetPlayer();
 	static int nCnt;
@@ -446,7 +445,7 @@ void UpdateTutorial(void)
 			if (GetTotalEnemy() == 0)
 			{
 				DeleteChar(CHARTEX_STEP6_BRIEF);
-				SetItem(ITEMTYPE_HEAL, D3DXVECTOR3(640.0f, 360.0f, 0.0f));
+				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
@@ -473,7 +472,7 @@ void UpdateTutorial(void)
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP7_BRIEF, TUTORIAL_BRIEFSTATE);
 			// アイテムを配置
 			UniteFileName(TUTORIAL_FILENAME, BLOCK_FILETYPE, &aStr[0]);
-			LoadBlock(&aStr[0]);
+			SetItem(ITEMTYPE_HEAL, D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 			HitPlayer(1);
 			nCnt = pPlayer->nLife;
 		}

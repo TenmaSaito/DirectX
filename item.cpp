@@ -22,13 +22,13 @@ ITEM g_aItem[MAX_ITEM];						// ブロック構造体
 
 const char* g_TEXTURE_ITEM[ITEMTYPE_MAX]
 {
-	"data\\TEXTURE\\CHARACTER\\ITEM_COIN.png",		// コイン
-	"data\\TEXTURE\\CHARACTER\\ITEM_HEAL.png",		// 回復
-	"data\\TEXTURE\\CHARACTER\\ITEM_HOMING.png",	// ホーミング
-	"data\\TEXTURE\\CHARACTER\\ITEM_BOMB.png",		// ボム
-	"data\\TEXTURE\\CHARACTER\\ITEM_LASER.png",	// レーザー
-	"data\\TEXTURE\\CHARACTER\\ITEM_KEY.png",		// 鍵
-	"data\\TEXTURE\\CHARACTER\\ITEM_ULTIMATE_COIN.png"		// なんかすごい
+	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_COIN.png",			// コイン
+	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_HEAL.png",			// 回復
+	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_HOMING.png",			// ホーミング
+	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_BOMB.png",			// ボム
+	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_LASER.png",			// レーザー
+	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_KEY.png",				// 鍵
+	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_ULTIMATE_COIN.png"	// なんかすごい
 };
 
 //================================================================================================================

@@ -13,6 +13,7 @@
 #include "editer.h"
 #include "bullet.h"
 #include "fade_stage.h"
+#include "item.h"
 
 // マクロ定義
 #define MAX_TURN			(3)			// ステージの最大ターン数
@@ -234,18 +235,20 @@ void UpdateStage(void)
 		{
 			if (SUCCEEDED(GetHandleWindow(&hWnd)))
 			{
-				MessageBox(hWnd, "ヤバイ","え？",MB_ICONWARNING);
+				MessageBox(hWnd, "お母さんを呼んでください","え？",MB_ICONWARNING);
 				return;
 			}
 		}
-			
-		if (g_aStageMap[g_stageExac].nTurn < MAX_TURN)
+		else
 		{
-			g_aStageMap[g_stageExac].nTurn++;
-		}
-		else if (g_aStageMap[g_stageExac].nTurn >= MAX_TURN)
-		{
-			g_aStageMap[g_stageExac].nTurn = ALREADY_CLEARED;
+			if (g_aStageMap[g_stageExac].nTurn < MAX_TURN)
+			{
+				g_aStageMap[g_stageExac].nTurn++;
+			}
+			else if (g_aStageMap[g_stageExac].nTurn >= MAX_TURN)
+			{
+				g_aStageMap[g_stageExac].nTurn = ALREADY_CLEARED;
+			}
 		}
 	}
 
@@ -336,123 +339,132 @@ void SetStage(STAGE stage)
 			return;
 		}
 	}
-
-	g_aStageMap[g_stageExac].bUse = false;
-
-	g_stageExac = stage;
-
-	g_aStageMap[g_stageExac].bUse = true;
-
-	// 現在配置されているブロックをすべて消去
-	ResetBlock();
-
-	// 現在生きている弾丸をすべてKill
-	BombBullet();
-
-	UniteFileName(FRAME_FILENAME, FRAME_LEFT_FILETYPE);
-	LoadBlock(&g_aFileName[0]);
-
-	UniteFileName(FRAME_FILENAME, FRAME_RIGHT_FILETYPE);
-	LoadBlock(&g_aFileName[0]);
-
-	UniteFileName(FRAME_FILENAME, FRAME_UP_FILETYPE);
-	LoadBlock(&g_aFileName[0]);
-
-	UniteFileName(FRAME_FILENAME, FRAME_DOWN_FILETYPE);
-	LoadBlock(&g_aFileName[0]);
-
-	pPlayer->posPlayer.x += (pPlayer->moveposPlayer.x * 2.0f);
-	pPlayer->posPlayer.y += (pPlayer->moveposPlayer.y * 2.0f);
-	if (pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_WAIT)
+	else
 	{
-		pPlayer->state = PLAYERSTATE_TELEPORT_COOLDOWN;
-		pPlayer->nCounterState = TELEPORT_COOLTIME;
-	}
+		g_aStageMap[g_stageExac].bUse = false;
 
-	// 指定されたステージへ移行
-	switch (g_aStageMap[g_stageExac].stage)
-	{
-	case STAGE_GRASS:
+		g_stageExac = stage;
 
-		UniteFileName(GRASS_FILENAME, BLOCK_FILETYPE);
-		LoadBlock(&g_aFileName[0]);
-		
-		// もしクリア済みでなければ
-		if (g_aTurn[STAGE_GRASS] != ALREADY_CLEARED)
-		{// ターンを初期化
-			g_aTurn[STAGE_GRASS] = 0;
-		}
+		g_aStageMap[g_stageExac].bUse = true;
 
-		break;
+		// 現在配置されているブロックをすべて消去
+		ResetBlock();
 
-	case STAGE_DESERT:
+		// 現在生きている弾丸をすべてKill
+		BombBullet();
 
-		UniteFileName(DESERT_FILENAME, BLOCK_FILETYPE);
+		UniteFileName(FRAME_FILENAME, FRAME_LEFT_FILETYPE);
 		LoadBlock(&g_aFileName[0]);
 
-		// もしクリア済みでなければ
-		if (g_aTurn[STAGE_DESERT] != ALREADY_CLEARED)
-		{// ターンを初期化
-			g_aTurn[STAGE_DESERT] = 0;
-		}
-
-		break;
-
-	case STAGE_ICE:
-
-		UniteFileName(ICE_FILENAME, BLOCK_FILETYPE);
+		UniteFileName(FRAME_FILENAME, FRAME_RIGHT_FILETYPE);
 		LoadBlock(&g_aFileName[0]);
 
-		// もしクリア済みでなければ
-		if (g_aTurn[STAGE_ICE] != ALREADY_CLEARED)
-		{// ターンを初期化
-			g_aTurn[STAGE_ICE] = 0;
-		}
-
-		break;
-
-	case STAGE_FOREST:
-
-		UniteFileName(FOREST_FILENAME, BLOCK_FILETYPE);
+		UniteFileName(FRAME_FILENAME, FRAME_UP_FILETYPE);
 		LoadBlock(&g_aFileName[0]);
 
-		// もしクリア済みでなければ
-		if (g_aTurn[STAGE_FOREST] != ALREADY_CLEARED)
-		{// ターンを初期化
-			g_aTurn[STAGE_FOREST] = 0;
-		}
-
-		break;
-
-	case STAGE_VOLCANO:
-
-		UniteFileName(VOLCANO_FILENAME, BLOCK_FILETYPE);
+		UniteFileName(FRAME_FILENAME, FRAME_DOWN_FILETYPE);
 		LoadBlock(&g_aFileName[0]);
 
-		// もしクリア済みでなければ
-		if (g_aTurn[STAGE_VOLCANO] != ALREADY_CLEARED)
-		{// ターンを初期化
-			g_aTurn[STAGE_VOLCANO] = 0;
+		pPlayer->posPlayer.x += (pPlayer->moveposPlayer.x * 2.0f);
+		pPlayer->posPlayer.y += (pPlayer->moveposPlayer.y * 2.0f);
+		if (pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_WAIT)
+		{
+			pPlayer->state = PLAYERSTATE_TELEPORT_COOLDOWN;
+			pPlayer->nCounterState = TELEPORT_COOLTIME;
 		}
 
-		break;
+		// 指定されたステージへ移行
+		switch (g_aStageMap[g_stageExac].stage)
+		{
+		case STAGE_GRASS:
 
-	case STAGE_SEA:
+			UniteFileName(GRASS_FILENAME, BLOCK_FILETYPE);
+			LoadBlock(&g_aFileName[0]);
 
-		UniteFileName(SEA_FILENAME, BLOCK_FILETYPE);
-		LoadBlock(&g_aFileName[0]);
+			// もしクリア済みでなければ
+			if (g_aTurn[STAGE_GRASS] != ALREADY_CLEARED)
+			{// ターンを初期化
+				g_aTurn[STAGE_GRASS] = 0;
+			}
 
-		// もしクリア済みでなければ
-		if (g_aTurn[STAGE_SEA] != ALREADY_CLEARED)
-		{// ターンを初期化
-			g_aTurn[STAGE_SEA] = 0;
+			break;
+
+		case STAGE_DESERT:
+
+			UniteFileName(DESERT_FILENAME, BLOCK_FILETYPE);
+			LoadBlock(&g_aFileName[0]);
+
+			// もしクリア済みでなければ
+			if (g_aTurn[STAGE_DESERT] != ALREADY_CLEARED)
+			{// ターンを初期化
+				g_aTurn[STAGE_DESERT] = 0;
+				SetItem(ITEMTYPE_KEY, D3DXVECTOR3(-110.0f, 710.0, 0.0));
+				SetItem(ITEMTYPE_COIN, D3DXVECTOR3(390.0f, 10.0, 0.0));
+				SetItem(ITEMTYPE_COIN, D3DXVECTOR3(390.0f, 210.0, 0.0));
+				SetItem(ITEMTYPE_COIN, D3DXVECTOR3(590.0f, 210.0, 0.0));
+				SetItem(ITEMTYPE_COIN, D3DXVECTOR3(790.0f, 210.0, 0.0));
+			}
+
+			break;
+
+		case STAGE_ICE:
+
+			UniteFileName(ICE_FILENAME, BLOCK_FILETYPE);
+			LoadBlock(&g_aFileName[0]);
+
+			// もしクリア済みでなければ
+			if (g_aTurn[STAGE_ICE] != ALREADY_CLEARED)
+			{// ターンを初期化
+				g_aTurn[STAGE_ICE] = 0;
+				SetItem(ITEMTYPE_ULTIMATE_COIN, D3DXVECTOR3(1590.0f, 610.0, 0.0));
+			}
+
+			break;
+
+		case STAGE_FOREST:
+
+			UniteFileName(FOREST_FILENAME, BLOCK_FILETYPE);
+			LoadBlock(&g_aFileName[0]);
+
+			// もしクリア済みでなければ
+			if (g_aTurn[STAGE_FOREST] != ALREADY_CLEARED)
+			{// ターンを初期化
+				g_aTurn[STAGE_FOREST] = 0;
+			}
+
+			break;
+
+		case STAGE_VOLCANO:
+
+			UniteFileName(VOLCANO_FILENAME, BLOCK_FILETYPE);
+			LoadBlock(&g_aFileName[0]);
+
+			// もしクリア済みでなければ
+			if (g_aTurn[STAGE_VOLCANO] != ALREADY_CLEARED)
+			{// ターンを初期化
+				g_aTurn[STAGE_VOLCANO] = 0;
+			}
+
+			break;
+
+		case STAGE_SEA:
+
+			UniteFileName(SEA_FILENAME, BLOCK_FILETYPE);
+			LoadBlock(&g_aFileName[0]);
+
+			// もしクリア済みでなければ
+			if (g_aTurn[STAGE_SEA] != ALREADY_CLEARED)
+			{// ターンを初期化
+				g_aTurn[STAGE_SEA] = 0;
+				SetItem(ITEMTYPE_ULTIMATE_COIN, D3DXVECTOR3(1490.0f, 350.0f, 0.0f));
+			}
+
+			break;
+
+		default:
+
+			break;
 		}
-
-		break;
-
-	default:
-
-		break;
 	}
 }
 

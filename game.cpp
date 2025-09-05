@@ -57,8 +57,6 @@ void InitGame(void)
 	// ブロックの初期化処理
 	InitBlock();
 
-	AddFunctionLog("END : Block Init");
-
 	// Mage
 	InitMage();
 
@@ -68,17 +66,11 @@ void InitGame(void)
 	// 背景の初期化処理
 	InitBG();				
 
-	AddFunctionLog("END : Background Init");
-
 	// ステージの初期化処理
 	InitStage();
 
-	AddFunctionLog("END : Stage Init");
-
 	// プレイヤーの初期化処理
 	InitPlayer();
-
-	AddFunctionLog("END : Player Init");
 
 	// 体力表示の初期化処理
 	InitHeart();
@@ -88,55 +80,33 @@ void InitGame(void)
 
 	// 弾の初期化
 	InitBullet();		
-
-	AddFunctionLog("END : Bullet Init");
 	
 	// 爆発の初期化処理
 	InitExplosion();	
 
-	AddFunctionLog("END : Explosion Init");
-
 	// 敵の初期化処理
 	InitEnemy();			
-
-	AddFunctionLog("END : Enemy Init");
 
 	// スコアの初期化処理
 	InitScore();
 
-	AddFunctionLog("END : Score Init");
-
 	// エフェクトの初期化処理
 	InitEffect();
-
-	AddFunctionLog("END : Effect Init");
 
 	// 弾の初期化
 	InitParticle();
 
-	AddFunctionLog("END : Particle Init");
-
 	// ゲージの初期化処理
 	InitGauge();
-
-	AddFunctionLog("END : Gauge Init");
 
 	// タイマーの初期化処理
 	InitTimer();
 
-	AddFunctionLog("END : Timer Init");
-
 	// ポーズ画面の初期化処理
 	InitPause();
 
-	AddFunctionLog("END : Pause Init");
-
 	// 自然消滅テクスチャの初期化処理
 	InitPlaceChar();
-
-	AddFunctionLog("END : Editer Init");
-
-	InitTutorial();
 
 	// ゲーム画面のBGM再生
 	PlaySound(SOUND_LABEL_BGM003);
@@ -152,6 +122,8 @@ void InitGame(void)
 
 	if (g_bUseTutorial == true)
 	{
+		InitTutorial();
+
 		SetTutorial();
 	}
 	else
@@ -160,10 +132,6 @@ void InitGame(void)
 		SetStage(STAGE_GRASS);
 		SetBG(STAGE_GRASS);
 	}
-
-	AddFunctionLog("END : FadeStage Init");
-
-	AddFunctionLog("END : GAME.cpp Init");
 }
 
 //================================================================================================================
