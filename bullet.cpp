@@ -31,10 +31,10 @@
 #define HOMING_TIME		(300)											// ホーミング弾の追尾持続時間
 
 #define NORMAL_DAMAGE	(1)												// 通常弾の一発のダメージ
-#define HOMING_DAMAGE	(NORMAL_DAMAGE * 5)								// ホーミング弾の一発のダメージ
+#define HOMING_DAMAGE	(NORMAL_DAMAGE * 8)								// ホーミング弾の一発のダメージ
 #define LASER_DAMAGE	(NORMAL_DAMAGE)									// レーザーの一発のダメージ		
-#define BOMB_DAMAGE		(NORMAL_DAMAGE * 8)								// ボムの直撃ダメージ
-#define BOMBBULLET_DAMAGE		(NORMAL_DAMAGE * 3)						// ボムの各散弾ダメージ
+#define BOMB_DAMAGE		(NORMAL_DAMAGE * 10)							// ボムの直撃ダメージ
+#define BOMBBULLET_DAMAGE		(NORMAL_DAMAGE * 5)						// ボムの各散弾ダメージ
 
 #define MAX_BOMB_BULLET	(8)												// ボムの爆発時、発生する弾の数
 #define BOMB_BULLET_SPD	(8.0f)											// 発生する弾の速度
@@ -367,6 +367,15 @@ void UpdateBullet(void)
 				SetBullet(pBullet->pos,
 					HOMING_SPD,
 					pBullet->move.z,
+					HOMING_LIFE,
+					pBullet->type,
+					SHOTTYPE_HOMING,
+					pBullet->col,
+					true);
+
+				SetBullet(pBullet->pos,
+					HOMING_SPD,
+					-pBullet->move.z,
 					HOMING_LIFE,
 					pBullet->type,
 					SHOTTYPE_HOMING,

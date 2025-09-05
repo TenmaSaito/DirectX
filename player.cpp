@@ -89,9 +89,9 @@ void InitPlayer(void)
 	g_player.posPlayer = PLAYER_SPOWN;			// プレイヤー位置の初期化
 	g_player.movePlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						// プレイヤー移動量の初期化
 	g_player.moveposPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						// プレイヤーの相対移動量の初期化
-	g_player.type = SHOTTYPE_LASER;				// チャージショットの初期化
+	g_player.type = SHOTTYPE_LASER;			// チャージショットの初期化
 	g_player.fBulletSpeed = LASER_SPD;				// チャージショットの弾速の初期化
-	g_player.nBulletLife = LASER_LIFE;			// チャージ技の体力の初期化
+	g_player.nBulletLife = LASER_LIFE;					// チャージ技の体力の初期化
 	g_player.nCounterAnimPlayer = 0;			// カウンターの初期化
 	g_player.nPatternAnimPlayer = 0;			// アニメーションNoの初期化
 	g_player.nLife = MAX_LIFE;					// プレイヤーの体力の初期化
@@ -361,7 +361,10 @@ void UpdatePlayer(void)
 
 	case PLAYERSTATE_BARRIER:
 
-		KeyboardPress();
+		if (g_subState != PLAYERSTATE_UNMOVE)
+		{
+			KeyboardPress();
+		}
 
 		// 表示
 		g_player.bDisp = true;

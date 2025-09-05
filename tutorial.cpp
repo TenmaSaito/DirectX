@@ -430,6 +430,8 @@ void UpdateTutorial(void)
 			// 敵を配置
 			UniteFileName(TUTORIAL_FILENAME, ENEMY_FILETYPE, &aStr[0]);
 			LoadEnemy(&aStr[0], 0);
+			pPlayer->state = PLAYERSTATE_BARRIER;
+			pPlayer->nCounterState = 1000000;
 		}
 
 		if (g_nCounterTutorialState > 0)
@@ -473,6 +475,8 @@ void UpdateTutorial(void)
 			// アイテムを配置
 			UniteFileName(TUTORIAL_FILENAME, BLOCK_FILETYPE, &aStr[0]);
 			SetItem(ITEMTYPE_HEAL, D3DXVECTOR3(640.0f, 360.0f, 0.0f));
+			pPlayer->nCounterState = 0;
+			pPlayer->state = PLAYERSTATE_NORMAL;
 			HitPlayer(1);
 			nCnt = pPlayer->nLife;
 		}
