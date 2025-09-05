@@ -376,7 +376,7 @@ void UpdatePlayer(void)
 		break;
 
 	case PLAYERSTATE_TELEPORT_COOLDOWN:
-
+		// クールタイム中のレーザーの反動軽減は作者の意図によりバグではなく仕様として扱います
 		KeyboardPress();
 
 		g_player.nCounterState--;
