@@ -32,9 +32,9 @@ float g_fAngle;
 
 const char* TEXTURE_ADDRESS[BLOCKTYPE_MAX]
 {
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 壁のテクスチャ
-	"data\\TEXTURE\\CHARACTER\\BLOCK_POISON.png",	// 毒床
-	"data\\TEXTURE\\CHARACTER\\BLOCK_BATTERY.png",	// 砲台
+	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",			// 壁のテクスチャ
+	"data\\TEXTURE\\CHARACTER\\BLOCK_POISON.png",		// 毒床
+	"data\\TEXTURE\\CHARACTER\\BLOCK_BATTERY.png",		// 砲台
 	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_A.png",		// 出口A
 	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_B.png",		// 出口B
 	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_C.png",		// 出口C
@@ -42,7 +42,7 @@ const char* TEXTURE_ADDRESS[BLOCKTYPE_MAX]
 	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_E.png",		// 出口E
 	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_F.png",		// 出口F
 	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_G.png",		// 出口G
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EX_EXIT_1.png",		// 鍵でアクトビラ
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EX_EXIT_1.png",	// 鍵でアクトビラ
 };
 
 //================================================================================================================

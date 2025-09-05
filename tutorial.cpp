@@ -12,6 +12,7 @@
 #include "placeChar.h"
 #include "fade_stage.h"
 #include "input.h"
+#include "item.h"
 
 // マクロ定義
 #define MAX_TURN		(3)				// 草原ステージのターン数
@@ -445,7 +446,7 @@ void UpdateTutorial(void)
 			if (GetTotalEnemy() == 0)
 			{
 				DeleteChar(CHARTEX_STEP6_BRIEF);
-				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+				SetItem(ITEMTYPE_HEAL, D3DXVECTOR3(640.0f, 360.0f, 0.0f));
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
