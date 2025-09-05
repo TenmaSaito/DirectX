@@ -222,6 +222,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="data\TEXTURE\ICON\icon.ico" />
+    <Image Include="data\TEXTURE\ICON\icon.png" />
+    <Image Include="data\TEXTURE\ICON\Re_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

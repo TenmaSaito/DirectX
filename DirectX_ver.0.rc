@@ -54,6 +54,16 @@ END
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "data\\TEXTURE\\ICON\\icon.ico"
 
+IDI_ICON2               ICON                    "data\\TEXTURE\\ICON\\Re_icon.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "data\\TEXTURE\\ICON\\icon.png"
+
 #endif    // “ú–{Œê (“ú–{) resources
 /////////////////////////////////////////////////////////////////////////////
 

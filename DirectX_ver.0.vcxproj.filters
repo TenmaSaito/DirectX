@@ -300,5 +300,11 @@
     <Image Include="data\TEXTURE\ICON\icon.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
+    <Image Include="data\TEXTURE\ICON\icon.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="data\TEXTURE\ICON\Re_icon.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

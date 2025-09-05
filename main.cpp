@@ -76,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 		(HBRUSH)(COLOR_WINDOW + 1),				// クライアント領域の背景色
 		NULL,									// メニューバー
 		CLASS_NAME,								// ウィンドウクラスの名前
-		LoadIcon(hInstance,(LPCSTR)IDI_ICON1)	// ファイルのアイコン
+		LoadIcon(hInstance,(LPCSTR)IDI_ICON2)	// ファイルのアイコン
 	}; 
 
 	AddFunctionLog("END : WindowClass Setting");
