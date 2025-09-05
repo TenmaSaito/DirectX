@@ -523,6 +523,9 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_TUTORIAL_COMPLETE);
 				SetGameTutorial(false);
+				pPlayer->nCounterState = 0;
+				pPlayer->state = PLAYERSTATE_NORMAL;
+				pPlayer->nLife = MAX_LIFE;
 				SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 			}
 		}
