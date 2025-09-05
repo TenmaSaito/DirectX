@@ -20,12 +20,12 @@ typedef enum
 }FADESTAGE;
 
 // プロトタイプ宣言
-void InitFadeStage(STAGE stage);
+void InitFadeStage(void);
 void UninitFadeStage(void);
 void UpdateFadeStage(void);
 void DrawFadeStage(void);
 
-void SetFadeStage(STAGE stage);
+void SetFadeStage(STAGE stage, FADESTAGE start);
 FADESTAGE GetFadeStage(void);
 
 #endif

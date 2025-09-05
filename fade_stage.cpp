@@ -21,13 +21,11 @@ D3DXCOLOR g_colorFadeStage;							// ポリゴンの色
 //================================================================================================================
 // ステージ用フェードの初期化処理
 //================================================================================================================
-void InitFadeStage(STAGE stage) 
+void InitFadeStage(void) 
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();			// デバイスのポインタ
 
 	g_fadeStage = FADESTAGE_NONE;			// 通常状態に
-
-	g_stageNext = stage;					// 次の画面を設定
 
 	g_colorFadeStage.a = 0.0f;				// alpha値を初期化
 
@@ -64,14 +62,6 @@ void InitFadeStage(STAGE stage)
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffFadeStage->Unlock();
-
-	if(GetGameTutorial() == false)
-	{
-		// ステージを設定
-		SetStage(g_stageNext);
-		// ステージの背景を設定
-		SetBG(g_stageNext);
-	}
 
 	PLAYER* pPlayer = GetPlayer();
 
@@ -124,7 +114,7 @@ void UpdateFadeStage(void)
 			}
 		}
 
-		VERTEX_2D* pVtx;
+		VERTEX_2D* pVtx = NULL;
 
 		// 頂点バッファをロックし、頂点情報へのポインタを取得
 		g_pVtxBuffFadeStage->Lock(0, 0, (void**)&pVtx, 0);
@@ -163,9 +153,9 @@ void DrawFadeStage(void)
 }
 
 // ステージ用フェードの設定
-void SetFadeStage(STAGE stageNext)
+void SetFadeStage(STAGE stageNext, FADESTAGE start)
 {
-	g_fadeStage = FADESTAGE_OUT;
+	g_fadeStage = start;
 
 	g_stageNext = stageNext;
 

@@ -12,23 +12,30 @@
 #define BG_WIDTH			(1280.0f)			// 背景の横
 #define BG_HEIGHT			(720.0f)			// 背景の縦
 
+// 背景構造体
+typedef struct
+{
+	STAGE stage;
+	bool bUse;
+}STAGE_BG;
+
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_apTextureBG[STAGE_MAX] = {};	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBG = NULL;					// 頂点バッファのポインタ
 D3DXVECTOR3 g_posBg;											// 背景の現在位置
-STAGE g_stageBg;												// 現在のステージ
+STAGE_BG g_aStageBg[STAGE_MAX];									// 各ステージ
+STAGE g_stageBgExac;
 float g_fLengthBg;												// 背景の対角線の長さ
 float g_fAngleBg;												// 背景の対角線の角度
 
 const char* TEXTURE_FILE[STAGE_MAX]
 {
-	"data\\TEXTURE\\BG\\steppe.jpg",//
-	"data\\TEXTURE\\BG\\desert.jpg",
-	"data\\TEXTURE\\BG\\steppe.jpg",
-	"data\\TEXTURE\\BG\\steppe.jpg",
-	"data\\TEXTURE\\BG\\steppe.jpg",
-	"data\\TEXTURE\\BG\\steppe.jpg",
-	"data\\TEXTURE\\BG\\steppe.jpg",
+	"data\\TEXTURE\\BG\\BG_GRASS.jpg",
+	"data\\TEXTURE\\BG\\BG_DESERT.jpg",
+	"data\\TEXTURE\\BG\\BG_ICE.jpg",
+	"data\\TEXTURE\\BG\\BG_FOREST.jpg",
+	"data\\TEXTURE\\BG\\BG_VOLCANO.jpg",
+	"data\\TEXTURE\\BG\\BG_SEA.jpg",
 };
 
 //================================================================================================================
@@ -47,8 +54,11 @@ void InitBG(void)
 
 	AddFunctionLog("START : Texture Create");
 
-	for (int n = 0; n < STAGE_MAX; ++n)
+	for (int n = 0; n < STAGE_MAX; n++)
 	{
+		g_aStageBg[n].stage = (STAGE)n;
+		g_aStageBg[n].bUse = false;
+
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,
 			TEXTURE_FILE[n],
@@ -85,29 +95,34 @@ void InitBG(void)
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffBG->Lock(0, 0, (void**)&pVtx, 0);
 
-	// 頂点座標の設定(座標設定は必ず右回りで！！！)
-	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1280.0f, 0.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, 720.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1280.0f, 720.0f, 0.0f);
+	for (int nCntBg = 0; nCntBg < STAGE_MAX; nCntBg++)
+	{
+		// 頂点座標の設定(座標設定は必ず右回りで！！！)
+		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(1280.0f, 0.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f, 720.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(1280.0f, 720.0f, 0.0f);
 
-	// rhwの設定
-	pVtx[0].rhw = 1.0f;
-	pVtx[1].rhw = 1.0f;
-	pVtx[2].rhw = 1.0f;
-	pVtx[3].rhw = 1.0f;
+		// rhwの設定
+		pVtx[0].rhw = 1.0f;
+		pVtx[1].rhw = 1.0f;
+		pVtx[2].rhw = 1.0f;
+		pVtx[3].rhw = 1.0f;
 
-	// 頂点カラー設定
-	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		// 頂点カラー設定
+		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		// テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+		pVtx += 4;
+	}
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffBG->Unlock();
@@ -169,20 +184,30 @@ void DrawBG(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	// テクスチャの設定
-	pDevice->SetTexture(0, g_apTextureBG[g_stageBg]);
+	for (int nCnt = 0; nCnt < STAGE_MAX; nCnt++)
+	{
+		if (g_aStageBg[nCnt].bUse == true)
+		{
+			// テクスチャの設定
+			pDevice->SetTexture(0, g_apTextureBG[nCnt]);
 
-	// ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
-					       0,						// 描画する最初の頂点インデックス
-						   2);						// 描画するプリミティブの数
+			// ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
+				0,						// 描画する最初の頂点インデックス
+				2);						// 描画するプリミティブの数
+		}
+	}
 }
 
 void SetBG(STAGE stage)
 {
 	AddFunctionLog("START : Background Set");
 
-	g_stageBg = stage;
+	g_aStageBg[g_stageBgExac].bUse = false;
+
+	g_stageBgExac = stage;
+
+	g_aStageBg[g_stageBgExac].bUse = true;
 
 	AddFunctionLog("END : Background Set");
 }

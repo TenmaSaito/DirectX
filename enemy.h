@@ -11,7 +11,7 @@
 
 // マクロ定義
 #define MAX_ENEMY		(128)	// 敵の最大数
-#define ENEMY_SIZE		(50)								// 敵のサイズ
+#define ENEMY_SIZE		(100)	// 敵のサイズ
 
 // 敵の状態
 typedef enum
@@ -124,8 +124,5 @@ int GetTotalEnemy(void);
 // デバッグ用プロトタイプ宣言
 //***************************************************************************************
 void DestroyEnemy(void);
-void SetEnemyCollision(void);
-void SetEnableCollisionBlock(bool bUse);
-bool GetEnableCollisionBlock(void);
 
 #endif // !_Enemy_H_

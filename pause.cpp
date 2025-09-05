@@ -185,16 +185,16 @@ void UpdatePause(void)
 				g_Select = SELECTTYPE_EXIT;
 
 				break;
-
+#if 0
 			case SELECTTYPE_SETTINGS:
 
 				g_Select = SELECTTYPE_CONTINUE;
 
 				break;
-
+#endif
 			case SELECTTYPE_RESTART:
 
-				g_Select = SELECTTYPE_SETTINGS;
+				g_Select = SELECTTYPE_CONTINUE;
 
 				break;
 
@@ -220,16 +220,16 @@ void UpdatePause(void)
 				{
 				case SELECTTYPE_CONTINUE:
 
-					g_Select = SELECTTYPE_SETTINGS;
+					g_Select = SELECTTYPE_RESTART;
 
 					break;
-
+#if 0
 				case SELECTTYPE_SETTINGS:
 
 					g_Select = SELECTTYPE_RESTART;
 
 					break;
-
+#endif
 				case SELECTTYPE_RESTART:
 
 					g_Select = SELECTTYPE_EXIT;
@@ -262,14 +262,14 @@ void UpdatePause(void)
 				SetGamePause(false);
 
 				break;
-
+#if 0
 			case SELECTTYPE_SETTINGS:
 
 				SetSettings();
 				g_Select = SELECTTYPE_NONE;
 
 				break;
-
+#endif
 			case SELECTTYPE_RESTART:
 
 				SetFade(MODE_GAME);

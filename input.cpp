@@ -9,7 +9,8 @@
 // マクロ定義
 #define NUM_KEY_MAX			(256)			// キーの最大数
 #define NUM_MOUSE_MAX		(3)				// ボタンの最大数
-#define THUMB_SLOW			(12)				// GetJoyThumbSlowでの遅延する数
+#define THUMB_SLOW			(12)			// GetJoyThumbSlowでの遅延する数
+#define STROKE_KEY_MAX		(288)			// キー及びボタン、スティックの最大数
 
 // グローバル変数
 LPDIRECTINPUT8 g_pInput = NULL;					// DirectInputオブジェクトのポインタ
@@ -27,6 +28,8 @@ int g_nCounterRepeatJoypad[JOYKEY_MAX] = {};	// ジョイパッドのリピートのカウント
 bool g_bUseJoykeyAny;							// ジョイキーの押下情報
 int g_nCounterJoyThumb[JOYTHUMB_MAX] = {};		// ジョイパッドのスティックの遅延カウント
 XINPUT_VIBRATION g_joyVibration;				// ジョイパッドのバイブレーション情報
+_XINPUT_KEYSTROKE g_keyStroke;					// 仮想キーのストローク状態
+int g_aStroke[STROKE_KEY_MAX];					// ストロークカウント
 
 LPDIRECTINPUTDEVICE8 g_pDevMouse = NULL;		// 入力デバイス(マウス)へのポインタ
 
@@ -478,6 +481,48 @@ bool GetJoyThumbSlow(JOYTHUMB Thumb)
 		return false;
 
 		break;
+	}
+}
+
+bool GetJoythumbRepeat(WORD VirtualKey)
+{
+	if (XInputGetKeystroke(NULL, NULL, &g_keyStroke) == ERROR_SUCCESS)
+	{
+		if (g_keyStroke.VirtualKey == VirtualKey)
+		{
+			if (g_keyStroke.Flags == 5)
+			{
+				g_aStroke[VirtualKey]++;
+				if (g_aStroke[VirtualKey] == 1)
+				{
+					return true;
+				}
+				else if (g_aStroke[VirtualKey] >= 2 && g_aStroke[VirtualKey] <= 100)
+				{
+					return false;
+				}
+				else if (g_aStroke[VirtualKey] > 100)
+				{
+					if (g_aStroke[VirtualKey] % 30 == 0)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+			else if (g_keyStroke.Flags == XINPUT_KEYSTROKE_KEYUP)
+			{
+				g_aStroke[VirtualKey] = 0;
+				return false;
+			}
+		}
+	}
+	else
+	{
+		return false;
 	}
 }
 

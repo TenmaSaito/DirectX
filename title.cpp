@@ -47,6 +47,8 @@ void InitTitle(void)
 
 	// ƒ^ƒCƒgƒ‹‰æ–Ê‚ÌBGMÄ¶
 	PlaySound(SOUND_LABEL_BGM001);
+
+	SetTitleSelect(true);
 }
 
 //================================================================================================================
@@ -69,11 +71,6 @@ void UninitTitle(void)
 //================================================================================================================
 void UpdateTitle(void)
 {
-	if (GetFade() == FADE_NONE)
-	{
-		SetTitleSelect(true);
-	}
-
 	g_dwCurrentTimeTitle = timeGetTime();
 	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 10000)
 	{

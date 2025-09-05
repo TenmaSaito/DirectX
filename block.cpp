@@ -16,7 +16,7 @@
 #include "heart.h"
 
 // マクロ定義
-#define MAX_BLOCK		(2056)			// ブロックの最大数
+#define MAX_BLOCK		(128)			// ブロックの最大数
 
 // プロトタイプ宣言
 void CollisionPlayer(BLOCK *pBlock);
@@ -27,9 +27,6 @@ void CollisionBullet(BLOCK *pBlock);
 LPDIRECT3DTEXTURE9		g_apTextureBlock[BLOCKTYPE_MAX] = {};	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBlock = NULL;	// 頂点バッファのポインタ
 BLOCK g_aBlock[MAX_BLOCK];						// ブロック構造体
-BLOCK g_aBlockEditer[MAX_BLOCK];			// エディタ情報保存用ブロック構造体
-BLOCKTYPE g_typeEditer = BLOCKTYPE_WALL;	// 設置するブロックの種類
-
 
 float g_fAngle;
 
@@ -38,32 +35,14 @@ const char* TEXTURE_ADDRESS[BLOCKTYPE_MAX]
 	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 壁のテクスチャ
 	"data\\TEXTURE\\CHARACTER\\BLOCK_POISON.png",	// 毒床
 	"data\\TEXTURE\\CHARACTER\\BLOCK_BATTERY.png",	// 砲台
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 出口A
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 出口B
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 出口C
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 出口D
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 出口E
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 出口F
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",		// 出口G
-	"data\\TEXTURE\\CHARACTER\\BLOCK_COIN.png",		// コイン
-	"data\\TEXTURE\\CHARACTER\\BLOCK_HEAL.png",		// 回復
-	"data\\TEXTURE\\CHARACTER\\BLOCK_HOMING.png",	// ホーミング
-	"data\\TEXTURE\\CHARACTER\\BLOCK_BOMB.png",		// ボム
-	"data\\TEXTURE\\CHARACTER\\BLOCK_LASER.png",	// レーザー
-	"data\\TEXTURE\\CHARACTER\\BLOCK_HEART.png",	// 体力
-	"data\\TEXTURE\\CHARACTER\\player_right.png",	// 残機
-	"data\\TEXTURE\\CHARACTER\\BLOCK_COLLISION.png",// 当たり判定
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UP.png",			// 上
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWN.png",			// 下
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_LEFT.png",			// 左
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_RIGHT.png",		// 右
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UPLEFT.png",		// 右上
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UPRIGHT.png",		// 左上
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWNLEFT.png",		// 右下
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWNRIGHT.png",	// 左下
-	"data\\TEXTURE\\CHARACTER\\BLOCK_COLLISION.png",// ステージエディタ用設置ブロック
-	"data\\TEXTURE\\CHARACTER\\BLOCK_COLLISION.png",// ステージエディタ用設置済みブロック
-	"data\\TEXTURE\\enemy000.png",					// ステージエディタ用設置済みエネミー
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_A.png",		// 出口A
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_B.png",		// 出口B
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_C.png",		// 出口C
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_D.png",		// 出口D
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_E.png",		// 出口E
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_F.png",		// 出口F
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_G.png",		// 出口G
+	"data\\TEXTURE\\CHARACTER\\BLOCK_EX_EXIT_1.png",		// 鍵でアクトビラ
 };
 
 //================================================================================================================
@@ -80,8 +59,8 @@ void InitBlock(void)
 		pBlock->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		pBlock->col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pBlock->type = BLOCKTYPE_WALL;
-		pBlock->fLength = pBlock->fLength = sqrtf(powf((BLOCK_WIDTH * 2), 2) + powf((BLOCK_HEIGHT * 2), 2)) * 0.5f;
-		pBlock->fAngle = pBlock->fAngle = atan2f((BLOCK_WIDTH * 2), (BLOCK_HEIGHT * 2));
+		pBlock->fLength  = sqrtf(powf((BLOCK_WIDTH * 2), 2) + powf((BLOCK_HEIGHT * 2), 2)) * 0.5f;
+		pBlock->fAngle = atan2f((BLOCK_WIDTH * 2), (BLOCK_HEIGHT * 2));
 		pBlock->fLaunchAngle = 0.0f;
 		pBlock->fWidth = (float)BLOCK_WIDTH;
 		pBlock->fHeight = (float)BLOCK_HEIGHT;
@@ -112,7 +91,7 @@ void InitBlock(void)
 
 	AddFunctionLog("END : VertexBuffer Create");
 
-	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
+	VERTEX_2D* pVtx = NULL;					// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffBlock->Lock(0, 0, (void**)&pVtx, 0);
@@ -195,10 +174,9 @@ void UninitBlock(void)
 //================================================================================================================
 void UpdateBlock(void)
 {
-	VERTEX_2D *pVtx;
+	VERTEX_2D *pVtx = NULL;
 	BLOCK *pBlock = &g_aBlock[0];
 	PLAYER *pPlayer = GetPlayer();
-	ENEMY *pEnemy = GetEnemy();
 	
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffBlock->Lock(0, 0, (void**)&pVtx, 0);
@@ -242,16 +220,9 @@ void UpdateBlock(void)
 			CollisionEnemy(pBlock);
 			CollisionBullet(pBlock);
 
-			if (pBlock->type != BLOCKTYPE_HEART
-				&& pBlock->type != BLOCKTYPE_STOCK
-				&& nCntBlock != pPlayer->g_nIDDirection)
+			if (nCntBlock != pPlayer->g_nIDDirection)
 			{
 				pos = pPlayer->moveposPlayer;
-			}
-
-			if (pBlock->type == BLOCKTYPE_COLLISION_ENEMY)
-			{
-				pBlock->pos = pEnemy[nCntBlock].pos;
 			}
 
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
@@ -300,6 +271,7 @@ void DrawBlock(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();			// デバイスのポインタ
 	BLOCK *pBlock = &g_aBlock[0];
+	HWND hWnd = NULL;
 
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffBlock, 0, sizeof(VERTEX_2D));
@@ -392,7 +364,17 @@ int SetBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
 	PLAYER* pPlayer = GetPlayer();
 	D3DXVECTOR3 Camerapos;
 	VERTEX_2D* pVtx;
+	HWND hWnd = NULL;
 	int nCntBlock;
+
+	if (type < BLOCKTYPE_WALL || type > BLOCKTYPE_MAX)
+	{
+		if (SUCCEEDED(GetHandleWindow(&hWnd)))
+		{
+			MessageBox(hWnd, "ヤバイ", "え？", MB_ICONWARNING);
+			return 0;
+		}
+	}
 
 	AddFunctionLog("START : Block Set");
 
@@ -400,19 +382,7 @@ int SetBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
 	{
 		if (pBlock->bUse == false)
 		{
-			if (type != BLOCKTYPE_HEART
-			&& type != BLOCKTYPE_STOCK
-			&& type != BLOCKTYPE_DIRECTION_UP
-			&& type != BLOCKTYPE_DIRECTION_UPLEFT
-			&& type != BLOCKTYPE_DIRECTION_UPRIGHT
-			&& type != BLOCKTYPE_DIRECTION_DOWN
-			&& type != BLOCKTYPE_DIRECTION_DOWNLEFT
-			&& type != BLOCKTYPE_DIRECTION_DOWNRIGHT
-			&& type != BLOCKTYPE_DIRECTION_LEFT
-			&& type != BLOCKTYPE_DIRECTION_RIGHT)
-			{
-				Camerapos = pPlayer->moveposPlayer;
-			}
+			Camerapos = pPlayer->moveposPlayer;
 
 			pBlock->pos = pos;
 			pBlock->type = type;
@@ -488,11 +458,10 @@ void DeleteBlock(int nID)
 void ResetBlock(void)
 {
 	BLOCK *pBlock = &g_aBlock[0];
-	PLAYER* pPlayer = GetPlayer();
 
 	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++, pBlock++)
 	{
-		if (pBlock->bUse == true && (pBlock->type != BLOCKTYPE_HEART && pBlock->type != BLOCKTYPE_STOCK && pPlayer->g_nIDDirection != nCntBlock))
+		if (pBlock->bUse == true)
 		{
 			pBlock->bUse = false;
 		}
@@ -551,15 +520,23 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EXIT_A:
 
-			if (nCntEnemy <= 0 && nTurnExac == ALREADY_CLEARED && GetFadeStage() == FADESTAGE_NONE)
+			if (nCntEnemy <= 0
+				&& nTurnExac == ALREADY_CLEARED 
+				&& GetFadeStage() == FADESTAGE_NONE 
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
+				pPlayer->movePlayer.x = 0.0f;
+				pPlayer->movePlayer.y = 0.0f;
+
+				pPlayer->state = PLAYERSTATE_UNMOVE;
+
 				if (stage == STAGE_GRASS)
 				{
-					SetFadeStage(STAGE_VOLCANO);
+					SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_VOLCANO)
 				{
-					SetFadeStage(STAGE_GRASS);
+					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 				}
 			}
 
@@ -567,15 +544,23 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EXIT_B:
 
-			if (nCntEnemy <= 0 && nTurnExac == ALREADY_CLEARED && GetFadeStage() == FADESTAGE_NONE)
+			if (nCntEnemy <= 0 
+				&& nTurnExac == ALREADY_CLEARED 
+				&& GetFadeStage() == FADESTAGE_NONE 
+			    &&(pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
+				pPlayer->movePlayer.x = 0.0f;
+				pPlayer->movePlayer.y = 0.0f;
+
+				pPlayer->state = PLAYERSTATE_UNMOVE;
+
 				if (stage == STAGE_GRASS)
 				{
-					SetFadeStage(STAGE_FOREST);
+					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_FOREST)
 				{
-					SetFadeStage(STAGE_GRASS);
+					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 				}
 			}
 
@@ -583,15 +568,23 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EXIT_C:
 
-			if (nCntEnemy <= 0 && nTurnExac == ALREADY_CLEARED && GetFadeStage() == FADESTAGE_NONE)
+			if (nCntEnemy <= 0 
+				&& nTurnExac == ALREADY_CLEARED 
+				&& GetFadeStage() == FADESTAGE_NONE 
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
+				pPlayer->movePlayer.x = 0.0f;
+				pPlayer->movePlayer.y = 0.0f;
+
+				pPlayer->state = PLAYERSTATE_UNMOVE;
+
 				if (stage == STAGE_GRASS)
 				{
-					SetFadeStage(STAGE_ICE);
+					SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_ICE)
 				{
-					SetFadeStage(STAGE_GRASS);
+					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 				}
 			}
 
@@ -599,15 +592,23 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EXIT_D:
 
-			if (nCntEnemy <= 0 && nTurnExac == ALREADY_CLEARED && GetFadeStage() == FADESTAGE_NONE)
+			if (nCntEnemy <= 0 
+				&& nTurnExac == ALREADY_CLEARED 
+				&& GetFadeStage() == FADESTAGE_NONE 
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
+				pPlayer->movePlayer.x = 0.0f;
+				pPlayer->movePlayer.y = 0.0f;
+
+				pPlayer->state = PLAYERSTATE_UNMOVE;
+
 				if (stage == STAGE_VOLCANO)
 				{
-					SetFadeStage(STAGE_DESERT);
+					SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_DESERT)
 				{
-					SetFadeStage(STAGE_VOLCANO);
+					SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
 				}
 			}
 
@@ -615,15 +616,23 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EXIT_E:
 
-			if (nCntEnemy <= 0 && nTurnExac == ALREADY_CLEARED && GetFadeStage() == FADESTAGE_NONE)
+			if (nCntEnemy <= 0 
+				&& nTurnExac == ALREADY_CLEARED 
+				&& GetFadeStage() == FADESTAGE_NONE 
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
+				pPlayer->movePlayer.x = 0.0f;
+				pPlayer->movePlayer.y = 0.0f;
+
+				pPlayer->state = PLAYERSTATE_UNMOVE;
+
 				if (stage == STAGE_DESERT)
 				{
-					SetFadeStage(STAGE_FOREST);
+					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_FOREST)
 				{
-					SetFadeStage(STAGE_DESERT);
+					SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
 				}
 			}
 
@@ -631,15 +640,23 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EXIT_F:
 
-			if (nCntEnemy <= 0 && nTurnExac == ALREADY_CLEARED && GetFadeStage() == FADESTAGE_NONE)
+			if (nCntEnemy <= 0 
+				&& nTurnExac == ALREADY_CLEARED 
+				&& GetFadeStage() == FADESTAGE_NONE 
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
+				pPlayer->movePlayer.x = 0.0f;
+				pPlayer->movePlayer.y = 0.0f;
+
+				pPlayer->state = PLAYERSTATE_UNMOVE;
+
 				if (stage == STAGE_FOREST)
 				{
-					SetFadeStage(STAGE_SEA);
+					SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_SEA)
 				{
-					SetFadeStage(STAGE_FOREST);
+					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
 				}
 			}
 
@@ -647,85 +664,34 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EXIT_G:
 
-			if (nCntEnemy <= 0 && nTurnExac == ALREADY_CLEARED && GetFadeStage() == FADESTAGE_NONE)
+			if (nCntEnemy <= 0 
+				&& nTurnExac == ALREADY_CLEARED 
+				&& GetFadeStage() == FADESTAGE_NONE 
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
+				pPlayer->movePlayer.x = 0.0f;
+				pPlayer->movePlayer.y = 0.0f;
+
+				pPlayer->state = PLAYERSTATE_UNMOVE;
+
 				if (stage == STAGE_SEA)
 				{
-					SetFadeStage(STAGE_ICE);
+					SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_ICE)
 				{
-					SetFadeStage(STAGE_SEA);
+					SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
 				}
 			}
 
 			break;
 
-		case BLOCKTYPE_ITEM_COIN:
-			// コイン
-  			AddScore(100);
+		case BLOCKTYPE_EX_EXIT_1:
 
-			pBlock->bUse = false;
-
-			break;
-
-		case BLOCKTYPE_ITEM_HEAL:
-			
-			if (pPlayer->nLife < MAX_LIFE)
-			{	// ヒール
-				pPlayer->nLife++;
-
-				AddHeart(1);
-			}
-
-			pBlock->bUse = false;
-
-			break;
-
-		case BLOCKTYPE_ITEM_HOMING:
-
-			pPlayer->type = SHOTTYPE_HOMING;
-			pPlayer->fBulletSpeed = HOMING_SPD;
-			pPlayer->nBulletLife = HOMING_LIFE;
-
-			pBlock->bUse = false;
-
-			break;
-
-		case BLOCKTYPE_ITEM_BOMB:
-
-			pPlayer->type = SHOTTYPE_BOMB;
-			pPlayer->fBulletSpeed = BOMB_SPD;
-			pPlayer->nBulletLife = BOMB_LIFE;
-
-			pBlock->bUse = false;
-
-			break;
-
-		case BLOCKTYPE_ITEM_LASER:
-
-			pPlayer->type = SHOTTYPE_LASER;
-			pPlayer->fBulletSpeed = LASER_SPD;
-			pPlayer->nBulletLife = LASER_LIFE;
-
-			pBlock->bUse = false;
-
-			break;
-
-		case BLOCKTYPE_EXIT_EDITER:
-
-			if (GetFadeStage() == FADESTAGE_NONE)
+			if (pPlayer->bHaveKey == true)
 			{
-
-				if (stage == STAGE_GRASS)
-				{
-					SetFadeStage(STAGE_EDITER);
-				}
-				else if (stage == STAGE_EDITER)
-				{
-					SetFadeStage(STAGE_GRASS);
-				}
-
+				pBlock->bUse = false;
+				// TODO : 鍵を取った時の音を鳴らす！！！！やれ！！！
 			}
 
 			break;
@@ -789,113 +755,14 @@ void CollisionBullet(BLOCK* pBlock)
 				&& pBullet->pos.y >= pBlock->pos.y - BLOCK_HEIGHT - (BULLET_SIZE * 0.5f)
 				&& pBullet->pos.y <= pBlock->pos.y + BLOCK_HEIGHT + (BULLET_SIZE * 0.5f))
 			{
-				SetParticle(pBullet->pos, pBullet->col, 10, D3DX_PI, -D3DX_PI, 5);
+				if (pBullet->type == BULLETTYPE_PLAYER)
+				{
+					SetParticle(pBullet->pos, pBullet->col, 10, D3DX_PI, -D3DX_PI, 5);
+				}
+
 				pBullet->bUse = false;
 			}
 		}
 	}
 }
 
-//================================================================================================================
-// ブロックの当たり判定(敵指定)
-//================================================================================================================
-void CollisionBlock(ENEMY *pEnemy)
-{
-	BLOCK *pBlock = &g_aBlock[0];
-
-	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++, pBlock++)
-	{
-		if (pEnemy->pos.x >= pBlock->pos.x - BLOCK_WIDTH - (ENEMY_SIZE * 0.5f)
-			&& pEnemy->pos.x <= pBlock->pos.x + BLOCK_WIDTH + (ENEMY_SIZE * 0.5f)
-			&& pEnemy->pos.y >= pBlock->pos.y - BLOCK_HEIGHT - (ENEMY_SIZE * 0.5f)
-			&& pEnemy->pos.y <= pBlock->pos.y + BLOCK_HEIGHT + (ENEMY_SIZE * 0.5f)
-			&& pBlock->type == BLOCKTYPE_WALL)
-		{
-			// プレイヤーとブロックの角度で判定
-			g_fAngle = atan2f(pBlock->pos.x - pEnemy->pos.x, pBlock->pos.y - pEnemy->pos.y);
-
-			if (g_fAngle > (D3DX_PI * -0.25f) && g_fAngle <= (D3DX_PI * 0.25f))
-			{
-				pEnemy->pos.y = pBlock->pos.y - BLOCK_HEIGHT - (ENEMY_SIZE * 0.5f);
-			}
-			else if (g_fAngle > (D3DX_PI * -0.75f) && g_fAngle <= (D3DX_PI * -0.25f))
-			{
-				pEnemy->pos.x = pBlock->pos.x + BLOCK_WIDTH + (ENEMY_SIZE * 0.5f);
-			}
-			else if (g_fAngle > (D3DX_PI * 0.75f) || g_fAngle <= (D3DX_PI * -0.75f))
-			{
-				pEnemy->pos.y = pBlock->pos.y + BLOCK_HEIGHT + (ENEMY_SIZE * 0.5f);
-			}
-			else if (g_fAngle > (D3DX_PI * 0.25f) && g_fAngle <= (D3DX_PI * 0.75f))
-			{
-				pEnemy->pos.x = pBlock->pos.x - BLOCK_WIDTH - (ENEMY_SIZE * 0.5f);
-			}
-		}
-	}
-}
-
-float GetBlockToPlayer(void)
-{
-	return g_fAngle;
-}
-
-// 当たり判定用ブロックを作成
-int SetCollisionBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
-{
-	VERTEX_2D *pVtx;
-	BLOCK* pBlock = &g_aBlock[0];
-	int nCntBlock;
-
-	for (nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++, pBlock++)
-	{
-		if (pBlock->bUse == false)
-		{
-			pBlock->type = type;
-			pBlock->pos = pos;
-			pBlock->col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.2f);
-
-			// 対角線の長さを算出
-			pBlock->fLength = sqrtf(powf(fWidth, 2) + powf(fHeight, 2)) * 0.5f;
-				
-			// 対角線の角度を算出
-			pBlock->fAngle = atan2f(fWidth, fHeight);
-
-			// 頂点バッファをロックし、頂点情報へのポインタを取得
-			g_pVtxBuffBlock->Lock(0, 0, (void**)&pVtx, 0);
-
-			pVtx += 4 * nCntBlock;
-
-			// 頂点座標の設定(座標設定は必ず右回りで！！！)
-			pVtx[0].pos.x = (pBlock->pos.x + pos.x) + sinf(D3DX_PI + pBlock->fAngle) * pBlock->fLength;
-			pVtx[0].pos.y = (pBlock->pos.y + pos.y) + cosf(D3DX_PI + pBlock->fAngle) * pBlock->fLength;
-			pVtx[0].pos.z = 0.0f;
-
-			pVtx[1].pos.x = (pBlock->pos.x + pos.x) + sinf(D3DX_PI - pBlock->fAngle) * pBlock->fLength;
-			pVtx[1].pos.y = (pBlock->pos.y + pos.y) + cosf(D3DX_PI - pBlock->fAngle) * pBlock->fLength;
-			pVtx[1].pos.z = 0.0f;
-
-			pVtx[2].pos.x = (pBlock->pos.x + pos.x) + sinf(-pBlock->fAngle) * pBlock->fLength;
-			pVtx[2].pos.y = (pBlock->pos.y + pos.y) + cosf(-pBlock->fAngle) * pBlock->fLength;
-			pVtx[2].pos.z = 0.0f;
-
-			pVtx[3].pos.x = (pBlock->pos.x + pos.x) + sinf(pBlock->fAngle) * pBlock->fLength;
-			pVtx[3].pos.y = (pBlock->pos.y + pos.y) + cosf(pBlock->fAngle) * pBlock->fLength;
-			pVtx[3].pos.z = 0.0f;
-
-
-			// 頂点バッファをアンロックする
-			g_pVtxBuffBlock->Unlock();
-
-			pBlock->bUse = true;
-
-			break;
-		}
-	}
-
-	return nCntBlock;
-}
-
-BLOCKTYPE GetType(void)
-{
-	return g_typeEditer;
-}

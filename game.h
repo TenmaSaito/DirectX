@@ -18,7 +18,6 @@ typedef enum
 	STAGE_FOREST, 			// 森林地帯
 	STAGE_VOLCANO,			// 火山地帯
 	STAGE_SEA,				// 海洋地帯
-	STAGE_EDITER,			// ステージエディタステージ
 	STAGE_MAX
 }STAGE;
 

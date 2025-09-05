@@ -148,7 +148,6 @@
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="bullet.cpp" />
-    <ClCompile Include="editer.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="explosion.cpp" />
@@ -159,7 +158,9 @@
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="heart.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="log.cpp" />
+    <ClCompile Include="mage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
@@ -170,7 +171,6 @@
     <ClCompile Include="result.cpp" />
     <ClCompile Include="resultbg.cpp" />
     <ClCompile Include="score.cpp" />
-    <ClCompile Include="settings.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="stock.cpp" />
@@ -179,13 +179,11 @@
     <ClCompile Include="titlebg.cpp" />
     <ClCompile Include="titleSelect.cpp" />
     <ClCompile Include="tutorial.cpp" />
-    <ClCompile Include="volume.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="bullet.h" />
-    <ClInclude Include="editer.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="explosion.h" />
@@ -196,7 +194,9 @@
     <ClInclude Include="gauge.h" />
     <ClInclude Include="heart.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="log.h" />
+    <ClInclude Include="mage.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
@@ -208,7 +208,6 @@
     <ClInclude Include="result.h" />
     <ClInclude Include="resultbg.h" />
     <ClInclude Include="score.h" />
-    <ClInclude Include="settings.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="stage.h" />
     <ClInclude Include="stock.h" />
@@ -217,7 +216,6 @@
     <ClInclude Include="titlebg.h" />
     <ClInclude Include="titleSelect.h" />
     <ClInclude Include="tutorial.h" />
-    <ClInclude Include="volume.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX_ver.0.rc" />

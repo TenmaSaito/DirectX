@@ -519,7 +519,7 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_TUTORIAL_COMPLETE);
 				SetGameTutorial(false);
-				InitFadeStage(STAGE_GRASS);
+				SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 			}
 		}
 
@@ -590,6 +590,7 @@ void DrawTutorial(void)
 void SetTutorial(void)
 {
 	char aFileName[STRING_MAX] = {};
+	PLAYER* pPlayer = GetPlayer();
 
 	// 現在配置されているブロックをすべて消去
 	ResetBlock();
@@ -609,6 +610,11 @@ void SetTutorial(void)
 	// チュートリアルをリセット
 	g_TutorialExac = TUTORIAL_START;
 	g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
+
+	for (int nCnt = 0; nCnt < 5; nCnt++)
+	{
+		pPlayer->aCouldDo[nCnt] = false;
+	}
 }
 
 // ファイルアドレスの合体

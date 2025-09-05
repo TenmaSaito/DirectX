@@ -20,16 +20,26 @@
 // プレイヤーの向きの列挙型の定義
 typedef enum
 {
-	PLAYERDIRECTION_LEFT = 0,		// 左向き
-	PLAYERDIRECTION_RIGHT,			// 右向き
-	PLAYERDIRECTION_UP,				// 上向き		
+	PLAYERDIRECTION_UP = 0,			// 上向き		
 	PLAYERDIRECTION_DOWN,			// 下向き
+	PLAYERDIRECTION_LEFT,			// 左向き
+	PLAYERDIRECTION_RIGHT,			// 右向き
 	PLAYERDIRECTION_UPLEFT,			// 左上向き
 	PLAYERDIRECTION_UPRIGHT,		// 右上向き
 	PLAYERDIRECTION_DOWNLEFT,		// 右下向き
 	PLAYERDIRECTION_DOWNRIGHT,		// 左下向き
 	PLAYERDIRECTION_MAX				// 向きの総数
 }PLAYERDIRECTION;
+
+// 方向の補正用列挙型
+typedef enum
+{
+	PLAYERTEX_LEFT = 0,
+	PLAYERTEX_RIGHT,
+	PLAYERTEX_UP,
+	PLAYERTEX_DOWN,
+	PLAYERTEX_MAX
+}PLAYERTEX;
 
 // プレイヤーの状態
 typedef enum
@@ -41,6 +51,7 @@ typedef enum
 	PLAYERSTATE_DEATH,			// 死亡時
 	PLAYERSTATE_BARRIER,		// バリア
 	PLAYERSTATE_UNMOVE,			// レーザービーム発射時の操作不能時間
+	PLAYERSTATE_TELEPORT_COOLDOWN,	//ステージ移動後の一時待機時間
 	PLAYERSTATE_MAX
 }PLAYERSTATE;
 
@@ -62,15 +73,16 @@ typedef struct
 	D3DXVECTOR3 movePlayer;							// プレイヤーの移動量
 	D3DXVECTOR3 moveposPlayer;						// プレイヤーの過去の位置から移動した量(bg,enemyの移動量)
 	PLAYERDIRECTION rotPlayer;						// プレイヤーの向き(上/下/左/右)
+	PLAYERTEX tex;
 	PLAYERSTATE state;								// プレイヤーの状態
 	SHOTTYPE type;									// チャージ技のタイプ
 	float fBulletSpeed;								// チャージ技の速度
+	float fLengthPlayer;							// 対角線の長さ
+	float fAnglePlayer;								// 対角線の角度
 	int nBulletLife;								// 弾の体力
 	int nCounterState;								// 状態持続時間
 	int nLife;										// プレイヤーの体力
 	int nStock;										// プレイヤーの残機
-	float fLengthPlayer;							// 対角線の長さ
-	float fAnglePlayer;								// 対角線の角度
 	int nCounterAnimPlayer;							// アニメーションカウンター
 	int nPatternAnimPlayer;							// アニメーションパターンNo.
 	int nCounterBullPlayer;							// 弾の連射速度
@@ -87,6 +99,7 @@ typedef struct
 	bool bDisp;										// 表示するかしないか
 	bool aCouldDo[PLAYERDO_MAX];					// 入力した操作が受け付けられるか
 	bool bCharge;									// チャージ完了したか
+	bool bHaveKey;									// 鍵を持っているか
 }PLAYER;
 		
 // プロトタイプ宣言
@@ -97,5 +110,8 @@ void DrawPlayer(void);
 PLAYER *GetPlayer(void);
 void HitPlayer(int nCntDamage);
 void SetPlayerDo(PLAYERDO playerDo, bool bCould);
+
+PLAYERDIRECTION GetPlayerDirection(void);
+void SetPlayerShotType(SHOTTYPE type);
 
 #endif

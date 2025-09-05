@@ -79,7 +79,7 @@ void InitTitleSelect(void)
 	g_nCounterSelectState = SELECTWAIT_STATE;
 	g_aTitleSelect[g_nTitleSelect].bSelect = true;
 
-	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
+	VERTEX_2D* pVtx = NULL;					// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffTitleSelect->Lock(0, 0, (void**)&pVtx, 0);
@@ -159,8 +159,9 @@ void UninitTitleSelect(void)
 void UpdateTitleSelect(void)
 {
 	TITLESELECT *pTitleSelect = &g_aTitleSelect[0];
-	VERTEX_2D *pVtx;
+	VERTEX_2D *pVtx = NULL;
 	HWND hWnd;
+
 	for (int nCntSelect = 0; nCntSelect < TITLESELECTTYPE_MAX; nCntSelect++, pTitleSelect++)
 	{
 		if (pTitleSelect->bSelect == true)

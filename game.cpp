@@ -21,9 +21,6 @@
 #include "fade_stage.h"
 #include "block.h"
 #include "pause.h"
-#include "settings.h"
-#include "volume.h"
-#include "editer.h"
 #include "particle.h"
 #include "heart.h"
 #include "stock.h"
@@ -31,9 +28,8 @@
 #include "placeChar.h"
 #include "tutorial.h"
 #include "playerframe.h"
-
-// マクロ定義
-#define CLEARLINE			(3000)					// クリア条件のスコアライン
+#include "mage.h"
+#include "item.h"
 
 // グローバル変数
 bool g_bPause;										// ポーズ状態のON/OFF
@@ -62,6 +58,12 @@ void InitGame(void)
 	InitBlock();
 
 	AddFunctionLog("END : Block Init");
+
+	// Mage
+	InitMage();
+
+	// Item
+	InitItem();
 
 	// 背景の初期化処理
 	InitBG();				
@@ -124,23 +126,10 @@ void InitGame(void)
 
 	AddFunctionLog("END : Timer Init");
 
-	// 音量調整の初期化処理	
-	InitVolume();
-
-	AddFunctionLog("END : Volume Init");
-
 	// ポーズ画面の初期化処理
 	InitPause();
 
 	AddFunctionLog("END : Pause Init");
-
-	// 設定画面の初期化処理
-	InitSettings();
-
-	AddFunctionLog("END : Settings Init");
-
-	// ステージエディタの初期化処理
-	InitEditer();
 
 	// 自然消滅テクスチャの初期化処理
 	InitPlaceChar();
@@ -159,13 +148,17 @@ void InitGame(void)
 	// ゲーム内枠の初期化処理
 	InitPlayerFrame();
 
+	InitFadeStage();
+
 	if (g_bUseTutorial == true)
 	{
 		SetTutorial();
 	}
 	else
 	{
-		InitFadeStage(STAGE_GRASS);
+		// モード設定
+		SetStage(STAGE_GRASS);
+		SetBG(STAGE_GRASS);
 	}
 
 	AddFunctionLog("END : FadeStage Init");
@@ -186,7 +179,13 @@ void UninitGame(void)
 	UninitGauge();
 
 	// 背景の終了処理
-	UninitBG();				
+	UninitBG();
+
+	// Mage
+	UninitMage();
+
+	// Item
+	UninitItem();
 
 	// ステージの終了処理
 	UninitStage();
@@ -229,15 +228,6 @@ void UninitGame(void)
 
 	// ポーズ画面の終了処理
 	UninitPause();
-
-	// 設定画面の終了処理
-	UninitSettings();
-
-	// 音量調整の終了処理
-	UninitVolume();
-
-	// ステージエディタの終了処理
-	UninitEditer();
 
 	// 自然消滅テクスチャの終了処理
 	UninitPlaceChar();
@@ -289,6 +279,7 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
+				AddRanking(GetScore());
 				SetFade(MODE_RESULT);
 			}
 		}
@@ -303,6 +294,12 @@ void UpdateGame(void)
 		// プレイヤーの更新処理
 		UpdatePlayer();
 
+		// Mage
+		UpdateMage();
+
+		// Item
+		UpdateItem();
+
 		// 背景の更新処理
 		UpdateBG();
 
@@ -311,7 +308,7 @@ void UpdateGame(void)
 			UpdateTutorial();
 		}
 		else
-	{
+		{
 			// ステージの更新処理
 			UpdateStage();
 
@@ -319,9 +316,13 @@ void UpdateGame(void)
 			UpdateFadeStage();
 
 			g_nCounter++;
-			if ((g_nCounter % 60) == 0)
+			if (((g_nCounter % 60) == 0) && GetFadeStage() == FADESTAGE_NONE)
 			{
 				AddTimer(-1);
+				if (GetTimer() <= 0)
+				{
+					SetGameState(GAMESTATE_BADEND, 60);
+				}
 			}
 		}
 
@@ -366,7 +367,8 @@ void UpdateGame(void)
 	}
 
 	if ((GetKeyboardTrigger(DIK_P) == true || GetJoypadTrigger(JOYKEY_START) == true)
-		&& GetFade() == FADE_NONE)
+		&& GetFade() == FADE_NONE
+		&& GetFadeStage() == FADESTAGE_NONE)
 	{// ポーズ状態の切り替え
 		if (GetPause() == PAUSE_NONE)
 		{
@@ -380,15 +382,6 @@ void UpdateGame(void)
 		// ポーズ画面の更新処理
 		UpdatePause();
 	}
-
-	// 設定画面の更新処理
-	UpdateSettings();
-
-	// 音量調整の更新処理
-	UpdateVolume();
-
-	// ステージエディタの更新処理
-	UpdateEditer();
 }
 
 //================================================================================================================
@@ -413,6 +406,9 @@ void DrawGame(void)
 
 	// ブロックの描画処理
 	DrawBlock();
+
+	// Mage
+	DrawMage();
 
 	// 弾の描画処理
 	DrawBullet();
@@ -458,15 +454,6 @@ void DrawGame(void)
 
 	// ポーズ画面の描画処理
 	DrawPause();
-
-	// 設定画面の描画処理
-	DrawSettings();
-
-	// 音量調整画面の設定の描画処理
-	DrawVolume();
-
-	// ステージエディタの描画処理
-	DrawEditer();
 
 	// 自然消滅テクスチャの描画処理
 	DrawPlaceChar();

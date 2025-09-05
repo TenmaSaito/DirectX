@@ -44,8 +44,8 @@
 #define LASER_BULLET_LIFE	(300)										// 発生する弾の寿命	
 
 // プロトタイプ宣言
-void CollisionEnemy(BULLET*pBullet);
-void CollisionPlayer(BULLET* pBullet);
+void CollisionEnemy(BULLET *pBullet);
+void CollisionPlayer(BULLET *pBullet);
 
 LPDIRECT3DTEXTURE9		g_pTextureBullet = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBullet = NULL;	// 頂点バッファのポインタ
@@ -344,6 +344,36 @@ void UpdateBullet(void)
 			pVtx[3].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z + g_fAngleBullet) * g_fLengthBullet;
 			pVtx[3].pos.z = 0.0f;
 
+			if (pBullet->shot == SHOTTYPE_FULLBURST)
+			{
+				SetBullet(pBullet->pos,
+					0.0f,
+					pBullet->move.z,
+					LASER_LIFE,
+					pBullet->type,
+					SHOTTYPE_LASER,
+					pBullet->col,
+					true);
+
+				SetBullet(pBullet->pos,
+					BOMB_SPD,
+					pBullet->move.z,
+					1,
+					pBullet->type,
+					SHOTTYPE_BOMB,
+					pBullet->col,
+					true);
+
+				SetBullet(pBullet->pos,
+					HOMING_SPD,
+					pBullet->move.z,
+					HOMING_LIFE,
+					pBullet->type,
+					SHOTTYPE_HOMING,
+					pBullet->col,
+					true);
+			}
+
 			switch (pBullet->type)
 			{
 			case BULLETTYPE_PLAYER:
@@ -401,8 +431,6 @@ void UpdateBullet(void)
 							true);
 					}
 				}
-
-				SetExplosion(pBullet->pos, D3DXCOLOR(0.5f, 0.0f, 0.8f, 1.0f), true);
 			}
 			else
 			{
@@ -463,7 +491,7 @@ void SetBullet(D3DXVECTOR3 pos, float speed, float rot, int nLife, BULLETTYPE ty
 	int nCntBullet;
 	int nCntMax = 5;
 	VERTEX_2D *pVtx;
-	BULLET*pBullet = &g_aBullet[0];			// 弾の先頭アドレスを代入
+	BULLET *pBullet = &g_aBullet[0];			// 弾の先頭アドレスを代入
 	PLAYER* pPlayer = GetPlayer();
 	D3DXVECTOR3 Camerapos = pPlayer->moveposPlayer;
 
@@ -627,7 +655,6 @@ void CollisionPlayer(BULLET* pBullet)
 	{
 		HitPlayer(1);
 
-		if(pBullet->shot != SHOTTYPE_LASERBULLET)
 		pBullet->bUse = false;
 	}
 }

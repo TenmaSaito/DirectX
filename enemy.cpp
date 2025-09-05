@@ -14,6 +14,7 @@
 #include "stage.h"
 #include "block.h"
 #include "particle.h"
+#include "item.h"
 
 // マクロ定義
 #define NUM_ENEMY			(ENEMYTEX_MAX)						// 敵の種類
@@ -231,11 +232,15 @@ void UpdateEnemy(void)
 				else if (pEnemy->type == ENEMYTYPE_MOVE)
 				{
 					if (pEnemy->pos.x <= STAGE_LEFT + (ENEMY_SIZE * 0.5f)
-						|| pEnemy->pos.x >= STAGE_RIGHT - (ENEMY_SIZE * 0.5f)
-						|| pEnemy->pos.y <= STAGE_CEILING + (ENEMY_SIZE * 0.5f)
+						|| pEnemy->pos.x >= STAGE_RIGHT - (ENEMY_SIZE * 0.5f))
+					{
+						pEnemy->move.x *= -1.0f;
+					}
+
+					if(	pEnemy->pos.y <= STAGE_CEILING + (ENEMY_SIZE * 0.5f)
 						|| pEnemy->pos.y >= STAGE_FLOOR - (ENEMY_SIZE * 0.5f))
 					{
-						pEnemy->fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x), (pPlayer->posPlayer.y - pEnemy->pos.y));
+						pEnemy->move.y *= -1.0f;
 					}
 
 					pEnemy->pos.x += sinf(pEnemy->fLength) * pEnemy->move.x;
@@ -316,23 +321,23 @@ void UpdateEnemy(void)
 
 					if (nRand <= 10 && nRand >= 0)
 					{
-						SetBlock(BLOCKTYPE_ITEM_COIN, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_COIN, pEnemy->pos);
 					}
 					else if (nRand >= 11 && nRand <= 20)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HOMING, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HOMING, pEnemy->pos);
 					}
 					else if (nRand >= 21 && nRand <= 30)
 					{
-						SetBlock(BLOCKTYPE_ITEM_BOMB, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_BOMB, pEnemy->pos);
 					}
 					else if (nRand >= 31 && nRand <= 40)
 					{
-						SetBlock(BLOCKTYPE_ITEM_LASER, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_LASER, pEnemy->pos);
 					}
 					else if (nRand <= 100 && nRand >= 90)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HEAL, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HEAL, pEnemy->pos);
 					}
 
 					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
@@ -359,11 +364,11 @@ void UpdateEnemy(void)
 							SetBullet(pEnemy->pos,
 								BULLETSPD_SLIME,
 								fLength,
-								BULLETLIFE_SLIME,
+								BULLETLIFE_SLIME * 5,
 								BULLETTYPE_ENEMY_1,
 								SHOTTYPE_NORMAL,
 								ENEMY_1_BULLET,
-								false);
+								true);
 						}
 					}
 
@@ -414,23 +419,23 @@ void UpdateEnemy(void)
 
 					if (nRand <= 10 && nRand >= 0)
 					{
-						SetBlock(BLOCKTYPE_ITEM_COIN, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_COIN, pEnemy->pos);
 					}
 					else if (nRand >= 11 && nRand <= 20)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HOMING, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HOMING, pEnemy->pos);
 					}
 					else if (nRand >= 21 && nRand <= 30)
 					{
-						SetBlock(BLOCKTYPE_ITEM_BOMB, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_BOMB, pEnemy->pos);
 					}
 					else if (nRand >= 31 && nRand <= 40)
 					{
-						SetBlock(BLOCKTYPE_ITEM_LASER, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_LASER, pEnemy->pos);
 					}
 					else if (nRand <= 100 && nRand >= 90)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HEAL, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HEAL, pEnemy->pos);
 					}
 
 					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
@@ -448,7 +453,7 @@ void UpdateEnemy(void)
 					if ((pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_DEATH && pPlayer->state != PLAYERSTATE_WAIT)
 						&& GetFade() == FADE_NONE)
 					{// プレイヤーが生きていて、且つフェードが終わったら
-						if ((rand() % 50) == 0)
+						if ((rand() % RAND_PERCENT) == 0)
 						{
 							float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
 								(pPlayer->posPlayer.y - pEnemy->pos.y));
@@ -460,7 +465,7 @@ void UpdateEnemy(void)
 								BULLETTYPE_ENEMY_1,
 								SHOTTYPE_BOMB,
 								ENEMY_1_BULLET,
-								false);
+								true);
 						}
 					}
 
@@ -511,23 +516,23 @@ void UpdateEnemy(void)
 
 					if (nRand <= 10 && nRand >= 0)
 					{
-						SetBlock(BLOCKTYPE_ITEM_COIN, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_COIN, pEnemy->pos);
 					}
 					else if (nRand >= 11 && nRand <= 20)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HOMING, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HOMING, pEnemy->pos);
 					}
 					else if (nRand >= 21 && nRand <= 30)
 					{
-						SetBlock(BLOCKTYPE_ITEM_BOMB, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_BOMB, pEnemy->pos);
 					}
 					else if (nRand >= 31 && nRand <= 40)
 					{
-						SetBlock(BLOCKTYPE_ITEM_LASER, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_LASER, pEnemy->pos);
 					}
 					else if (nRand <= 100 && nRand >= 90)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HEAL, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HEAL, pEnemy->pos);
 					}
 
 					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
@@ -609,23 +614,23 @@ void UpdateEnemy(void)
 
 					if (nRand <= 10 && nRand >= 0)
 					{
-						SetBlock(BLOCKTYPE_ITEM_COIN, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_COIN, pEnemy->pos);
 					}
 					else if (nRand >= 11 && nRand <= 20)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HOMING, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HOMING, pEnemy->pos);
 					}
 					else if (nRand >= 21 && nRand <= 30)
 					{
-						SetBlock(BLOCKTYPE_ITEM_BOMB, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_BOMB, pEnemy->pos);
 					}
 					else if (nRand >= 31 && nRand <= 40)
 					{
-						SetBlock(BLOCKTYPE_ITEM_LASER, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_LASER, pEnemy->pos);
 					}
 					else if (nRand <= 100 && nRand >= 90)
 					{
-						SetBlock(BLOCKTYPE_ITEM_HEAL, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+						SetItem(ITEMTYPE_HEAL, pEnemy->pos);
 					}
 
 					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
@@ -707,8 +712,10 @@ void UpdateEnemy(void)
 
 				case ENEMYSTATE_DEATH:
 
-					SetBlock(BLOCKTYPE_ITEM_COIN, pEnemy->pos, BLOCK_WIDTH, BLOCK_HEIGHT);
+					SetItem(ITEMTYPE_COIN, pEnemy->pos);
 					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
+
+					SetClearBossStage(true);
 
 					break;
 
@@ -1161,19 +1168,19 @@ void HitEnemy(int nCntEnemy, int nCntDamage)
 
 			case ENEMYBULLET_NORMALBULLET:
 
-				AddScore(100);
+				AddScore(300);
 
 				break;
 
 			case ENEMYBULLET_BOMBBULLET:
 
-				AddScore(300);
+				AddScore(500);
 
 				break;
 
 			case ENEMYBULLET_HOMINGBULLET:
 
-				AddScore(50);
+				AddScore(500);
 
 				break;
 
@@ -1274,9 +1281,6 @@ void CollisionEnemy(ENEMY *pEnemy)
 				{
 					pEnemy1->pos.x = pEnemy->pos.x - ENEMY_SIZE;
 				}
-
-				CollisionBlock(pEnemy);
-				CollisionBlock(pEnemy1);
 			}
 		}
 	}
@@ -1297,49 +1301,4 @@ void DestroyEnemy(void)
 			SetExplosion(pEnemy->pos, EXPLOSION_COLOR, true);
 		}
 	}
-}
-
-//***************************************************************************************
-// 現在出現中の敵の当たり判定を表示
-//***************************************************************************************
-void SetEnemyCollision(void)
-{
-	ENEMY* pEnemy = &g_aEnemy[0];
-
-	if (g_bUseCollisonBlock == true)
-	{
-		for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++, pEnemy++)
-		{
-			if (pEnemy->bUse == true)
-			{
-				pEnemy->nID = SetCollisionBlock(BLOCKTYPE_COLLISION_ENEMY, pEnemy->pos, (float)ENEMY_SIZE, (float)ENEMY_SIZE);
-			}
-		}
-	}
-	else
-	{
-		for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++, pEnemy++)
-		{
-			if (pEnemy->bUse == true)
-			{
-				DeleteBlock(pEnemy->nID);
-			}
-		}
-	}
-}
-
-//***************************************************************************************
-// 当たり判定の表示を切り替え
-//***************************************************************************************
-void SetEnableCollisionBlock(bool bUse)
-{
-	g_bUseCollisonBlock = bUse;
-}
-
-//***************************************************************************************
-// 当たり判定の表示を取得
-//***************************************************************************************
-bool GetEnableCollisionBlock(void)
-{
-	return g_bUseCollisonBlock;
 }

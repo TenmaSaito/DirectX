@@ -19,6 +19,7 @@
 #include "heart.h"
 #include "stock.h"
 #include "placeChar.h"
+#include "mage.h"
 
 // マクロ定義
 #define MAX_PLAYER_SIZE	(300)						// プレイヤーの大きさの最大値
@@ -60,13 +61,12 @@ float GetPlayerRot(PLAYER *pPlayer);
 void KeyboardPress(void);
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTexturePlayer[PLAYERDIRECTION_MAX] = {};	// テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;	// 頂点バッファのポインタ
+LPDIRECT3DTEXTURE9		g_apTexturePlayer[PLAYERTEX_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;				// 頂点バッファのポインタ
 PLAYER g_player;
-D3DXVECTOR3 g_posPast;								// プレイヤーの初期位置				
+D3DXVECTOR3 g_posPast;											// プレイヤーの初期位置				
 XINPUT_VIBRATION* g_pJoyVibration;
 XINPUT_STATE* g_pState = GetJoypadState();
-PLAYERDIRECTION g_direction;
 PLAYERSTATE g_subState;
 int g_nCounterSubState;
 
@@ -76,18 +76,6 @@ const char* TEXTURE_PLAYER[MAX_PLAYERTEX]
 	"data\\TEXTURE\\CHARACTER\\player_right.png",
 	"data\\TEXTURE\\CHARACTER\\player_up.png",
 	"data\\TEXTURE\\CHARACTER\\player_down.png"
-};
-
-const char* TEXTURE_DIRECTION[PLAYERDIRECTION_MAX]
-{
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UP.png",
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWN.png",
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_LEFT.png",
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_RIGHT.png",
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UPLEFT.png",
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UPRIGHT.png",
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWNLEFT.png",
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWNRIGHT.png"
 };
 
 //================================================================================================================
@@ -102,13 +90,14 @@ void InitPlayer(void)
 	g_player.movePlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						// プレイヤー移動量の初期化
 	g_player.moveposPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);						// プレイヤーの相対移動量の初期化
 	g_player.type = SHOTTYPE_LASER;				// チャージショットの初期化
-	g_player.fBulletSpeed = LASER_SPD;			// チャージショットの弾速の初期化
+	g_player.fBulletSpeed = LASER_SPD;				// チャージショットの弾速の初期化
 	g_player.nBulletLife = LASER_LIFE;			// チャージ技の体力の初期化
 	g_player.nCounterAnimPlayer = 0;			// カウンターの初期化
 	g_player.nPatternAnimPlayer = 0;			// アニメーションNoの初期化
 	g_player.nLife = MAX_LIFE;					// プレイヤーの体力の初期化
 	g_player.nStock = MAX_STOCK;				// プレイヤーの残機の初期化
 	g_player.rotPlayer = PLAYERDIRECTION_RIGHT;	// プレイヤーの向きの初期化(右向き)
+	g_player.tex = PLAYERTEX_DOWN;				
 	g_player.state = PLAYERSTATE_APPEAR;		// プレイヤーの状態の初期化
 	g_player.nCounterState = APPEAR_STATE;		// 状態持続時間を初期化(出現時に設定)
 	g_player.bDisp = true;						// プレイヤーの表示状態を初期化(表示)
@@ -124,6 +113,7 @@ void InitPlayer(void)
 	g_pJoyVibration = GetJoyVibration();
 	g_player.g_nIDDirection = -1;
 	g_player.bCharge = false;
+	g_player.bHaveKey = false;
 
 	for (int nCntPlayer = 0; nCntPlayer < PLAYERDO_MAX; nCntPlayer++)
 	{
@@ -138,26 +128,25 @@ void InitPlayer(void)
 	/**/
 
 	g_posPast = g_player.posPlayer;
-	g_direction = PLAYERDIRECTION_DOWN;
 	g_subState = PLAYERSTATE_NORMAL;
 	g_nCounterSubState = 0;
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 							  "data\\TEXTURE\\CHARACTER\\player_left.png",
-							  &g_apTexturePlayer[PLAYERDIRECTION_LEFT]);
+							  &g_apTexturePlayer[PLAYERTEX_LEFT]);
 
 	D3DXCreateTextureFromFile(pDevice,
 							  "data\\TEXTURE\\CHARACTER\\player_right.png",
-							  &g_apTexturePlayer[PLAYERDIRECTION_RIGHT]);
+							  &g_apTexturePlayer[PLAYERTEX_RIGHT]);
 
 	D3DXCreateTextureFromFile(pDevice,
 							"data\\TEXTURE\\CHARACTER\\player_up.png",
-							&g_apTexturePlayer[PLAYERDIRECTION_UP]);
+							&g_apTexturePlayer[PLAYERTEX_UP]);
 
 	D3DXCreateTextureFromFile(pDevice,
 							"data\\TEXTURE\\CHARACTER\\player_down.png",
-							&g_apTexturePlayer[PLAYERDIRECTION_DOWN]);
+							&g_apTexturePlayer[PLAYERTEX_DOWN]);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -217,7 +206,7 @@ void InitPlayer(void)
 void UninitPlayer(void)
 {
 	// テクスチャの破棄(必ず行うこと！！！)
-	for (int nCnt = 0; nCnt < 4; nCnt++)
+	for (int nCnt = 0; nCnt < PLAYERTEX_MAX; nCnt++)
 	{
 		if (g_apTexturePlayer[nCnt] != NULL)
 		{
@@ -252,8 +241,6 @@ void UpdatePlayer(void)
 		// 出現時
 		g_player.nCounterState--;
 
- 		KeyboardPress();
-
 		// 点滅処理
 		if ((g_player.nCounterState % 5) == 0)
 		{
@@ -275,14 +262,14 @@ void UpdatePlayer(void)
 			{
 				// 体力の配置
 				SetHeart();
+				// Mageの配置
+				SetMage();
 				if (g_player.nStock == MAX_STOCK)
 				{// 残機がマックスの時
 					// 残機の配置
 					SetStock();
 				}
 			}
-
-			g_player.g_nIDDirection = SetBlock(BLOCKTYPE_DIRECTION_DOWN, D3DXVECTOR3(SCREEN_WIDTH * 0.5f,SCREEN_HEIGHT * 0.5f, 0.0f), 80.0f, 80.0f);
 		}
 
 		break;
@@ -298,6 +285,8 @@ void UpdatePlayer(void)
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+		g_player.bDisp = true;
 
 		break;
 
@@ -333,7 +322,7 @@ void UpdatePlayer(void)
 		// 死亡時
 		// 非表示に
 		g_player.bDisp = false;
-		DeleteBlock(g_player.g_nIDDirection);
+		EnableMageDraw(false);
 
 		AddGauge(-pGauge[g_player.nGaugeNo].nPercentGauge, g_player.nGaugeNo);
 		g_player.nCounterBulletCharge = 0;
@@ -379,6 +368,29 @@ void UpdatePlayer(void)
 
 		break;
 
+	case PLAYERSTATE_UNMOVE:
+
+		break;
+
+	case PLAYERSTATE_TELEPORT_COOLDOWN:
+
+		KeyboardPress();
+
+		g_player.nCounterState--;
+		if (g_player.nCounterState <= 0)
+		{
+			g_player.state = PLAYERSTATE_NORMAL;
+		}
+		else
+		{
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.5f);
+		}
+
+		break;
+
 	default:
 
 		break;
@@ -402,7 +414,7 @@ void UpdatePlayer(void)
 		}
 	}
 
-	if(g_player.g_nIDDirection != -1)GetPlayerRot(&g_player);
+	GetPlayerRot(&g_player);
 
 	if (g_player.nCounterParticle > 0)
 	{
@@ -528,7 +540,7 @@ void DrawPlayer(void)
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	// テクスチャの設定
-	pDevice->SetTexture(0, g_apTexturePlayer[g_direction]);
+	pDevice->SetTexture(0, g_apTexturePlayer[g_player.tex]);
 
 	if (g_player.bDisp == true)
 	{// 表示するなら
@@ -554,8 +566,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 	{
 	case PLAYERDIRECTION_UP:
 
-		g_direction = PLAYERDIRECTION_UP;
-		pBlock->type = BLOCKTYPE_DIRECTION_UP;
+		g_player.tex = PLAYERTEX_UP;
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -571,8 +582,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_DOWN:
 
-		g_direction = PLAYERDIRECTION_DOWN;
-		pBlock->type = BLOCKTYPE_DIRECTION_DOWN;
+		g_player.tex = PLAYERTEX_DOWN;
 		
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -587,8 +597,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 		
 	case PLAYERDIRECTION_LEFT:
 
-		g_direction = PLAYERDIRECTION_LEFT;
-		pBlock->type = BLOCKTYPE_DIRECTION_LEFT;
+		g_player.tex = PLAYERTEX_LEFT;
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -603,8 +612,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_RIGHT:
 		// 右向き
-		g_direction = PLAYERDIRECTION_RIGHT;
-		pBlock->type = BLOCKTYPE_DIRECTION_RIGHT;
+		g_player.tex = PLAYERTEX_RIGHT;
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -618,8 +626,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_UPLEFT:
 		// 右向き
-		g_direction = PLAYERDIRECTION_UP;
-		pBlock->type = BLOCKTYPE_DIRECTION_UPLEFT;
+		g_player.tex = PLAYERTEX_UP;
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -634,8 +641,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_UPRIGHT:
 		// 右向き
-		g_direction = PLAYERDIRECTION_UP;
-		pBlock->type = BLOCKTYPE_DIRECTION_UPRIGHT;
+		g_player.tex = PLAYERTEX_UP;
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -650,8 +656,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_DOWNLEFT:
 		// 右向き
-		g_direction = PLAYERDIRECTION_DOWN;
-		pBlock->type = BLOCKTYPE_DIRECTION_DOWNLEFT;
+		g_player.tex = PLAYERTEX_DOWN;
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -666,8 +671,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_DOWNRIGHT:
 		// 右向き
-		g_direction = PLAYERDIRECTION_DOWN;
-		pBlock->type = BLOCKTYPE_DIRECTION_DOWNRIGHT;
+		g_player.tex = PLAYERTEX_DOWN;
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -682,8 +686,7 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	default:
 
-		g_direction = PLAYERDIRECTION_DOWN;
-		pBlock->type = BLOCKTYPE_DIRECTION_DOWN;
+		g_player.tex = PLAYERTEX_DOWN;
 
 		return D3DX_PI;
 
@@ -925,7 +928,7 @@ void KeyboardPress(void)
 			{
 				SetBullet(g_player.posPlayer, g_player.fBulletSpeed, GetPlayerRot(&g_player), g_player.nBulletLife, BULLETTYPE_PLAYER, g_player.type, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), true);
 
-				if (g_player.type == SHOTTYPE_LASER)
+				if (g_player.type == SHOTTYPE_LASER || g_player.type == SHOTTYPE_FULLBURST)
 				{
 					g_nCounterSubState = UNMOVE_STATE;
 					g_subState = PLAYERSTATE_UNMOVE;
@@ -1153,4 +1156,49 @@ void KeyboardPress(void)
 void SetPlayerDo(PLAYERDO playerDo, bool bCould)
 {
 	g_player.aCouldDo[playerDo] = bCould;
+}
+
+// プレイヤーの向き(DIRECTION)を取得
+PLAYERDIRECTION GetPlayerDirection(void)
+{
+	// PLAYERDIRECTIONの更新
+	GetPlayerRot(&g_player);
+
+	return g_player.rotPlayer;
+}
+
+// チャージ技のタイプを指定
+void SetPlayerShotType(SHOTTYPE type)
+{
+	g_player.type = type;
+	switch (type)
+	{
+	case SHOTTYPE_HOMING:
+
+		g_player.fBulletSpeed = HOMING_SPD;
+		g_player.nBulletLife = HOMING_LIFE;
+
+		break;
+
+	case SHOTTYPE_BOMB:
+
+		g_player.fBulletSpeed = BOMB_SPD;
+		g_player.nBulletLife = BOMB_LIFE;
+
+		break;
+
+	case SHOTTYPE_LASER:
+
+		g_player.fBulletSpeed = LASER_SPD;
+		g_player.nBulletLife = LASER_LIFE;
+
+		break;
+
+	case SHOTTYPE_FULLBURST:
+
+		g_player.fBulletSpeed = 0.0f;
+		g_player.nBulletLife = 1;
+
+		break;
+	}
 }

@@ -366,7 +366,7 @@ void UpdateEditer(void)
 			g_bUseEditer = false;
 			DeleteBlock(g_nID);
 
-			SetFadeStage(STAGE_GRASS);
+			SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 		}
 
 		if ((pBlock->pos.x) <= STAGE_LEFT + (BLOCK_WIDTH))
@@ -400,7 +400,6 @@ void DrawEditer(void)
 	RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };			// 画面サイズ
 	char aStr[15][256];										// 画面に表示する文字列
 
-
 	// 文字列に代入
 	wsprintf(aStr[0], "設置したエディタブロックの数 : %d\n" ,g_nCounterEditer);
 
@@ -423,7 +422,7 @@ void DrawEditer(void)
 	}
 
 	// テキストの描画
-	g_pFontEditer->DrawText(NULL, &aStr[0][0], -1, &rect, DT_RIGHT, D3DCOLOR_RGBA(0, 0, 0, 255));
+	//g_pFontEditer->DrawText(NULL, &aStr[0][0], -1, &rect, DT_RIGHT, D3DCOLOR_RGBA(0, 0, 0, 255));
 
 }
 
@@ -479,6 +478,8 @@ HRESULT SaveBlock(void)
 
 			fprintf(pFile, "END_SETBLOCK\n");
 			fprintf(pFile, "#========================================\n\n");
+
+			nBlock++;
 		}
 
 		fprintf(pFile, "END_SCRIPT");
@@ -504,6 +505,7 @@ HRESULT SaveEnemy(void)
 {
 	char aStr[STRING_MAX] = {};
 	char aNum[STRING_MAX] = {};
+	int nEnemy = 0;
 	FILE* pFile;
 	D3DXVECTOR3 pos;
 	EDITER* pEditer = &g_Editer;
@@ -535,7 +537,7 @@ HRESULT SaveEnemy(void)
 				}
 
 				fprintf(pFile, "#========================================\n");
-				fprintf(pFile, "# %d 番目の敵\n", nCntEnemy);
+				fprintf(pFile, "# %d 番目の敵\n", nEnemy);
 				fprintf(pFile, "#========================================\n");
 				fprintf(pFile, "START_SETENEMY\n\n");
 
@@ -559,6 +561,8 @@ HRESULT SaveEnemy(void)
 
 				fprintf(pFile, "END_SETENEMY\n");
 				fprintf(pFile, "#========================================\n\n");
+
+				nEnemy++;
 			}
 
 			fprintf(pFile, "END_TURN%d\n\n", nCntTurn);

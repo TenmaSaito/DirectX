@@ -40,6 +40,7 @@ typedef enum
 	SHOTTYPE_BOMBBULLET,			// ボムによって拡散する弾
 	SHOTTYPE_LASER,					// レーザービームを発射する始点を設定する
 	SHOTTYPE_LASERBULLET,			// レーザービームによって発射された貫通弾
+	SHOTTYPE_FULLBURST,				// 全弾発射！！！
 	SHOTTYPE_MAX
 }SHOTTYPE;
 

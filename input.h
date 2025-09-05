@@ -75,6 +75,7 @@ bool GetJoypadPress(JOYKEY Key);
 bool GetJoypadTrigger(JOYKEY Key);
 bool GetJoypadRelease(JOYKEY Key);
 bool GetJoypadRepeat(JOYKEY Key);
+bool GetJoythumbRepeat(WORD VirtualKey);
 bool GetJoypadAny(void);
 
 XINPUT_VIBRATION *GetJoyVibration(void);

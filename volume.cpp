@@ -132,7 +132,7 @@ void DrawVolume(void)
 	pDevice = GetDevice();
 
 	//頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffVolume, 0, sizeof(VERTEX_2D));
+  	pDevice->SetStreamSource(0, g_pVtxBuffVolume, 0, sizeof(VERTEX_2D));
 
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);

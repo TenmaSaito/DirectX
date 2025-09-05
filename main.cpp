@@ -16,7 +16,6 @@
 #include "gauge.h"
 #include "gameover.h"
 #include "block.h"
-#include "volume.h"
 #include "bullet.h"
 #include "resource.h"
 #include <crtdbg.h>
@@ -685,7 +684,6 @@ HRESULT GetHandleWindow(HWND* phWnd)
 	}
 }
 
-
 // デバッグ表示
 void DrawDebug(void)
 {
@@ -695,9 +693,9 @@ void DrawDebug(void)
 	PLAYER* pPlayer = GetPlayer();							// プレイヤーの情報
 	XINPUT_VIBRATION *pVibration = GetJoyVibration();		// バイブレーションの情報
 	XINPUT_STATE *pState = GetJoypadState();				// ジョイパッドの情報
+	_XINPUT_KEYSTROKE stroke;
 	Gauge *pGauge = GetGauge();								// ゲージの情報
 	POINT pos = GetMousePos();								// マウスの位置情報
-	float fAngle = GetBlockToPlayer();						// ブロックとプレイヤーとの角度関係の情報
 	int nBullet = GetBulletAll();
 
 	// 文字列に代入
@@ -721,21 +719,11 @@ void DrawDebug(void)
 
 	wsprintf(&aStr[9][0], "Y:%d\n", pos.y);
 
-	sprintf(&aStr[10][0], "Angle:%f\n", fAngle);
-
-	wsprintf(&aStr[11][0], "LeftTX:%d\n", pState->Gamepad.sThumbLX);
-
-	wsprintf(&aStr[12][0], "LeftTY:%d\n", pState->Gamepad.sThumbLY);
-
-	wsprintf(&aStr[13][0], "RightTX:%d\n", pState->Gamepad.sThumbRX);
-
-	wsprintf(&aStr[14][0], "RightTY:%d\n", pState->Gamepad.sThumbRY);
-
-	wsprintf(&aStr[15][0], "Enemy:%d\n", GetTotalEnemy());
+	wsprintf(&aStr[10][0], "Enemy:%d\n", GetTotalEnemy());
 
 
 	// 文字列を結合
-	for (int nCntDebug = 0; nCntDebug < 15; nCntDebug++)
+	for (int nCntDebug = 0; nCntDebug < 10; nCntDebug++)
 	{
 		strcat(&aStr[0][0], &aStr[nCntDebug + 1][0]);
 	}

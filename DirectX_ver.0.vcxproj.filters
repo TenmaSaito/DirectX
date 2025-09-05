@@ -105,9 +105,6 @@
     <ClCompile Include="sound.cpp">
       <Filter>ソース ファイル\main</Filter>
     </ClCompile>
-    <ClCompile Include="volume.cpp">
-      <Filter>ソース ファイル\main</Filter>
-    </ClCompile>
     <ClCompile Include="gameover.cpp">
       <Filter>ソース ファイル\gameover</Filter>
     </ClCompile>
@@ -141,17 +138,11 @@
     <ClCompile Include="stage.cpp">
       <Filter>ソース ファイル\game\stage</Filter>
     </ClCompile>
-    <ClCompile Include="editer.cpp">
-      <Filter>ソース ファイル\game\stage</Filter>
-    </ClCompile>
     <ClCompile Include="score.cpp">
       <Filter>ソース ファイル\game\number</Filter>
     </ClCompile>
     <ClCompile Include="timer.cpp">
       <Filter>ソース ファイル\game\number</Filter>
-    </ClCompile>
-    <ClCompile Include="settings.cpp">
-      <Filter>ソース ファイル\game\pause</Filter>
     </ClCompile>
     <ClCompile Include="pause.cpp">
       <Filter>ソース ファイル\game\pause</Filter>
@@ -186,6 +177,12 @@
     <ClCompile Include="playerframe.cpp">
       <Filter>ソース ファイル\game\object</Filter>
     </ClCompile>
+    <ClCompile Include="mage.cpp">
+      <Filter>ソース ファイル\game\object</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>ソース ファイル\game\object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h">
@@ -202,9 +199,6 @@
     </ClInclude>
     <ClInclude Include="enemy.h">
       <Filter>ヘッダー ファイル\game\charcter</Filter>
-    </ClInclude>
-    <ClInclude Include="editer.h">
-      <Filter>ヘッダー ファイル\game\stage</Filter>
     </ClInclude>
     <ClInclude Include="explosion.h">
       <Filter>ヘッダー ファイル\game\effect</Filter>
@@ -254,9 +248,6 @@
     <ClInclude Include="result.h">
       <Filter>ヘッダー ファイル\result</Filter>
     </ClInclude>
-    <ClInclude Include="settings.h">
-      <Filter>ヘッダー ファイル\game\pause</Filter>
-    </ClInclude>
     <ClInclude Include="sound.h">
       <Filter>ヘッダー ファイル\main</Filter>
     </ClInclude>
@@ -265,9 +256,6 @@
     </ClInclude>
     <ClInclude Include="title.h">
       <Filter>ヘッダー ファイル\title</Filter>
-    </ClInclude>
-    <ClInclude Include="volume.h">
-      <Filter>ヘッダー ファイル\main</Filter>
     </ClInclude>
     <ClInclude Include="heart.h">
       <Filter>ヘッダー ファイル\game\object</Filter>
@@ -294,6 +282,12 @@
       <Filter>ヘッダー ファイル\title</Filter>
     </ClInclude>
     <ClInclude Include="playerframe.h">
+      <Filter>ヘッダー ファイル\game\object</Filter>
+    </ClInclude>
+    <ClInclude Include="mage.h">
+      <Filter>ヘッダー ファイル\game\object</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
       <Filter>ヘッダー ファイル\game\object</Filter>
     </ClInclude>
   </ItemGroup>

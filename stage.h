@@ -22,6 +22,10 @@
 #define FRAME_FILENAME		"data\\STAGE\\FRAME\\"						// ステージのフレームのファイルアドレス
 #define GRASS_FILENAME		"data\\STAGE\\GRASS\\"						// 草原ステージのファイルアドレス
 #define VOLCANO_FILENAME	"data\\STAGE\\VOLCANO\\"					// 火山ステージのファイルアドレス
+#define DESERT_FILENAME		"data\\STAGE\\DESERT\\"						// 砂漠ステージのファイルアドレス
+#define FOREST_FILENAME		"data\\STAGE\\FOREST\\"						// 森林ステージのファイルアドレス
+#define SEA_FILENAME		"data\\STAGE\\SEA\\"						// 海ステージのファイルアドレス
+#define ICE_FILENAME		"data\\STAGE\\ICE\\"						// 氷山ステージのファイルアドレス
 #define TUTORIAL_FILENAME	"data\\STAGE\\TUTORIAL\\"					// チュートリアルのファイルアドレス
 
 #define BLOCK_FILETYPE		"BLOCK.txt"											// ブロック用アドレス末尾
@@ -41,5 +45,6 @@ void SetStage(STAGE stage);
 STAGE GetStage(void);
 int GetTurn();
 void UniteFileName(const char* pFileName, const char* pFiletype);
+void SetClearBossStage(bool bClear);
 
 #endif
