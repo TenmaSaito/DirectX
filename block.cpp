@@ -688,6 +688,30 @@ void CollisionPlayer(BLOCK* pBlock)
 
 		case BLOCKTYPE_EX_EXIT_1:
 
+			// プレイヤーとブロックの角度で判定
+			g_fAngle = atan2f(pBlock->pos.x - pPlayer->posPlayer.x, pBlock->pos.y - pPlayer->posPlayer.y);
+
+			if (g_fAngle > (D3DX_PI * -0.25f) && g_fAngle <= (D3DX_PI * 0.25f))
+			{
+				pPlayer->posPlayer.y = pBlock->pos.y - BLOCK_HEIGHT - (PLAYER_SIZE * 0.5f);
+				pPlayer->movePlayer.y = 0.0f;
+			}
+			else if (g_fAngle > (D3DX_PI * -0.75f) && g_fAngle <= (D3DX_PI * -0.25f))
+			{
+				pPlayer->posPlayer.x = pBlock->pos.x + BLOCK_WIDTH + (PLAYER_SIZE * 0.25f);
+				pPlayer->movePlayer.x = 0.0f;
+			}
+			else if (g_fAngle > (D3DX_PI * 0.75f) || g_fAngle <= (D3DX_PI * -0.75f))
+			{
+				pPlayer->posPlayer.y = pBlock->pos.y + BLOCK_HEIGHT + (PLAYER_SIZE * 0.5f);
+				pPlayer->movePlayer.y = 0.0f;
+			}
+			else if (g_fAngle > (D3DX_PI * 0.25f) && g_fAngle <= (D3DX_PI * 0.75f))
+			{
+				pPlayer->posPlayer.x = pBlock->pos.x - BLOCK_WIDTH - (PLAYER_SIZE * 0.25f);
+				pPlayer->movePlayer.x = 0.0f;
+			}
+
 			if (pPlayer->bHaveKey == true)
 			{
 				pBlock->bUse = false;
