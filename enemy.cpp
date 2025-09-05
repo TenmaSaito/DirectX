@@ -1298,7 +1298,7 @@ void DestroyEnemy(void)
 		{
 			pEnemy->bUse = false;
 			g_nCounterEnemy--;
-			SetExplosion(pEnemy->pos, EXPLOSION_COLOR, true);
+			SetParticle(pEnemy->pos, D3DXCOLOR_NULL, 5, D3DX_PI, -D3DX_PI, 10);
 		}
 	}
 }

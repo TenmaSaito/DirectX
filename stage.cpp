@@ -41,7 +41,7 @@ int g_aTurn[STAGE_MAX];										// 各ステージの現在のターン
 float g_fLengthStage;										// ステージの対角線の長さ
 float g_fAngleStage;										// ステージの対角線の角度
 char g_aFileName[STRING_MAX];			
-bool g_bClearBoss;											// ボスを討伐したか
+bool g_bAllClear;											// 完全クリアしたか
 
 int g_nCounterTimer;
 
@@ -75,7 +75,7 @@ void InitStage(void)
 	}
 
 	g_nCounterTimer = 0;
-	g_bClearBoss = false;
+	g_bAllClear = false;
 	g_stageExac = STAGE_GRASS;
 
 	// 対角線の長さを取得
@@ -252,13 +252,17 @@ void UpdateStage(void)
 		}
 	}
 
-	for (int nCntStage = 0; nCntStage < STAGE_MAX; nCntStage++)
+	if (g_bAllClear == false)
 	{
-		if (g_aStageMap[nCntStage].nTurn == ALREADY_CLEARED) nCnt++;
-
-		if (nCnt >= 5)
+		for (int nCntStage = 0; nCntStage < STAGE_MAX; nCntStage++)
 		{
-			SetGameState(GAMESTATE_CLEAREND, 120);
+			if (g_aStageMap[nCntStage].nTurn == ALREADY_CLEARED) nCnt++;
+
+			if (nCnt >= STAGE_MAX)
+			{
+				SetGameState(GAMESTATE_CLEAREND, 120);
+				g_bAllClear = true;
+			}
 		}
 	}
 
@@ -495,5 +499,5 @@ void UniteFileName(const char* pFileName, const char* pFiletype)
 
 void SetClearBossStage(bool bClear)
 {
-	g_bClearBoss = bClear;
+	g_bAllClear = bClear;
 }
