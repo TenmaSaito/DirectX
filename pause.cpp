@@ -208,6 +208,8 @@ void UpdatePause(void)
 
 				break;
 			}
+
+			PlaySound(SOUND_LABEL_SE_SELECT);
 		}
 		else
 		{
@@ -247,6 +249,7 @@ void UpdatePause(void)
 					break;
 				}
 
+				PlaySound(SOUND_LABEL_SE_SELECT);
 			}
 		}
 
@@ -288,6 +291,8 @@ void UpdatePause(void)
 
 				break;
 			}
+
+			PlaySound(SOUND_LABEL_SE_ENTER);
 		}
 
 		if (GetJoypadTrigger(JOYKEY_START) == true)

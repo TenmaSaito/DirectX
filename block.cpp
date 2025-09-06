@@ -5,6 +5,7 @@
 //
 //================================================================================================================
 #include "block.h"
+#include "sound.h"
 #include "player.h"
 #include "bullet.h"
 #include "explosion.h"
@@ -716,6 +717,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			{
 				pBlock->bUse = false;
 				// TODO : 鍵を取った時の音を鳴らす！！！！やれ！！！
+
+				PlaySound(SOUND_LABEL_SE_OPEN);
 			}
 
 			break;

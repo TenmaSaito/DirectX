@@ -186,6 +186,8 @@ void UpdateTitleSelect(void)
 				g_nTitleSelect = TITLESELECTTYPE_START;
 			}
 			g_aTitleSelect[g_nTitleSelect].bSelect = true;
+
+			PlaySound(SOUND_LABEL_SE_SELECT);
 		}
 		else if (GetKeyboardRepeat(DIK_W) == true
 			|| GetJoypadRepeat(JOYKEY_UP) == true)
@@ -197,6 +199,8 @@ void UpdateTitleSelect(void)
 				g_nTitleSelect = TITLESELECTTYPE_EXIT;
 			}
 			g_aTitleSelect[g_nTitleSelect].bSelect = true;
+
+			PlaySound(SOUND_LABEL_SE_SELECT);
 		}
 
 		if (GetKeyboardTrigger(DIK_RETURN) == true
@@ -204,6 +208,7 @@ void UpdateTitleSelect(void)
 			|| GetJoypadTrigger(JOYKEY_START) == true)
 		{
 			g_nCounterSelectState--;
+			PlaySound(SOUND_LABEL_SE_ENTER);
 		}
 	}
 	
@@ -217,7 +222,6 @@ void UpdateTitleSelect(void)
 				if (GetFade() == FADE_NONE)
 				{
 					SetGameTutorial(false);
-					PlaySound(SOUND_LABEL_SE_ENTER);
 					SetFade(MODE_GAME);
 				}
 			}

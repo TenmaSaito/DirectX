@@ -5,6 +5,7 @@
 //
 //================================================================================================================
 #include "main.h"
+#include "fade.h"
 #include "stage.h"
 #include "tutorial.h"
 #include "block.h"
@@ -13,6 +14,8 @@
 #include "fade_stage.h"
 #include "input.h"
 #include "item.h"
+#include "gauge.h"
+#include "heart.h"
 
 // マクロ定義
 #define MAX_TURN		(3)				// 草原ステージのターン数
@@ -162,6 +165,7 @@ void UpdateTutorial(void)
 {
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 	PLAYER* pPlayer = GetPlayer();
+	Gauge* pGauge = GetGauge();
 	static int nCnt;
 	char aStr[STRING_MAX] = {};
 
@@ -431,7 +435,7 @@ void UpdateTutorial(void)
 			UniteFileName(TUTORIAL_FILENAME, ENEMY_FILETYPE, &aStr[0]);
 			LoadEnemy(&aStr[0], 0);
 			pPlayer->state = PLAYERSTATE_BARRIER;
-			pPlayer->nCounterState = 1000000;
+			pPlayer->nCounterBarrierTime = 1000000;
 		}
 
 		if (g_nCounterTutorialState > 0)
@@ -475,8 +479,9 @@ void UpdateTutorial(void)
 			// アイテムを配置
 			UniteFileName(TUTORIAL_FILENAME, BLOCK_FILETYPE, &aStr[0]);
 			SetItem(ITEMTYPE_HEAL, D3DXVECTOR3(640.0f, 360.0f, 0.0f));
-			pPlayer->nCounterState = 0;
+			pPlayer->nCounterBarrierTime = 0;
 			pPlayer->state = PLAYERSTATE_NORMAL;
+			AddGauge(-pGauge[pPlayer->nBarrierNo].nPercentGauge, pPlayer->nBarrierNo);
 			HitPlayer(1);
 			nCnt = pPlayer->nLife;
 		}
@@ -526,7 +531,8 @@ void UpdateTutorial(void)
 				pPlayer->nCounterState = 0;
 				pPlayer->state = PLAYERSTATE_NORMAL;
 				pPlayer->nLife = MAX_LIFE;
-				SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
+				SetHeart();
+				SetFade(MODE_GAME);
 			}
 		}
 

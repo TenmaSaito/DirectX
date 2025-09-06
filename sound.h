@@ -13,7 +13,7 @@
 #define SOUND_BGMSTART		(SOUND_LABEL_BGM000)		// BGMの開始位置
 #define SOUND_SESTART		(SOUND_LABEL_SE_SHOT)		// SEの開始位置
 #define SOUND_MENUSTART		(SOUND_LABEL_SE_ENTER)		// MENU用SEの開始位置
-#define SOUND_STANDARD		(0.01f)						// 初期音量
+#define SOUND_STANDARD		(0.1f)						// 初期音量
 
 //*****************************************************************************
 // サウンド一覧 (sound.cppのsoundinfoにも追加する！)
@@ -29,6 +29,16 @@ typedef enum
 	SOUND_LABEL_SE_HIT,			// ヒット音
 	SOUND_LABEL_SE_EXPLOSION,	// 爆発音
 	SOUND_LABEL_SE_ENTER,		// 決定音
+	SOUND_LABEL_SE_BARRIAR,		// バリア発動音
+	SOUND_LABEL_SE_GETCOIN,		// コイン獲得音
+	SOUND_LABEL_SE_GETULTIMATECOIN,		// 凄いコイン獲得音
+	SOUND_LABEL_SE_GETKEY,		// コイン獲得音
+	SOUND_LABEL_SE_OPEN,		// ドアを開ける音
+	SOUND_LABEL_SE_SELECT,		// ドアを開ける音
+	SOUND_LABEL_SE_CHARGE,		// チャージ開始音
+	SOUND_LABEL_SE_FULLCHARGE,	// チャージ完了
+	SOUND_LABEL_SE_SHOT_1,	// チャージ完了
+	SOUND_LABEL_SE_CHARGE_SHOT,	// チャージ完了
 	SOUND_LABEL_MAX,
 } SOUND_LABEL;
 

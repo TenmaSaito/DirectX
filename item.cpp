@@ -8,6 +8,7 @@
 #include "player.h"
 #include "score.h"
 #include "heart.h"
+#include "sound.h"
 
 // マクロ定義
 #define MAX_ITEM		(64)			// ブロックの最大数
@@ -322,6 +323,8 @@ void CollisionPlayer(ITEM* pItem)
 			// コイン
   			AddScore(1000);
 
+			PlaySound(SOUND_LABEL_SE_GETCOIN);
+
 			pItem->bUse = false;
 
 			break;
@@ -368,12 +371,16 @@ void CollisionPlayer(ITEM* pItem)
 			pPlayer->bHaveKey = true;
 			pItem->bUse = false;
 
+			PlaySound(SOUND_LABEL_SE_GETKEY);
+
 			break;
 
 		case ITEMTYPE_ULTIMATE_COIN:
 
 			// スーパーアルティメットコイン
 			AddScore(100000);
+
+			PlaySound(SOUND_LABEL_SE_GETULTIMATECOIN);
 
 			pItem->bUse = false;
 

@@ -241,6 +241,8 @@ void UpdatePlayer(void)
 		// èoåªéû
 		g_player.nCounterState--;
 
+		KeyboardPress();
+
 		// ì_ñ≈èàóù
 		if ((g_player.nCounterState % 5) == 0)
 		{
@@ -845,7 +847,7 @@ void KeyboardPress(void)
 
 	if (g_player.g_nIDDirection != -1)GetPlayerRot(&g_player);
 
-	if (g_player.aCouldDo[PLAYERDO_SHOT] == true)
+	if (g_player.aCouldDo[PLAYERDO_SHOT] == true && g_player.state != PLAYERSTATE_APPEAR)
 	{
 		if ((GetKeyboardRepeat(DIK_SPACE) == true || GetJoypadRepeat(JOYKEY_A) == true)
 			&& g_player.nCounterBarrier == 0)
@@ -855,6 +857,7 @@ void KeyboardPress(void)
 			{
 				// éÀåÇ
 				SetBullet(g_player.posPlayer, -15.0f, GetPlayerRot(&g_player), 300, BULLETTYPE_PLAYER, SHOTTYPE_NORMAL, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), false);
+				PlaySound(SOUND_LABEL_SE_SHOT_1);
 				g_player.nCounterBulletCharge++;
 			}
 			else if (g_player.nCounterBulletCharge < 6)
@@ -866,6 +869,8 @@ void KeyboardPress(void)
 						g_player.nGaugeNo = SetGauge(D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y, 0.0f), GAUGE_COLOR, GAUGETYPE_HOMING, 0, 50.0f);
 					}
 					g_player.nCounterBulletCharge++;
+
+					PlaySound(SOUND_LABEL_SE_CHARGE);
 				}
 			}
 			else if (g_player.nCounterBulletCharge >= 6 && pGauge[g_player.nGaugeNo].nPercentGauge <= GAUGE_MAX)
@@ -922,6 +927,7 @@ void KeyboardPress(void)
 				{
 					SetPlaceChar(D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y - 50.0f, 0.0f), POLY_SIZE(200.0f, 50.0f), CHARTEX_FULLCHARGE, 120);
 					g_player.bCharge = true;
+					PlaySound(SOUND_LABEL_SE_FULLCHARGE);
 				}
 			}
 		}
@@ -930,6 +936,9 @@ void KeyboardPress(void)
 			if (pGauge[g_player.nGaugeNo].nPercentGauge > GAUGE_MAX && g_player.aCouldDo[PLAYERDO_SP] == true)
 			{
 				SetBullet(g_player.posPlayer, g_player.fBulletSpeed, GetPlayerRot(&g_player), g_player.nBulletLife, BULLETTYPE_PLAYER, g_player.type, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), true);
+
+				StopSound(SOUND_LABEL_SE_FULLCHARGE);
+				PlaySound(SOUND_LABEL_SE_CHARGE_SHOT);
 
 				if (g_player.type == SHOTTYPE_LASER || g_player.type == SHOTTYPE_FULLBURST)
 				{
@@ -988,7 +997,7 @@ void KeyboardPress(void)
 		}
 	}
 
-	if (g_player.aCouldDo[PLAYERDO_BARRIAR] == true)
+	if (g_player.aCouldDo[PLAYERDO_BARRIAR] == true && g_player.state != PLAYERSTATE_APPEAR)
 	{
 		if ((GetKeyboardRepeat(DIK_B) == true || GetJoypadRepeat(JOYKEY_B) == true)
 			&& g_player.nCounterBulletCharge == 0
@@ -1057,6 +1066,8 @@ void KeyboardPress(void)
 				g_player.state = PLAYERSTATE_BARRIER;
 				g_player.nCounterCoolTime = BARRIAR_COOLDOWN;
 				SetPlaceChar(D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y - 50.0f, 0.0f), POLY_SIZE(400.0f, 50.0f), CHARTEX_BARRIAR, 120);
+
+				PlaySound(SOUND_LABEL_SE_BARRIAR);
 
 				g_player.nCounterBarrier = 0;
 				g_player.nCounterBarrierTime = BARRIER_STATE;
@@ -1133,16 +1144,6 @@ void KeyboardPress(void)
 			}
 
 		}
-	}
-
-	if (GetKeyboardTrigger(DIK_0) == true)
-	{// seÇçƒê∂
-		PlaySound(SOUND_LABEL_SE_HIT);
-	}
-
-	if (GetKeyboardRepeat(DIK_Y) == true || GetMousePress(MOUSEKEY_WHEEL) == true)
-	{
-		AddScore(10);
 	}
 
 #ifdef _DEBUG

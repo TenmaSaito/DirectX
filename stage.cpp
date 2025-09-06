@@ -181,7 +181,8 @@ void UpdateStage(void)
 	D3DXVECTOR3 pos = pPlayer->moveposPlayer;		// プレイヤーの移動量を代入
 
 	if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED
-		&& GetTotalEnemy() == NULL)
+		&& GetTotalEnemy() == NULL
+		&& GetFadeStage() == FADESTAGE_NONE)
 	{
 		// ステージのターンにより処理を変更
 
