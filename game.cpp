@@ -247,6 +247,7 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
+				AddScore(1000000);
 				SetFade(MODE_RESULT);
 			}
 		}

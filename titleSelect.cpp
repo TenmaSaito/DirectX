@@ -14,9 +14,9 @@
 #include "settings.h"
 
 // マクロ定義
-#define SELECTSIZE_WIDTH		(500)		// 横のサイズ
-#define SELECTSIZE_HEIGHT		(60)		// 縦のサイズ
-#define SELECTWAIT_STATE		(100)		// 選択後の待機時間
+#define SELECTSIZE_WIDTH		(SCREEN_WIDTH * 0.4f)			// 横のサイズ
+#define SELECTSIZE_HEIGHT		(SCREEN_HEIGHT * 0.085f)		// 縦のサイズ
+#define SELECTWAIT_STATE		(100)							// 選択後の待機時間
 
 // タイトルセレクト構造体
 typedef struct
@@ -39,8 +39,6 @@ const char* g_TITLESELECTTEX[TITLESELECTTYPE_MAX]
 {
 	"data\\TEXTURE\\CHARACTER\\CHARTEX\\GAME_START.png",
 	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\SETTINGS.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\CREDIT.png",
 	"data\\TEXTURE\\CHARACTER\\CHARTEX\\GAME_END.png",
 	"data\\TEXTURE\\CHARACTER\\CHARTEX\\GAME_START.png"
 };
@@ -57,7 +55,7 @@ void InitTitleSelect(void)
 	// 各変数の初期化
 	for (nCntTitleSelect = 0; nCntTitleSelect < TITLESELECTTYPE_MAX; nCntTitleSelect++, pTitleSelect++)
 	{
-		pTitleSelect->pos = D3DXVECTOR3(200.0f, 400.0f * (nCntTitleSelect + 1), 0.0f);
+		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.16f, SCREEN_HEIGHT * 0.558f * (nCntTitleSelect + 1), 0.0f);
 		pTitleSelect->col = D3DXCOLOR_NULL;
 		pTitleSelect->type = (TITLESELECTTYPE)nCntTitleSelect;
 		pTitleSelect->bSelect = false;
@@ -179,6 +177,7 @@ void UpdateTitleSelect(void)
 		if (GetKeyboardRepeat(DIK_S) == true
 			|| GetJoypadRepeat(JOYKEY_DOWN) == true)
 		{
+			PlaySound(SOUND_LABEL_SE_SELECT);
 			g_aTitleSelect[g_nTitleSelect].bSelect = false;
 			g_nTitleSelect++;
 			if (g_nTitleSelect >= TITLESELECTTYPE_NONE)
@@ -187,7 +186,6 @@ void UpdateTitleSelect(void)
 			}
 			g_aTitleSelect[g_nTitleSelect].bSelect = true;
 
-			PlaySound(SOUND_LABEL_SE_SELECT);
 		}
 		else if (GetKeyboardRepeat(DIK_W) == true
 			|| GetJoypadRepeat(JOYKEY_UP) == true)
@@ -265,18 +263,6 @@ void UpdateTitleSelect(void)
 			}
 
 			g_nCounterSelectState--;
-
-			break;
-
-		case TITLESELECTTYPE_SETTING:
-
-			g_nCounterSelectState = SELECTWAIT_STATE;
-
-			break;
-
-		case TITLESELECTTYPE_CREDIT:
-
-			g_nCounterSelectState = SELECTWAIT_STATE;
 
 			break;
 

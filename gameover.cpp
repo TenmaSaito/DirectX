@@ -27,7 +27,7 @@ void InitGameover(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-							  "data\\TEXTURE\\gameover.png",
+							  "data\\TEXTURE\\CHARACTER\\gameover.png",
 							  &g_pTextureGameover);
 
 	// 頂点バッファの生成
@@ -45,9 +45,9 @@ void InitGameover(void)
 
 	// 頂点座標の設定(座標設定は必ず右回りで！！！)
 	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(1280.0f, 0.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, 720.0f, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(1280.0f, 720.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
 
 	// rhwの設定
 	pVtx[0].rhw = 1.0f;

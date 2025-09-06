@@ -958,6 +958,8 @@ void KeyboardPress(void)
 
 				XInputSetState(0, g_pJoyVibration);
 			}
+
+			StopSound(SOUND_LABEL_SE_FULLCHARGE);
 		}
 		else
 		{

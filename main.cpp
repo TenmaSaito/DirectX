@@ -212,7 +212,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	int nID;
-	
+	D3DDISPLAYMODE d3ddm;			// ディスプレイモード
+	D3DPRESENT_PARAMETERS d3dpp;	// プレゼンテーションパラメータ	
+
 	switch (uMsg)
 	{
 	case WM_DESTROY:		// ウィンドウ破棄のメッセージ
@@ -731,28 +733,3 @@ void DrawDebug(void)
 	// テキストの描画
     g_pFont->DrawText(NULL, &aStr[0][0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 }
-
-// デバッグ表示
-//void DrawTutorial(void)
-//{
-//	RECT rect = { 0,620,SCREEN_WIDTH,SCREEN_HEIGHT };			// 画面サイズ
-//	char aStr[15][256];										// 画面に表示する文字列
-//
-//	// 文字列に代入
-//	wsprintf(aStr[0], "スティック/十字キー/WASD : 移動\n");
-//
-//	wsprintf(aStr[1], "A/SPACE : 射撃\n");
-//
-//	wsprintf(aStr[2], "A(長押し)/SPACE(長押し) : チャージ(離すとホーミング弾発射)\n");
-//
-//	wsprintf(aStr[3], "B(長押し) : チャージ(離すとバリア展開)\n");
-//
-//	// 文字列を結合
-//	for (int nCntDebug = 0; nCntDebug < 3; nCntDebug++)
-//	{
-//		strcat(&aStr[0][0], &aStr[nCntDebug + 1][0]);
-//	}
-//
-//	// テキストの描画
-//	g_pFont->DrawText(NULL, &aStr[0][0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-//}

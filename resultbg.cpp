@@ -22,7 +22,7 @@ void InitResultBg(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\sougen.jpg",
+		"data\\TEXTURE\\RankingResult.png",
 		&g_pTextureResultBg);
 
 	// 頂点バッファの生成
