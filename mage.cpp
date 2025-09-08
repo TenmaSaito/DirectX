@@ -12,23 +12,11 @@
 #define MAGE_HEIGHT		(80.0f)					// 縦幅
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTextureMage[PLAYERDIRECTION_MAX] = {};		// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureMage = NULL;		// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMage = NULL;	// 頂点バッファのポインタ
 D3DXVECTOR3 g_posMage;							// ライフを表示する位置
 PLAYERDIRECTION g_direction = PLAYERDIRECTION_DOWN;
 bool g_bUseMage = false;
-
-const char* g_apTEXTURE_MAGE[PLAYERDIRECTION_MAX]
-{
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UP.png",			// 上
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWN.png",			// 下
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_LEFT.png",			// 左
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_RIGHT.png",		// 右
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UPLEFT.png",		// 右上
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_UPRIGHT.png",		// 左上
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWNLEFT.png",		// 右下
-	"data\\TEXTURE\\CHARACTER\\DIRECTION_DOWNRIGHT.png"		// 左下
-};
 
 //================================================================================================================
 // ハートの初期化処理
@@ -37,13 +25,11 @@ void InitMage(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();			// デバイスのポインタ
 
-	for (int nCntMage = 0; nCntMage < PLAYERDIRECTION_MAX; nCntMage++)
-	{
-		// テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			g_apTEXTURE_MAGE[nCntMage],
-			&g_apTextureMage[nCntMage]);
-	}
+	// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\CHARACTER\\DIRECTION\\DIRECTION.png",
+		&g_pTextureMage);
+	
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -96,10 +82,10 @@ void InitMage(void)
 	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+	pVtx[0].tex = D3DXVECTOR2(0.125f * g_direction, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(0.125f * g_direction + 0.125f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.125f * g_direction, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(0.125f * g_direction + 0.125f, 1.0f);
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffMage->Unlock();
@@ -113,14 +99,12 @@ void InitMage(void)
 void UninitMage(void)
 {
 	// テクスチャの破棄(必ず行うこと！！！)
-	for (int nCntMage = 0; nCntMage < PLAYERDIRECTION_MAX; nCntMage++)
+	if (g_pTextureMage != NULL)
 	{
-		if (g_apTextureMage[nCntMage] != NULL)
-		{
-			g_apTextureMage[nCntMage]->Release();
-			g_apTextureMage[nCntMage] = NULL;
-		}
+		g_pTextureMage->Release();
+		g_pTextureMage = NULL;
 	}
+	
 	
 	// 頂点バッファの破棄(必ず行うこと！！！)
 	if (g_pVtxBuffMage != NULL)
@@ -135,10 +119,22 @@ void UninitMage(void)
 //================================================================================================================
 void UpdateMage(void)
 {
+	VERTEX_2D* pVtx = nullptr;
+
+	g_pVtxBuffMage->Lock(0, 0, (void**)&pVtx, 0);
+
 	if (g_bUseMage == true)
 	{
 		g_direction = GetPlayerDirection();
+
+		// テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.125f * g_direction, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(0.125f * g_direction + 0.125f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.125f * g_direction, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(0.125f * g_direction + 0.125f, 1.0f);
 	}
+
+	g_pVtxBuffMage->Unlock();
 }
 
 //================================================================================================================
@@ -155,7 +151,7 @@ void DrawMage(void)
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	// テクスチャの設定(使わないならNULLを入れる！！！！)
-	pDevice->SetTexture(0, g_apTextureMage[g_direction]);
+	pDevice->SetTexture(0, g_pTextureMage);
 
 	if (g_bUseMage == true)
 	{
@@ -167,7 +163,7 @@ void DrawMage(void)
 }
 
 //================================================================================================================
-// ハートの設置
+// 魔法陣の設置
 //================================================================================================================
 void SetMage(void)
 {
@@ -176,6 +172,9 @@ void SetMage(void)
 	g_direction = PLAYERDIRECTION_DOWN;
 }
 
+//================================================================================================================
+// 魔法陣の有効化
+//================================================================================================================
 void EnableMageDraw(bool bUse)
 {
 	g_bUseMage = bUse;

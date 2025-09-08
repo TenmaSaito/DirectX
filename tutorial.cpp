@@ -626,7 +626,7 @@ void SetTutorial(void)
 
 	for (int nCnt = 0; nCnt < 5; nCnt++)
 	{
-		pPlayer->aCouldDo[nCnt] = false;
+		pPlayer->aCouldDo[nCnt] = true;
 	}
 }
 

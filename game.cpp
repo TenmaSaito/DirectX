@@ -35,7 +35,6 @@
 bool g_bPause;										// ポーズ状態のON/OFF
 int g_nCounter;
 float g_fVolume ;									// 音量
-STAGE g_stage;										// 現在のステージ
 GAMESTATE g_gameState = GAMESTATE_NONE;				// ゲーム状態
 int g_nCounterState;								// 状態カウンター
 bool g_bUseTutorial;								// チュートリアルの有無

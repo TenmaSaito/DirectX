@@ -18,20 +18,9 @@
 void CollisionPlayer(ITEM *pItem);
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTextureItem[ITEMTYPE_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureItem = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffItem = NULL;	// 頂点バッファのポインタ
 ITEM g_aItem[MAX_ITEM];						// ブロック構造体
-
-const char* g_TEXTURE_ITEM[ITEMTYPE_MAX]
-{
-	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_COIN.png",			// コイン
-	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_HEAL.png",			// 回復
-	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_HOMING.png",			// ホーミング
-	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_BOMB.png",			// ボム
-	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_LASER.png",			// レーザー
-	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_KEY.png",				// 鍵
-	"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM_ULTIMATE_COIN.png"	// なんかすごい
-};
 
 //================================================================================================================
 // ブロックの初期化処理
@@ -50,14 +39,9 @@ void InitItem(void)
 	}
 
 	// テクスチャの読み込み
-	for (int nCntTex = 0; nCntTex < ITEMTYPE_MAX; nCntTex++)
-	{
-		D3DXCreateTextureFromFile(pDevice,
-			g_TEXTURE_ITEM[nCntTex],
-			&g_apTextureItem[nCntTex]);
-
-		AddFunctionLog("END : Texture Create");
-	}
+	D3DXCreateTextureFromFile(pDevice,
+			"data\\TEXTURE\\CHARACTER\\ITEM\\ITEM.png",
+			&g_pTextureItem);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_ITEM,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -110,10 +94,10 @@ void InitItem(void)
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		pVtx[0].tex = D3DXVECTOR2(0.125f * pItem->type, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(0.125f * pItem->type + 0.125f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.125f * pItem->type, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(0.125f * pItem->type + 0.125f, 1.0f);
 
 		pVtx += 4;
 	}
@@ -132,10 +116,10 @@ void UninitItem(void)
 	// テクスチャの破棄(必ず行うこと！！！)
 	for (int nCntItem = 0; nCntItem < ITEMTYPE_MAX; nCntItem++)
 	{
-		if (g_apTextureItem[nCntItem] != NULL)
+		if (g_pTextureItem != NULL)
 		{
-			g_apTextureItem[nCntItem]->Release();
-			g_apTextureItem[nCntItem] = NULL;
+			g_pTextureItem->Release();
+			g_pTextureItem = NULL;
 		}
 	}
 
@@ -198,6 +182,12 @@ void UpdateItem(void)
 			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+			// テクスチャ座標の設定
+			pVtx[0].tex = D3DXVECTOR2(0.125f * pItem->type, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.125f * pItem->type + 0.125f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.125f * pItem->type, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.125f * pItem->type + 0.125f, 1.0f);
 		}
 
 		pVtx += 4;				// 頂点データのポインタを4つ分進める
@@ -226,7 +216,7 @@ void DrawItem(void)
 		if (pItem->bUse == true)
 		{
 			// テクスチャの設定(使わないならNULLを入れる！！！！)
-			pDevice->SetTexture(0, g_apTextureItem[g_aItem[nCntItem].type]);
+			pDevice->SetTexture(0, g_pTextureItem);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
@@ -277,6 +267,12 @@ void SetItem(ITEMTYPE type, D3DXVECTOR3 pos)
 			pVtx[3].pos.x = (pItem->pos.x + Camerapos.x) + ITEM_WIDTH;
 			pVtx[3].pos.y = (pItem->pos.y + Camerapos.y) + ITEM_HEIGHT;
 			pVtx[3].pos.z = 0.0f;
+
+			// テクスチャ座標の設定
+			pVtx[0].tex = D3DXVECTOR2(0.125f * pItem->type, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.125f * pItem->type + 0.125f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.125f * pItem->type, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.125f * pItem->type + 0.125f, 1.0f);
 
 			// 頂点バッファをアンロックする
 			g_pVtxBuffItem->Unlock();

@@ -55,7 +55,6 @@ void InitBlock(void)
 	}
 
 	// テクスチャの読み込み
-
 	D3DXCreateTextureFromFile(pDevice,
 							"data\\TEXTURE\\CHARACTER\\BLOCK.png",
 							&g_pTextureBlock);
