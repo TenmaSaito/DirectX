@@ -15,6 +15,7 @@
 #include "fade.h"
 #include "gauge.h"
 #include "gameover.h"
+#include "gameclear.h"
 #include "block.h"
 #include "bullet.h"
 #include "resource.h"
@@ -31,7 +32,7 @@ void Uninit(void);
 void Update(void);
 void Draw(void);
 void DrawDebug(void);
-//void DrawTutorial(void);
+void ToggleFullscreen(HWND hWnd);
 
 // グローバル変数
 LPDIRECT3D9				g_pD3D = NULL;				// Direct3Dオブジェクトへのポインタ
@@ -41,6 +42,8 @@ MODE g_modeExac = MODE_TITLE;						// ひとつ前の過去の画面
 LPD3DXFONT g_pFont = NULL;							// フォントへのポインタ
 HWND g_hWnd = NULL;									// 獲得したウィンドウハンドル
 int g_nCountFPS = 0;								// FPSカウンタ
+bool g_isFullscreen = false;						// フルスクリーンの使用状況
+RECT g_windowRect;									// ウィンドウサイズ
 
 //================================================================================================================
 // メイン関数
@@ -212,8 +215,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	int nID;
-	D3DDISPLAYMODE d3ddm;			// ディスプレイモード
-	D3DPRESENT_PARAMETERS d3dpp;	// プレゼンテーションパラメータ	
 
 	switch (uMsg)
 	{
@@ -236,6 +237,10 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(hWnd);
 			}
 
+			break;
+
+		case VK_F11:
+			ToggleFullscreen(hWnd);// F11でフルスクリーン
 			break;
 		}
 		break;
@@ -564,6 +569,10 @@ void Draw(void)
 		case MODE_GAMEOVER:
 			DrawGameover();
 			break;
+
+		case MODE_GAMECLEAR:
+			DrawGameclear();
+			break;
 		}
 
 		// フェードの描画処理
@@ -620,6 +629,10 @@ void SetMode(MODE mode)
 		UninitGameover();
 		AddFunctionLog("END : Gameover Uninit");
 		break;
+
+	case MODE_GAMECLEAR:
+		UninitGameclear();
+		break;
 	}
 
 	// 現在のモードを保存
@@ -646,6 +659,10 @@ void SetMode(MODE mode)
 	case MODE_GAMEOVER:
 		InitGameover();
 		AddFunctionLog("END : Gameover Init");
+		break;
+
+	case MODE_GAMECLEAR:
+		InitGameclear();
 		break;
 	}
 
@@ -732,4 +749,33 @@ void DrawDebug(void)
 
 	// テキストの描画
     g_pFont->DrawText(NULL, &aStr[0][0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
+}
+
+//================================================
+// ウィンドウフルスクリーン処理
+//================================================
+void ToggleFullscreen(HWND hWnd)
+{
+	// 現在のウィンドウスタイルを取得
+	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
+	if (g_isFullscreen)
+	{
+		// ウィンドウモードに切り替え
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, g_windowRect.left, g_windowRect.top,
+			g_windowRect.right - g_windowRect.left, g_windowRect.bottom - g_windowRect.top,
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_NORMAL);
+	}
+	else
+	{
+		// フルスクリーンモードに切り替え
+		GetWindowRect(hWnd, &g_windowRect);
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_MAXIMIZE);
+	}
+
+	g_isFullscreen = !g_isFullscreen;
 }

@@ -111,6 +111,33 @@ void UninitScore(void)
 void UpdateScore(void)
 {
 	// 後で書きたきゃ書け
+	VERTEX_2D* pVtx = NULL;
+
+	g_pVtxBuffScore->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int nCntScore = 0; nCntScore < NUM_PLACE; nCntScore++)
+	{
+		// 頂点座標の設定(座標設定は必ず右回りで！！！)
+		pVtx[0].pos.x = g_posScore.x + (35.0f * nCntScore) - 15.0f;
+		pVtx[0].pos.y = g_posScore.y - 28.0f;
+		pVtx[0].pos.z = 0.0f;
+
+		pVtx[1].pos.x = g_posScore.x + (35.0f * nCntScore) + 15.0f;
+		pVtx[1].pos.y = g_posScore.y - 28.0f;
+		pVtx[1].pos.z = 0.0f;
+
+		pVtx[2].pos.x = g_posScore.x + (35.0f * nCntScore) - 15.0f;
+		pVtx[2].pos.y = g_posScore.y + 28.0f;
+		pVtx[2].pos.z = 0.0f;
+
+		pVtx[3].pos.x = g_posScore.x + (35.0f * nCntScore) + 15.0f;
+		pVtx[3].pos.y = g_posScore.y + 28.0f;
+		pVtx[3].pos.z = 0.0f;
+
+		pVtx += 4;
+	}
+
+	g_pVtxBuffScore->Unlock();
 }
 
 // スコアの描画処理

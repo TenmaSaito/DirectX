@@ -25,6 +25,7 @@ typedef struct
 Title g_Title;									// タイトル構造体の作成
 DWORD g_dwCurrentTimeTitle;						// 現在の時間
 DWORD g_dwExacLastTimeTitle;					// タイトル画面に移行した瞬間の時間
+bool g_bEnableTitleSelect = false;						// セレクト画面が表示されているかどうか
 
 //================================================================================================================
 // 背景の初期化処理
@@ -35,6 +36,7 @@ void InitTitle(void)
 	g_Title.nCounterAnim = 0;			
 	g_Title.nPatternAnim = 0;
 	g_Title.bUse = true;
+	g_bEnableTitleSelect = false;
 
 	g_dwCurrentTimeTitle = timeGetTime();
 	g_dwExacLastTimeTitle = timeGetTime();
@@ -47,8 +49,6 @@ void InitTitle(void)
 
 	// タイトル画面のBGM再生
 	PlaySound(SOUND_LABEL_BGM001);
-
-	SetTitleSelect(true);
 }
 
 //================================================================================================================
@@ -71,8 +71,14 @@ void UninitTitle(void)
 //================================================================================================================
 void UpdateTitle(void)
 {
+	if (GetFade() == FADE_NONE && g_bEnableTitleSelect == false)
+	{
+		SetTitleSelect(true);
+		g_bEnableTitleSelect = true;
+	}
+
 	g_dwCurrentTimeTitle = timeGetTime();
-	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 10000)
+	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 20000)
 	{
 		if (GetFade() == FADE_NONE)
 		{

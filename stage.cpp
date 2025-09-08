@@ -44,6 +44,7 @@ char g_aFileName[STRING_MAX];
 bool g_bAllClear;											// 完全クリアしたか
 
 int g_nCounterTimer;
+bool g_bHaveKeyExac = false;								// プレイヤーは鍵を持っていたか
 
 const char* g_apTEXTURE_STAGE[STAGE_MAX]
 {
@@ -76,6 +77,7 @@ void InitStage(void)
 
 	g_nCounterTimer = 0;
 	g_bAllClear = false;
+	g_bHaveKeyExac = false;
 	g_stageExac = STAGE_GRASS;
 
 	// 対角線の長さを取得
@@ -236,7 +238,9 @@ void UpdateStage(void)
 		{
 			if (SUCCEEDED(GetHandleWindow(&hWnd)))
 			{
+#ifdef  _DEBUG
 				MessageBox(hWnd, "お母さんを呼んでください","え？",MB_ICONWARNING);
+#endif
 				return;
 			}
 		}
@@ -335,12 +339,15 @@ void SetStage(STAGE stage)
 	PLAYER *pPlayer = GetPlayer();
 	HWND hWnd = NULL;
 	int nID;
+	static bool g_bHaveKeyExac = false;
 
 	if (g_stageExac < STAGE_GRASS || g_stageExac >= STAGE_MAX)
 	{
 		if (SUCCEEDED(GetHandleWindow(&hWnd)))
-		{
+		{ // ステージの種類が万が一範囲外だった場合、処理を中断
+#ifdef  _DEBUG
 			MessageBox(hWnd, "ヤバイ", "え？", MB_ICONWARNING);
+#endif
 			return;
 		}
 	}
@@ -402,11 +409,15 @@ void SetStage(STAGE stage)
 			UniteFileName(DESERT_FILENAME, BLOCK_FILETYPE);
 			LoadBlock(&g_aFileName[0]);
 
+			if (pPlayer->bHaveKey != true && g_bHaveKeyExac == false)
+			{
+				SetItem(ITEMTYPE_KEY, D3DXVECTOR3(-110.0f, 710.0, 0.0));
+			}
+
 			// もしクリア済みでなければ
 			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_DESERT] = 0;
-				SetItem(ITEMTYPE_KEY, D3DXVECTOR3(-110.0f, 710.0, 0.0));
 				SetItem(ITEMTYPE_COIN, D3DXVECTOR3(390.0f, 10.0, 0.0));
 				SetItem(ITEMTYPE_COIN, D3DXVECTOR3(390.0f, 210.0, 0.0));
 				SetItem(ITEMTYPE_COIN, D3DXVECTOR3(590.0f, 210.0, 0.0));
@@ -460,11 +471,13 @@ void SetStage(STAGE stage)
 			UniteFileName(SEA_FILENAME, BLOCK_FILETYPE);
 			LoadBlock(&g_aFileName[0]);
 
+			SetItem(ITEMTYPE_ULTIMATE_COIN, D3DXVECTOR3(1490.0f, 350.0f, 0.0f));
+			
+
 			// もしクリア済みでなければ
 			if (g_aStageMap[g_stageExac].nTurn != ALREADY_CLEARED)
 			{// ターンを初期化
 				g_aTurn[STAGE_SEA] = 0;
-				SetItem(ITEMTYPE_ULTIMATE_COIN, D3DXVECTOR3(1490.0f, 350.0f, 0.0f));
 			}
 
 			break;
@@ -501,4 +514,10 @@ void UniteFileName(const char* pFileName, const char* pFiletype)
 void SetClearBossStage(bool bClear)
 {
 	g_bAllClear = bClear;
+}
+
+// プレイヤーがキーを拾ったか
+void SetEnableHaveKeyExac(bool bHave)
+{
+	g_bHaveKeyExac = bHave;
 }

@@ -46,5 +46,6 @@ STAGE GetStage(void);
 int GetTurn();
 void UniteFileName(const char* pFileName, const char* pFiletype);
 void SetClearBossStage(bool bClear);
+void SetEnableHaveKeyExac(bool bHave);
 
 #endif

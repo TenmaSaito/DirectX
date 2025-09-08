@@ -44,6 +44,7 @@ typedef enum
 	MODE_GAME,				// ゲーム画面
 	MODE_RESULT,			// リザルト画面
 	MODE_GAMEOVER,			// ゲームオーバー画面
+	MODE_GAMECLEAR,			// ゲームクリア画面
 	MODE_MAX
 }MODE;
 

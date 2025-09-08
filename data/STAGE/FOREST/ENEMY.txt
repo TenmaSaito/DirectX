@@ -1,3 +1,9 @@
+#========================================
+#
+# 敵の配置用テキストファイル(ENEMY.txt)
+# Author : TENMA SAITO
+#
+#========================================
 START_SCRIPT
 
 #========================================
@@ -15,6 +21,7 @@ START_SETENEMY
 
 POS = 290.0 510.0 0.0
 TYPE = 1
+SIZE = 50.0 50.0
 BULLET = 0
 TEX = 0
 MOVE = 5.0 5.0 0.0
@@ -30,6 +37,7 @@ START_SETENEMY
 
 POS = 990.0 510.0 0.0
 TYPE = 1
+SIZE = 50.0 50.0
 BULLET = 0
 TEX = 0
 MOVE = 5.0 5.0 0.0
@@ -45,6 +53,7 @@ START_SETENEMY
 
 POS = 1190.0 110.0 0.0
 TYPE = 1
+SIZE = 50.0 50.0
 BULLET = 0
 TEX = 0
 MOVE = 5.0 5.0 0.0
@@ -60,6 +69,7 @@ START_SETENEMY
 
 POS = 90.0 110.0 0.0
 TYPE = 1
+SIZE = 50.0 50.0
 BULLET = 0
 TEX = 0
 MOVE = 5.0 5.0 0.0
@@ -85,6 +95,7 @@ START_SETENEMY
 
 POS = 190.0 -90.0 0.0
 TYPE = 2
+SIZE = 100.0 100.0
 BULLET = 1
 TEX = 3
 MOVE = 0.0 5.0 0.0
@@ -100,6 +111,7 @@ START_SETENEMY
 
 POS = -110.0 110.0 0.0
 TYPE = 2
+SIZE = 100.0 100.0
 BULLET = 1
 TEX = 3
 MOVE = -5.0 0.0 0.0
@@ -115,6 +127,7 @@ START_SETENEMY
 
 POS = 1590.0 610.0 0.0
 TYPE = 2
+SIZE = 100.0 100.0
 BULLET = 1
 TEX = 3
 MOVE = 5.0 0.0 0.0
@@ -130,6 +143,7 @@ START_SETENEMY
 
 POS = 1090.0 710.0 0.0
 TYPE = 2
+SIZE = 100.0 100.0
 BULLET = 1
 TEX = 3
 MOVE = 0.0 -5.0 0.0

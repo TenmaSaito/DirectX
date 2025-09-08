@@ -79,6 +79,12 @@
     <Filter Include="ヘッダー ファイル\game\stage">
       <UniqueIdentifier>{2dc99a95-8613-4495-8a6d-1d922efc9019}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\gameclear">
+      <UniqueIdentifier>{8cffb497-5d7e-43a5-910b-0f0df0a6175d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gameclear">
+      <UniqueIdentifier>{9f5660b9-b911-4d81-94fa-c336f344d588}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp">
@@ -182,6 +188,15 @@
     </ClCompile>
     <ClCompile Include="item.cpp">
       <Filter>ソース ファイル\game\object</Filter>
+    </ClCompile>
+    <ClCompile Include="gameclear.cpp">
+      <Filter>ソース ファイル\gameclear</Filter>
+    </ClCompile>
+    <ClCompile Include="gameclearBg.cpp">
+      <Filter>ソース ファイル\gameclear</Filter>
+    </ClCompile>
+    <ClCompile Include="gameclearEffect.cpp">
+      <Filter>ソース ファイル\gameclear</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,6 +304,15 @@
     </ClInclude>
     <ClInclude Include="item.h">
       <Filter>ヘッダー ファイル\game\object</Filter>
+    </ClInclude>
+    <ClInclude Include="gameclear.h">
+      <Filter>ヘッダー ファイル\gameclear</Filter>
+    </ClInclude>
+    <ClInclude Include="gameclearBg.h">
+      <Filter>ヘッダー ファイル\gameclear</Filter>
+    </ClInclude>
+    <ClInclude Include="gameclearEffect.h">
+      <Filter>ヘッダー ファイル\gameclear</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

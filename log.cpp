@@ -8,7 +8,6 @@
 #include <time.h>
 
 // プロトタイプ宣言
-char* GetLocalTime(void);
 
 void InitLog(void)
 {

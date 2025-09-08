@@ -70,8 +70,11 @@ typedef enum
 typedef struct
 {
 	D3DXVECTOR3 pos;			// 敵の位置
-	D3DXVECTOR3 move;					// 敵の移動量
+	D3DXVECTOR3 move;			// 敵の移動量
 	float fLength;				// 敵の移動の角度
+	POLY_SIZE size;				// 敵の大きさ
+	float fLengthEnemy;			// 敵の対角線の長さ
+	float fAngleEnemy;			// 敵の対角線の角度
 	ENEMYTYPE type;				// 敵の種類
 	ENEMYBULLET bullet;			// 弾の種類
 	ENEMYTEX tex;				// 敵のテクスチャの種類
@@ -100,12 +103,13 @@ void LoadEnemy(char* pFileName, int nTurn);
 /// @brief 引数を空きのある敵構造体に代入し、代入された引数を基に敵を有効化します。
 /// @param pos 配置座標
 /// @param move 移動量
+/// @param size 敵の大きさ(x = 横幅: y = 縦幅)
 /// @param type 敵の種類
 /// @param bullet 発射する弾の種類
 /// @param tex 敵のテクスチャ
 /// @param nLife 敵の体力
 /// @return 無し
-void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife);
+void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife);
 
 /// @brief 敵構造体の先頭アドレスを取得します。
 /// @return 敵構造体の先頭アドレスのポインタ

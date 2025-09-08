@@ -79,9 +79,6 @@ void InitBlock(void)
 		AddFunctionLog("END : Texture Create");
 	}
 
-	// TODO : 
-
-
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_BLOCK,			// sizeofの後必ず * 頂点数 を書くこと！
 		D3DUSAGE_WRITEONLY,
@@ -371,8 +368,10 @@ int SetBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
 	if (type < BLOCKTYPE_WALL || type >= BLOCKTYPE_MAX)
 	{
 		if (SUCCEEDED(GetHandleWindow(&hWnd)))
-		{
+		{ // ブロックの種類が万が一規定外の値だった場合、処理を中断
+#ifdef  _DEBUG
 			MessageBox(hWnd, "ヤバイ", "え？", MB_ICONWARNING);
+#endif //  _DEBUG
 			return 0;
 		}
 	}
@@ -719,6 +718,7 @@ void CollisionPlayer(BLOCK* pBlock)
 				// TODO : 鍵を取った時の音を鳴らす！！！！やれ！！！
 
 				PlaySound(SOUND_LABEL_SE_OPEN);
+				pPlayer->bHaveKey = false;
 			}
 
 			break;

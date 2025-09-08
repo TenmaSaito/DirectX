@@ -9,6 +9,7 @@
 #include "score.h"
 #include "heart.h"
 #include "sound.h"
+#include "stage.h"
 
 // マクロ定義
 #define MAX_ITEM		(64)			// ブロックの最大数
@@ -370,6 +371,7 @@ void CollisionPlayer(ITEM* pItem)
 
 			pPlayer->bHaveKey = true;
 			pItem->bUse = false;
+			SetEnableHaveKeyExac(true);
 
 			PlaySound(SOUND_LABEL_SE_GETKEY);
 

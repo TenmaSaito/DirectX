@@ -601,10 +601,10 @@ void CollisionEnemy(BULLET *pBullet)
 		if (pEnemy->bUse == true)
 		{// “G‚ªŽg‚í‚ê‚Ä‚¢‚ê‚Î
 
-			if (pBullet->pos.x > pEnemy->pos.x - (ENEMY_SIZE * 0.5f) - (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.x < pEnemy->pos.x + (ENEMY_SIZE * 0.5f) + (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.y > pEnemy->pos.y - (ENEMY_SIZE * 0.5f) - (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.y < pEnemy->pos.y + (ENEMY_SIZE * 0.5f) + (BULLET_SIZE * 0.5f)
+			if (pBullet->pos.x > pEnemy->pos.x - (pEnemy->size.x * 0.5f) - (BULLET_SIZE * 0.5f)
+				&& pBullet->pos.x < pEnemy->pos.x + (pEnemy->size.x * 0.5f) + (BULLET_SIZE * 0.5f)
+				&& pBullet->pos.y > pEnemy->pos.y - (pEnemy->size.y * 0.5f) - (BULLET_SIZE * 0.5f)
+				&& pBullet->pos.y < pEnemy->pos.y + (pEnemy->size.y * 0.5f) + (BULLET_SIZE * 0.5f)
 				&& pBullet->shot != SHOTTYPE_LASER)
 			{
 				switch (pBullet->shot)

@@ -96,6 +96,9 @@ void InitEnemy(void)
 	{
 		pEnemy->pos = D3DXVECTOR3_NULL;
 		pEnemy->move = D3DXVECTOR3_NULL;
+		pEnemy->size = POLY_SIZE(ENEMY_SIZE, ENEMY_SIZE);
+		pEnemy->fLengthEnemy = sqrtf(powf(pEnemy->size.x, 2.0f) + powf(pEnemy->size.y, 2.0f)) * 0.5f;
+		pEnemy->fAngleEnemy = atan2f(pEnemy->size.x, pEnemy->size.y);
 		pEnemy->fLength = 0.0f;
 		pEnemy->type = ENEMYTYPE_FIX;
 		pEnemy->bullet = ENEMYBULLET_NONE;
@@ -120,12 +123,6 @@ void InitEnemy(void)
 		&g_pVtxBuffEnemy,
 		NULL);
 
-	// 対角線の長さを取得
-	g_fLengthEnemy = sqrtf(ENEMY_SIZE * ENEMY_SIZE + ENEMY_SIZE * ENEMY_SIZE) * 0.5f;
-
-	// 対角線の角度を算出
-	g_fAngleEnemy = atan2f(ENEMY_SIZE, ENEMY_SIZE);
-
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
@@ -136,20 +133,20 @@ void InitEnemy(void)
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++,pEnemy++)
 	{
 		// 頂点座標の設定(座標設定は必ず右回りで！！！)
-		pVtx[0].pos.x = pEnemy->pos.x + sinf(D3DX_PI + g_fAngleEnemy) * g_fLengthEnemy;
-		pVtx[0].pos.y = pEnemy->pos.y + cosf(D3DX_PI + g_fAngleEnemy) * g_fLengthEnemy;
+		pVtx[0].pos.x = pEnemy->pos.x + sinf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+		pVtx[0].pos.y = pEnemy->pos.y + cosf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 		pVtx[0].pos.z = 0.0f;
 
-		pVtx[1].pos.x = pEnemy->pos.x + sinf(D3DX_PI - g_fAngleEnemy) * g_fLengthEnemy;
-		pVtx[1].pos.y = pEnemy->pos.y + cosf(D3DX_PI - g_fAngleEnemy) * g_fLengthEnemy;
+		pVtx[1].pos.x = pEnemy->pos.x + sinf(D3DX_PI - pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+		pVtx[1].pos.y = pEnemy->pos.y + cosf(D3DX_PI - pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 		pVtx[1].pos.z = 0.0f;
 
-		pVtx[2].pos.x = pEnemy->pos.x + sinf(-g_fAngleEnemy) * g_fLengthEnemy;
-		pVtx[2].pos.y = pEnemy->pos.y + cosf(-g_fAngleEnemy) * g_fLengthEnemy;
+		pVtx[2].pos.x = pEnemy->pos.x + sinf(-pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+		pVtx[2].pos.y = pEnemy->pos.y + cosf(-pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 		pVtx[2].pos.z = 0.0f;
 
-		pVtx[3].pos.x = pEnemy->pos.x + sinf(g_fAngleEnemy) * g_fLengthEnemy;
-		pVtx[3].pos.y = pEnemy->pos.y + cosf(g_fAngleEnemy) * g_fLengthEnemy;
+		pVtx[3].pos.x = pEnemy->pos.x + sinf(pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+		pVtx[3].pos.y = pEnemy->pos.y + cosf(pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 		pVtx[3].pos.z = 0.0f;
 
 		// rhwの設定
@@ -874,20 +871,20 @@ void UpdateEnemy(void)
 			}
 
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
-			pVtx[0].pos.x = (pEnemy->pos.x + pos.x) + sinf(D3DX_PI + g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[0].pos.y = (pEnemy->pos.y + pos.y) + cosf(D3DX_PI + g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[0].pos.x = (pEnemy->pos.x + pos.x) + sinf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[0].pos.y = (pEnemy->pos.y + pos.y) + cosf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[0].pos.z = 0.0f;
 
-			pVtx[1].pos.x = (pEnemy->pos.x + pos.x) + sinf(D3DX_PI - g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[1].pos.y = (pEnemy->pos.y + pos.y) + cosf(D3DX_PI - g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[1].pos.x = (pEnemy->pos.x + pos.x) + sinf(D3DX_PI - pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[1].pos.y = (pEnemy->pos.y + pos.y) + cosf(D3DX_PI - pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[1].pos.z = 0.0f;
 
-			pVtx[2].pos.x = (pEnemy->pos.x + pos.x) + sinf(-g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[2].pos.y = (pEnemy->pos.y + pos.y) + cosf(-g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[2].pos.x = (pEnemy->pos.x + pos.x) + sinf(-pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[2].pos.y = (pEnemy->pos.y + pos.y) + cosf(-pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[2].pos.z = 0.0f;
 
-			pVtx[3].pos.x = (pEnemy->pos.x + pos.x) + sinf(g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[3].pos.y = (pEnemy->pos.y + pos.y) + cosf(g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[3].pos.x = (pEnemy->pos.x + pos.x) + sinf(pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[3].pos.y = (pEnemy->pos.y + pos.y) + cosf(pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[3].pos.z = 0.0f;
 
 			g_pVtxBuffEnemy->Unlock();
@@ -957,71 +954,79 @@ void LoadEnemy(char* pFileName, int nTurn)
 		pFile = fopen(pFileName, "r");
 		if (pFile != NULL)
 		{// ファイルが開けた場合
-			(void)fscanf(pFile, "%s", &aStr[0]);
-			if (strcmp(&aStr[0], "START_SCRIPT") == 0)
-			{// SCRIPTの始まり
-				while (1)
-				{
-					(void)fscanf(pFile, "%s", &aStr[0]);
-					if (strcmp(&aStr[0], &aStartTurn[0]) == 0)
-					{// ターンの始まり
-						while (1)
-						{
-							(void)fscanf(pFile, "%s", &aStr[0]);
-							if (strcmp(&aStr[0], "START_SETENEMY") == 0)
-							{// 敵の配置の開始
-								while (1)
-								{
-									(void)fscanf(pFile, "%s", &aStr[0]);
-									if (strcmp(&aStr[0], "POS") == 0)
-									{// 位置を設定
-										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-										(void)fscanf(pFile, "%f %f %f", &lEnemy.pos.x, &lEnemy.pos.y, &lEnemy.pos.z);
-									}
-									else if (strcmp(&aStr[0], "TYPE") == 0)
-									{// タイプを設定
-										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-										(void)fscanf(pFile, "%d", &lEnemy.type);
-									}
-									else if (strcmp(&aStr[0], "BULLET") == 0)
-									{// タイプを設定
-										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-										(void)fscanf(pFile, "%d", &lEnemy.bullet);
-									}
-									else if (strcmp(&aStr[0], "TEX") == 0)
-									{// テクスチャを設定
-										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-										(void)fscanf(pFile, "%d", &lEnemy.tex);
-									}
-									else if (strcmp(&aStr[0], "MOVE") == 0)
-									{// 移動量を設定
-										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-										(void)fscanf(pFile, "%f %f %f", &lEnemy.move.x, &lEnemy.move.y, &lEnemy.move.z);
-									}
-									else if (strcmp(&aStr[0], "LIFE") == 0)
-									{// 移動量を設定
-										fread(&aTrash[0], 1, sizeof(aTrash), pFile);
-										(void)fscanf(pFile, "%d", &lEnemy.nLife);
-									}
+			while (1)
+			{
+				(void)fscanf(pFile, "%s", &aStr[0]);
+				if (strcmp(&aStr[0], "START_SCRIPT") == 0)
+				{// SCRIPTの始まり
+					while (1)
+					{
+						(void)fscanf(pFile, "%s", &aStr[0]);
+						if (strcmp(&aStr[0], &aStartTurn[0]) == 0)
+						{// ターンの始まり
+							while (1)
+							{
+								(void)fscanf(pFile, "%s", &aStr[0]);
+								if (strcmp(&aStr[0], "START_SETENEMY") == 0)
+								{// 敵の配置の開始
+									while (1)
+									{
+										(void)fscanf(pFile, "%s", &aStr[0]);
+										if (strcmp(&aStr[0], "POS") == 0)
+										{// 位置を設定
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%f %f %f", &lEnemy.pos.x, &lEnemy.pos.y, &lEnemy.pos.z);
+										}
+										else if (strcmp(&aStr[0], "TYPE") == 0)
+										{// タイプを設定
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%d", &lEnemy.type);
+										}
+										else if (strcmp(&aStr[0], "SIZE") == 0)
+										{
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%f %f", &lEnemy.size.x, &lEnemy.size.y);
+										}
+										else if (strcmp(&aStr[0], "BULLET") == 0)
+										{// タイプを設定
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%d", &lEnemy.bullet);
+										}
+										else if (strcmp(&aStr[0], "TEX") == 0)
+										{// テクスチャを設定
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%d", &lEnemy.tex);
+										}
+										else if (strcmp(&aStr[0], "MOVE") == 0)
+										{// 移動量を設定
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%f %f %f", &lEnemy.move.x, &lEnemy.move.y, &lEnemy.move.z);
+										}
+										else if (strcmp(&aStr[0], "LIFE") == 0)
+										{// 移動量を設定
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%d", &lEnemy.nLife);
+										}
 
-									if (strcmp(&aStr[0], "END_SETENEMY") == 0)
-									{// 敵を配置して配置の終了
-										SetEnemy(lEnemy.pos, lEnemy.move, lEnemy.type, lEnemy.bullet, lEnemy.tex, lEnemy.nLife);
-										break;
+										if (strcmp(&aStr[0], "END_SETENEMY") == 0)
+										{// 敵を配置して配置の終了
+											SetEnemy(lEnemy.pos, lEnemy.move, lEnemy.size, lEnemy.type, lEnemy.bullet, lEnemy.tex, lEnemy.nLife);
+											break;
+										}
 									}
 								}
-							}
 
-							if (strcmp(&aStr[0], &aEndTurn[0]) == 0)
-							{// ターン1の設定を終了
-								break;
+								if (strcmp(&aStr[0], &aEndTurn[0]) == 0)
+								{// ターン1の設定を終了
+									break;
+								}
 							}
 						}
-					}
 
-					if (strcmp(&aStr[0], "END_SCRIPT") == 0)
-					{// スクリプトの読み込みを終了
-						break;
+						if (strcmp(&aStr[0], "END_SCRIPT") == 0)
+						{// スクリプトの読み込みを終了
+							return;
+						}
 					}
 				}
 			}
@@ -1040,7 +1045,7 @@ void LoadEnemy(char* pFileName, int nTurn)
 //================================================================================================================
 // 敵の設定処理
 //================================================================================================================
-void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife)
+void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife)
 {
 	VERTEX_2D* pVtx;
 	ENEMY *pEnemy = &g_aEnemy[0];
@@ -1054,23 +1059,26 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, ENEMYTYPE type, ENEMYBULLET bul
 		if (pEnemy->bUse == false)
 		{
 			pEnemy->pos = pos;
+			pEnemy->size = size;
+			pEnemy->fLengthEnemy = sqrtf(powf(pEnemy->size.x, 2.0f) + powf(pEnemy->size.y, 2.0f)) * 0.5f;
+			pEnemy->fAngleEnemy = atan2f(pEnemy->size.x, pEnemy->size.y);
 			pEnemy->state = ENEMYSTATE_APPEAR;
 			
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
-			pVtx[0].pos.y = (pEnemy->pos.y + Camerapos.x) + cosf(D3DX_PI + g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[0].pos.x = (pEnemy->pos.x + Camerapos.y) + sinf(D3DX_PI + g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[0].pos.y = (pEnemy->pos.y + Camerapos.x) + cosf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[0].pos.x = (pEnemy->pos.x + Camerapos.y) + sinf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[0].pos.z = 0.0f;
 	
-			pVtx[1].pos.x = (pEnemy->pos.y + Camerapos.x) + sinf(D3DX_PI - g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[1].pos.y = (pEnemy->pos.x + Camerapos.y) + cosf(D3DX_PI - g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[1].pos.x = (pEnemy->pos.y + Camerapos.x) + sinf(D3DX_PI - pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[1].pos.y = (pEnemy->pos.x + Camerapos.y) + cosf(D3DX_PI - pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[1].pos.z = 0.0f;
 	
-			pVtx[2].pos.x = (pEnemy->pos.y + Camerapos.x) + sinf(-g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[2].pos.y = (pEnemy->pos.x + Camerapos.y) + cosf(-g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[2].pos.x = (pEnemy->pos.y + Camerapos.x) + sinf(-pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[2].pos.y = (pEnemy->pos.x + Camerapos.y) + cosf(-pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[2].pos.z = 0.0f;
 	
-			pVtx[3].pos.x = (pEnemy->pos.y + Camerapos.x) + sinf(g_fAngleEnemy) * g_fLengthEnemy;
-			pVtx[3].pos.y = (pEnemy->pos.x + Camerapos.y) + cosf(g_fAngleEnemy) * g_fLengthEnemy;
+			pVtx[3].pos.x = (pEnemy->pos.y + Camerapos.x) + sinf(pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
+			pVtx[3].pos.y = (pEnemy->pos.x + Camerapos.y) + cosf(pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
 			pVtx[3].pos.z = 0.0f;
 	
 			// 頂点カラーの設定
@@ -1235,10 +1243,10 @@ void CollisionPlayer(ENEMY *pEnemy)
 {
 	PLAYER* pPlayer = GetPlayer();			// プレイヤーの情報のポインタ
 
-	if (pEnemy->pos.x > pPlayer->posPlayer.x - (PLAYER_SIZE * 0.5f) - (ENEMY_SIZE * 0.5f)
-		&& pEnemy->pos.x < pPlayer->posPlayer.x + (PLAYER_SIZE * 0.5f) + (ENEMY_SIZE * 0.5f)
-		&& pEnemy->pos.y > pPlayer->posPlayer.y - (PLAYER_SIZE * 0.5f) - (ENEMY_SIZE * 0.5f)
-		&& pEnemy->pos.y < pPlayer->posPlayer.y + (PLAYER_SIZE * 0.5f) + (ENEMY_SIZE * 0.5f)
+	if (pEnemy->pos.x > pPlayer->posPlayer.x - (PLAYER_SIZE * 0.5f) - (pEnemy->size.x * 0.5f)
+		&& pEnemy->pos.x < pPlayer->posPlayer.x + (PLAYER_SIZE * 0.5f) + (pEnemy->size.x * 0.5f)
+		&& pEnemy->pos.y > pPlayer->posPlayer.y - (PLAYER_SIZE * 0.5f) - (pEnemy->size.y * 0.5f)
+		&& pEnemy->pos.y < pPlayer->posPlayer.y + (PLAYER_SIZE * 0.5f) + (pEnemy->size.y * 0.5f)
 		&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_UNMOVE)
 		&& pEnemy->state != ENEMYSTATE_APPEAR)
 	{
@@ -1257,29 +1265,29 @@ void CollisionEnemy(ENEMY *pEnemy)
 	{
 		if (pEnemy1->bUse == true && pEnemy1 != pEnemy)
 		{
-			if (pEnemy1->pos.x >= pEnemy->pos.x - ENEMY_SIZE
-				&& pEnemy1->pos.x <= pEnemy->pos.x + ENEMY_SIZE
-				&& pEnemy1->pos.y >= pEnemy->pos.y - ENEMY_SIZE
-				&& pEnemy1->pos.y <= pEnemy->pos.y + ENEMY_SIZE)
+			if (pEnemy1->pos.x >= pEnemy->pos.x - pEnemy->size.x
+				&& pEnemy1->pos.x <= pEnemy->pos.x + pEnemy->size.x
+				&& pEnemy1->pos.y >= pEnemy->pos.y - pEnemy->size.y
+				&& pEnemy1->pos.y <= pEnemy->pos.y + pEnemy->size.y)
 			{
 				// 敵と対象の敵の角度で判定
 				float fAngle = atan2f(pEnemy->pos.x - pEnemy1->pos.x, pEnemy->pos.y - pEnemy1->pos.y);
 
 				if (fAngle > (D3DX_PI * -0.25f) && fAngle <= (D3DX_PI * 0.25f))
 				{
-					pEnemy1->pos.y = pEnemy->pos.y - ENEMY_SIZE;
+					pEnemy1->pos.y = pEnemy->pos.y - pEnemy->size.y;
 				}
 				else if (fAngle > (D3DX_PI * -0.75f) && fAngle <= (D3DX_PI * -0.25f))
 				{
-					pEnemy1->pos.x = pEnemy->pos.x + ENEMY_SIZE;
+					pEnemy1->pos.x = pEnemy->pos.x + pEnemy->size.x;
 				}
 			    else if (fAngle > (D3DX_PI * 0.75f) || fAngle <= (D3DX_PI * -0.75f))
 				{
-					pEnemy1->pos.y = pEnemy->pos.y + ENEMY_SIZE;
+					pEnemy1->pos.y = pEnemy->pos.y + pEnemy->size.y;
 				}
 				else if (fAngle > (D3DX_PI * 0.25f) && fAngle <= (D3DX_PI * 0.75f))
 				{
-					pEnemy1->pos.x = pEnemy->pos.x - ENEMY_SIZE;
+					pEnemy1->pos.x = pEnemy->pos.x - pEnemy->size.x;
 				}
 			}
 		}

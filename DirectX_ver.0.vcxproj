@@ -154,6 +154,9 @@
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fade_stage.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="gameclear.cpp" />
+    <ClCompile Include="gameclearBg.cpp" />
+    <ClCompile Include="gameclearEffect.cpp" />
     <ClCompile Include="gameover.cpp" />
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="heart.cpp" />
@@ -190,6 +193,9 @@
     <ClInclude Include="fade.h" />
     <ClInclude Include="fade_stage.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameclear.h" />
+    <ClInclude Include="gameclearBg.h" />
+    <ClInclude Include="gameclearEffect.h" />
     <ClInclude Include="gameover.h" />
     <ClInclude Include="gauge.h" />
     <ClInclude Include="heart.h" />
