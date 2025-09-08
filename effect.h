@@ -26,5 +26,6 @@ void DrawEffect(void);
 
 void SetEffect(D3DXVECTOR3 pos,D3DXVECTOR3 move,D3DXCOLOR col, float fRadius ,int nLife, bool bUseColRainbow);
 void SetParticle(D3DXVECTOR3 pos, D3DXCOLOR col, D3DXVECTOR3 move, float fRadius, int nLife, float fRandMin, float fRandMax, bool bParticleMove);
+void DestroyEffect(void);
 
 #endif // !_BULLET_H_

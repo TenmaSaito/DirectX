@@ -25,7 +25,7 @@ void InitGameclearEffect(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-							  "data\\TEXTURE\\CHARACTER\\GameclearEffect.png",
+							  "data\\TEXTURE\\CHARACTER\\player_gameclear.png",
 							  &g_pTextureGameclearEffect);
 
 	// 頂点バッファの生成

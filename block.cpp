@@ -25,26 +25,11 @@ void CollisionEnemy(BLOCK *Block);
 void CollisionBullet(BLOCK *pBlock);
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTextureBlock[BLOCKTYPE_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureBlock = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBlock = NULL;	// 頂点バッファのポインタ
 BLOCK g_aBlock[MAX_BLOCK];						// ブロック構造体
 
 float g_fAngle;
-
-const char* TEXTURE_ADDRESS[BLOCKTYPE_MAX]
-{
-	"data\\TEXTURE\\CHARACTER\\BLOCK_WALL.png",			// 壁のテクスチャ
-	"data\\TEXTURE\\CHARACTER\\BLOCK_POISON.png",		// 毒床
-	"data\\TEXTURE\\CHARACTER\\BLOCK_BATTERY.png",		// 砲台
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_A.png",		// 出口A
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_B.png",		// 出口B
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_C.png",		// 出口C
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_D.png",		// 出口D
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_E.png",		// 出口E
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_F.png",		// 出口F
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EXIT_G.png",		// 出口G
-	"data\\TEXTURE\\CHARACTER\\BLOCK_EX_EXIT_1.png",	// 鍵でアクトビラ
-};
 
 //================================================================================================================
 // ブロックの初期化処理
@@ -70,14 +55,10 @@ void InitBlock(void)
 	}
 
 	// テクスチャの読み込み
-	for (int nCntTex = 0; nCntTex < BLOCKTYPE_MAX; nCntTex++)
-	{
-		D3DXCreateTextureFromFile(pDevice,
-								TEXTURE_ADDRESS[nCntTex],
-								&g_apTextureBlock[nCntTex]);
 
-		AddFunctionLog("END : Texture Create");
-	}
+	D3DXCreateTextureFromFile(pDevice,
+							"data\\TEXTURE\\CHARACTER\\BLOCK.png",
+							&g_pTextureBlock);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_BLOCK,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -130,10 +111,10 @@ void InitBlock(void)
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		pVtx[0].tex = D3DXVECTOR2(0.0909f * pBlock->type, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(0.0909f * pBlock->type + 0.0909f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0909f * pBlock->type, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(0.0909f * pBlock->type + 0.0909f, 1.0f);
 
 		pVtx += 4;
 	}
@@ -150,14 +131,12 @@ void InitBlock(void)
 void UninitBlock(void)
 {
 	// テクスチャの破棄(必ず行うこと！！！)
-	for (int nCntBlock = 0; nCntBlock < BLOCKTYPE_MAX; nCntBlock++)
+	if (g_pTextureBlock != NULL)
 	{
-		if (g_apTextureBlock[nCntBlock] != NULL)
-		{
-			g_apTextureBlock[nCntBlock]->Release();
-			g_apTextureBlock[nCntBlock] = NULL;
-		}
+		g_pTextureBlock->Release();
+		g_pTextureBlock = NULL;
 	}
+	
 
 	// 頂点バッファの破棄(必ず行うこと！！！)
 	if (g_pVtxBuffBlock != NULL)
@@ -185,17 +164,7 @@ void UpdateBlock(void)
 		{
 			D3DXVECTOR3 pos = D3DXVECTOR3(0.0f,0.0f,0.0f);
 
-			if (pBlock->type == BLOCKTYPE_POISON)
-			{
-
-				SetParticle(pBlock->pos,
-					D3DXCOLOR(0.7f, 0.0f, 0.7f, 0.6f),
-					60,
-					D3DX_PI,
-					D3DX_PI,
-					30);
-			}
-			else if (pBlock->type == BLOCKTYPE_BATTERY)
+			if (pBlock->type == BLOCKTYPE_BATTERY)
 			{
 				pBlock->nCounter++;
 				if ((pBlock->nCounter % 12) == 0)
@@ -252,6 +221,10 @@ void UpdateBlock(void)
 			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
+			pVtx[0].tex = D3DXVECTOR2(0.1f * pBlock->type, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.1f * pBlock->type + 0.1f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.1f * pBlock->type, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.1f * pBlock->type + 0.1f, 1.0f);
 		}
 
 		pVtx += 4;				// 頂点データのポインタを4つ分進める
@@ -282,7 +255,7 @@ void DrawBlock(void)
 		if (pBlock->bUse == true)
 		{
 			// テクスチャの設定(使わないならNULLを入れる！！！！)
-			pDevice->SetTexture(0, g_apTextureBlock[g_aBlock[nCntBlock].type]);
+			pDevice->SetTexture(0, g_pTextureBlock);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
@@ -419,6 +392,11 @@ int SetBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
 			pVtx[3].pos.y = (pBlock->pos.y + Camerapos.y) + cosf(pBlock->fAngle) * pBlock->fLength;
 			pVtx[3].pos.z = 0.0f;
 
+			pVtx[0].tex = D3DXVECTOR2(0.0909f * pBlock->type, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.0909f * pBlock->type + 0.0909f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.0909f * pBlock->type, 0.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.0909f * pBlock->type + 0.0909f, 0.0f);
+
 			// 頂点バッファをアンロックする
 			g_pVtxBuffBlock->Unlock();
 
@@ -512,9 +490,30 @@ void CollisionPlayer(BLOCK* pBlock)
 
 			break;
 
-		case BLOCKTYPE_POISON:
+		case BLOCKTYPE_BATTERY:
+			// プレイヤーとブロックの角度で判定
+			g_fAngle = atan2f(pBlock->pos.x - pPlayer->posPlayer.x, pBlock->pos.y - pPlayer->posPlayer.y);
 
-			HitPlayer(1);
+			if (g_fAngle > (D3DX_PI * -0.25f) && g_fAngle <= (D3DX_PI * 0.25f))
+			{
+				pPlayer->posPlayer.y = pBlock->pos.y - BLOCK_HEIGHT - (PLAYER_SIZE * 0.5f);
+				pPlayer->movePlayer.y = 0.0f;
+			}
+			else if (g_fAngle > (D3DX_PI * -0.75f) && g_fAngle <= (D3DX_PI * -0.25f))
+			{
+				pPlayer->posPlayer.x = pBlock->pos.x + BLOCK_WIDTH + (PLAYER_SIZE * 0.25f);
+				pPlayer->movePlayer.x = 0.0f;
+			}
+			else if (g_fAngle > (D3DX_PI * 0.75f) || g_fAngle <= (D3DX_PI * -0.75f))
+			{
+				pPlayer->posPlayer.y = pBlock->pos.y + BLOCK_HEIGHT + (PLAYER_SIZE * 0.5f);
+				pPlayer->movePlayer.y = 0.0f;
+			}
+			else if (g_fAngle > (D3DX_PI * 0.25f) && g_fAngle <= (D3DX_PI * 0.75f))
+			{
+				pPlayer->posPlayer.x = pBlock->pos.x - BLOCK_WIDTH - (PLAYER_SIZE * 0.25f);
+				pPlayer->movePlayer.x = 0.0f;
+			}
 
 			break;
 

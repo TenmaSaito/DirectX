@@ -10,7 +10,7 @@
 #include "main.h"
 
 // マクロ定義
-#define MAX_BULLET		(4096)		// 弾の最大数
+#define MAX_BULLET		(512)		// 弾の最大数
 #define BULLET_SPD		(-50.0f)	// 弾の速度
 #define BULLET_SIZE		(30.0f)		// 弾のサイズ
 

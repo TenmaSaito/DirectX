@@ -20,23 +20,13 @@ typedef struct
 }STAGE_BG;
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTextureBG[STAGE_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureBG = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBG = NULL;					// 頂点バッファのポインタ
 D3DXVECTOR3 g_posBg;											// 背景の現在位置
 STAGE_BG g_aStageBg[STAGE_MAX];									// 各ステージ
 STAGE g_stageBgExac;
 float g_fLengthBg;												// 背景の対角線の長さ
 float g_fAngleBg;												// 背景の対角線の角度
-
-const char* TEXTURE_FILE[STAGE_MAX]
-{
-	"data\\TEXTURE\\BG\\BG_GRASS.jpg",
-	"data\\TEXTURE\\BG\\BG_DESERT.jpg",
-	"data\\TEXTURE\\BG\\BG_ICE.jpg",
-	"data\\TEXTURE\\BG\\BG_FOREST.jpg",
-	"data\\TEXTURE\\BG\\BG_VOLCANO.jpg",
-	"data\\TEXTURE\\BG\\BG_SEA.jpg",
-};
 
 //================================================================================================================
 // 背景の初期化処理
@@ -46,6 +36,7 @@ void InitBG(void)
 	AddFunctionLog("START : Background Init");
 
 	LPDIRECT3DDEVICE9 pDevice;			// デバイスのポインタ
+	HWND hWnd = NULL;
 
 	AddFunctionLog("START : DirectXDevice GetPointer");
 
@@ -58,12 +49,12 @@ void InitBG(void)
 	{
 		g_aStageBg[n].stage = (STAGE)n;
 		g_aStageBg[n].bUse = false;
-
-		// テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			TEXTURE_FILE[n],
-			&g_apTextureBG[n]);
 	}
+
+	// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\BG\\BG.jpg",
+		&g_pTextureBG);
 
 	AddFunctionLog("END : Texture Create");
 
@@ -115,11 +106,24 @@ void InitBG(void)
 		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		if (nCntBg < STAGE_GRASS || nCntBg >= STAGE_MAX)
+		{
+			if (SUCCEEDED(GetHandleWindow(&hWnd)))
+			{ // ステージの種類が万が一範囲外だった場合、処理を中断
+#ifdef  _DEBUG
+				MessageBox(hWnd, "ヤバイ", "え？", MB_ICONWARNING);
+#endif
+				return;
+			}
+		}
+		else
+		{
+			// テクスチャ座標の設定
+			pVtx[0].tex = D3DXVECTOR2(0.125f * nCntBg, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.125f * nCntBg + 0.125f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.125f * nCntBg, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.125f * nCntBg + 0.125f, 1.0f);
+		}
 
 		pVtx += 4;
 	}
@@ -142,10 +146,10 @@ void UninitBG(void)
 	// テクスチャの破棄(必ず行うこと！！！)
 	for (int nCntBg = 0; nCntBg < STAGE_MAX; nCntBg++)
 	{
-		if (g_apTextureBG[nCntBg] != NULL)
+		if (g_pTextureBG != NULL)
 		{
-			g_apTextureBG[nCntBg]->Release();
-			g_apTextureBG[nCntBg] = NULL;
+			g_pTextureBG->Release();
+			g_pTextureBG = NULL;
 		}
 	}
 
@@ -165,7 +169,6 @@ void UninitBG(void)
 void UpdateBG(void)
 {
 	//後で書く
-	
 }
 
 //================================================================================================================
@@ -189,7 +192,7 @@ void DrawBG(void)
 		if (g_aStageBg[nCnt].bUse == true)
 		{
 			// テクスチャの設定
-			pDevice->SetTexture(0, g_apTextureBG[nCnt]);
+			pDevice->SetTexture(0, g_pTextureBG);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類

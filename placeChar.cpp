@@ -20,34 +20,10 @@ typedef struct
 	bool bUse;									// 使われているか
 }FADETEX;
 
-LPDIRECT3DTEXTURE9		g_apTexturePlaceChar[CHARTEX_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTexturePlaceChar = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlaceChar = NULL;				// 頂点バッファのポインタ
 FADETEX g_aFadeTex[MAX_FADETEX];								// 構造体の宣言
 int g_nCounterPlaceChar;										// 汎用カウンター
-
-const char* g_CHARTEX_FILE[CHARTEX_MAX]
-{
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\FULLCHARGE.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\BARRIAR.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_START.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_START_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_MOVE.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_MOVE_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_SHOT.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_SHOT_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_CHARGE.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_CHARGE_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_SP.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_SP_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_BARRIAR.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_BARRIAR_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_ENEMY.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_ENEMY_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_ITEM.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_ITEM_BRIEF.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL_COMPLETE.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\SUCCESS.png"
-};
 
 //================================================================================================================
 // 自然消滅テクスチャの初期化
@@ -57,14 +33,11 @@ void InitPlaceChar(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();			// デバイスのポインタ,デバイスの取得
 	int nCntPlaceChar;
 
-	for (nCntPlaceChar = 0; nCntPlaceChar < CHARTEX_MAX; nCntPlaceChar++)
-	{
-		// テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			g_CHARTEX_FILE[nCntPlaceChar],
-			&g_apTexturePlaceChar[nCntPlaceChar]);
-	}
-
+	// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\CHARACTER\\CHARTEX\\CHARTEX.png",
+		&g_pTexturePlaceChar);
+	
 	FADETEX *pFadeTex = &g_aFadeTex[0];		// 構造体の先頭アドレスを代入
 
 	// 自然消滅テクスチャの情報の初期化
@@ -128,10 +101,10 @@ void InitPlaceChar(void)
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
 
 		pVtx += 4;				// 頂点データのポインタを4つ分進める
 	}
@@ -145,14 +118,12 @@ void InitPlaceChar(void)
 void UninitPlaceChar(void)
 {
 	// テクスチャの破棄(必ず行うこと！！！)
-	for (int nCntPlaceChar = 0; nCntPlaceChar < CHARTEX_MAX; nCntPlaceChar++)
+	if (g_pTexturePlaceChar != NULL)
 	{
-		if (g_apTexturePlaceChar[nCntPlaceChar] != NULL)
-		{
-			g_apTexturePlaceChar[nCntPlaceChar]->Release();
-			g_apTexturePlaceChar[nCntPlaceChar] = NULL;
-		}
+		g_pTexturePlaceChar->Release();
+		g_pTexturePlaceChar = NULL;
 	}
+	
 
 	// 頂点バッファの破棄(必ず行うこと！！！)
 	if (g_pVtxBuffPlaceChar != NULL)
@@ -210,6 +181,12 @@ void UpdatePlaceChar(void)
 			pVtx[2].col = pFadeTex->col;
 			pVtx[3].col = pFadeTex->col;
 
+			// テクスチャ座標の設定
+			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
+			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
+			pVtx[2].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+			pVtx[3].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+
 			pFadeTex->nLife--;
 			if (pFadeTex->nLife <= 0)
 			{
@@ -245,7 +222,7 @@ void DrawPlaceChar(void)
 		if (pFadeTex->bUse == true)
 		{
 			// テクスチャの設定
-			pDevice->SetTexture(0, g_apTexturePlaceChar[pFadeTex->tex]);
+			pDevice->SetTexture(0, g_pTexturePlaceChar);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
@@ -298,6 +275,12 @@ void SetPlaceChar(D3DXVECTOR3 pos, POLY_SIZE size, CHARTEX tex, int nCounter)
 		pVtx[1].col = pFadeTex->col;
 		pVtx[2].col = pFadeTex->col;
 		pVtx[3].col = pFadeTex->col;
+
+		// テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
 
 		pFadeTex->bUse = true;
 

@@ -207,7 +207,7 @@ END_SETBLOCK
 START_SETBLOCK
 
 POS = 1590.0 360.0 0.0
-TYPE = 3
+TYPE = 2
 
 END_SETBLOCK
 #========================================
@@ -218,7 +218,7 @@ END_SETBLOCK
 START_SETBLOCK
 
 POS = 640.0 -90.0 0.0
-TYPE = 6
+TYPE = 5
 
 END_SETBLOCK
 #========================================
@@ -229,7 +229,7 @@ END_SETBLOCK
 START_SETBLOCK
 
 POS = -210.0 10.0 0.0
-TYPE = 2
+TYPE = 1
 
 END_SETBLOCK
 #========================================

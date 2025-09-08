@@ -18,7 +18,6 @@
 typedef enum
 {
 	BLOCKTYPE_WALL = 0,				// 障害物
-	BLOCKTYPE_POISON,				// ダメージゾーン
 	BLOCKTYPE_BATTERY,				// 砲台
 	BLOCKTYPE_EXIT_A,				// 出口A(草原と火山との道)
 	BLOCKTYPE_EXIT_B,				// 出口B(草原と森との道)

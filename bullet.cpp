@@ -641,7 +641,7 @@ void CollisionEnemy(BULLET *pBullet)
 
 				}
 
-				if (pBullet->shot != SHOTTYPE_LASERBULLET)
+				if (pBullet->shot != SHOTTYPE_LASERBULLET && pBullet->shot != SHOTTYPE_BOMBBULLET)
 				pBullet->bUse = false;
 			}
 			

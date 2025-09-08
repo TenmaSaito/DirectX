@@ -8,7 +8,7 @@
 #include "player.h"
 
 // マクロ定義
-#define MAX_EFFECT			(35500)	// エフェクトの最大数
+#define MAX_EFFECT			(12250)	// エフェクトの最大数
 #define ALPHA_DECREASE		(0.03f)	// Alpha値の減少係数
 
 // エフェクトの構造体の定義
@@ -354,4 +354,15 @@ void SetParticle(D3DXVECTOR3 pos, D3DXCOLOR col,D3DXVECTOR3 move, float fRadius,
 	}
 
 	g_pVtxBuffEffect->Unlock();
+}
+
+// エフェクトの全消去
+void DestroyEffect(void)
+{
+	for (int nCntEffect = 0; nCntEffect < MAX_EFFECT; nCntEffect++)
+	{
+		if (g_aEffect[nCntEffect].bUse != true)continue;
+
+		g_aEffect[nCntEffect].bUse = false;
+	}
 }

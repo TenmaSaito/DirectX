@@ -10,7 +10,7 @@
 #include "main.h"
 
 // マクロ定義
-#define MAX_ENEMY		(128)	// 敵の最大数
+#define MAX_ENEMY		(64)	// 敵の最大数
 #define ENEMY_SIZE		(100)	// 敵のサイズ
 
 // 敵の状態

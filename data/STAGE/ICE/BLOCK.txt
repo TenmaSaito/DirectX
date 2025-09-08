@@ -9,7 +9,7 @@ START_SCRIPT
 START_SETBLOCK
 
 POS = -310.0 360.0 0.0
-TYPE = 5
+TYPE = 4
 
 END_SETBLOCK
 #========================================
@@ -20,7 +20,7 @@ END_SETBLOCK
 START_SETBLOCK
 
 POS = 640.0 -90.0 0.0
-TYPE = 9
+TYPE = 8
 
 END_SETBLOCK
 #========================================
@@ -31,7 +31,7 @@ END_SETBLOCK
 START_SETBLOCK
 
 POS = 1590.0 -90.0 0.0
-TYPE = 2
+TYPE = 1
 
 END_SETBLOCK
 #========================================
@@ -42,7 +42,7 @@ END_SETBLOCK
 START_SETBLOCK
 
 POS = 1590.0 810.0 0.0
-TYPE = 2
+TYPE = 1
 
 END_SETBLOCK
 #========================================

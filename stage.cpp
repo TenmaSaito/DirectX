@@ -14,6 +14,7 @@
 #include "bullet.h"
 #include "fade_stage.h"
 #include "item.h"
+#include "effect.h"
 
 // マクロ定義
 #define MAX_TURN			(3)			// ステージの最大ターン数
@@ -31,8 +32,11 @@ typedef struct
 	bool bUse;			// 使われているか
 }STAGE_MAP;
 
+// プロトタイプ宣言
+void UniteFileName(const char* pFileName, const char* pFiletype);
+
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTextureStage[STAGE_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureStage = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffStage = NULL;				// 頂点バッファのポインタ
 D3DXVECTOR3 g_posStage;										// ステージの現在位置
 STAGE_MAP g_aStageMap[STAGE_MAX];							// 各ステージ
@@ -46,34 +50,25 @@ bool g_bAllClear;											// 完全クリアしたか
 int g_nCounterTimer;
 bool g_bHaveKeyExac = false;								// プレイヤーは鍵を持っていたか
 
-const char* g_apTEXTURE_STAGE[STAGE_MAX]
-{
-	"data\\TEXTURE\\STAGE\\STAGE_GRASS.png",
-	"data\\TEXTURE\\STAGE\\STAGE_DESERT.jpg",
-	"data\\TEXTURE\\STAGE\\STAGE_ICE.png",
-	"data\\TEXTURE\\STAGE\\STAGE_FOREST.jpg",
-	"data\\TEXTURE\\STAGE\\STAGE_VOLCANO.jpg",
-	"data\\TEXTURE\\STAGE\\STAGE_SEA.jpg",
-};
-
 //================================================================================================================
 // ステージの初期化処理
 //================================================================================================================
 void InitStage(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();			// デバイスのポインタ
+	HWND hWnd = NULL;
 
 	for (int nCntStage = 0; nCntStage < STAGE_MAX; nCntStage++)
 	{
 		g_aStageMap[nCntStage].stage = (STAGE)nCntStage;
 		g_aStageMap[nCntStage].nTurn = 0;
 		g_aStageMap[nCntStage].bUse = false;
-
-		// テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			g_apTEXTURE_STAGE[nCntStage],
-			&g_apTextureStage[nCntStage]);
 	}
+
+	// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\STAGE\\STAGE.jpg",
+		&g_pTextureStage);
 
 	g_nCounterTimer = 0;
 	g_bAllClear = false;
@@ -134,11 +129,24 @@ void InitStage(void)
 		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		if (nCntStage < STAGE_GRASS || nCntStage >= STAGE_MAX)
+		{
+			if (SUCCEEDED(GetHandleWindow(&hWnd)))
+			{ // ステージの種類が万が一範囲外だった場合、処理を中断
+#ifdef  _DEBUG
+				MessageBox(hWnd, "ヤバイ", "え？", MB_ICONWARNING);
+#endif
+				return;
+			}
+		}
+		else
+		{
+			// テクスチャ座標の設定
+			pVtx[0].tex = D3DXVECTOR2(0.125f * nCntStage, 0.0f);
+			pVtx[1].tex = D3DXVECTOR2(0.125f * nCntStage + 0.125f, 0.0f);
+			pVtx[2].tex = D3DXVECTOR2(0.125f * nCntStage, 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.125f * nCntStage + 0.125f, 1.0f);
+		}
 
 		pVtx += 4;
 	}
@@ -152,14 +160,12 @@ void InitStage(void)
 void UninitStage(void)
 {
 	// テクスチャの破棄(必ず行うこと！！！)
-	for (int nCntStage = 0; nCntStage < STAGE_MAX; nCntStage++)
+	if (g_pTextureStage != NULL)
 	{
-		if (g_apTextureStage[nCntStage] != NULL)
-		{
-			g_apTextureStage[nCntStage]->Release();
-			g_apTextureStage[nCntStage] = NULL;
-		}
+		g_pTextureStage->Release();
+		g_pTextureStage = NULL;
 	}
+	
 
 	// 頂点バッファの破棄(必ず行うこと！！！)
 	if (g_pVtxBuffStage != NULL)
@@ -274,7 +280,7 @@ void UpdateStage(void)
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffStage->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCnt = 0; nCnt < STAGE_MAX; nCnt++)
+	for (int nCntStage = 0; nCntStage < STAGE_MAX; nCntStage++)
 	{
 		// 頂点座標の設定(座標設定は必ず右回りで！！！)
 		pVtx[0].pos.x = (g_posStage.x + pos.x) + sinf(D3DX_PI + g_fAngleStage) * g_fLengthStage;
@@ -321,11 +327,11 @@ void DrawStage(void)
 		if (g_aStageMap[nCnt].bUse == true)
 		{
 			// テクスチャの設定
-			pDevice->SetTexture(0, g_apTextureStage[g_aStageMap[nCnt].stage]);
+			pDevice->SetTexture(0, g_pTextureStage);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
-				0,						// 描画する最初の頂点インデックス
+				4 * nCnt,						// 描画する最初の頂点インデックス
 				2);						// 描画するプリミティブの数
 		}
 	}
@@ -367,6 +373,9 @@ void SetStage(STAGE stage)
 
 		// 現在生きている弾丸をすべてKill
 		BombBullet();
+
+		// エフェクトを消去
+		DestroyEffect();
 
 		UniteFileName(FRAME_FILENAME, FRAME_LEFT_FILETYPE);
 		LoadBlock(&g_aFileName[0]);

@@ -61,7 +61,7 @@ float GetPlayerRot(PLAYER *pPlayer);
 void KeyboardPress(void);
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTexturePlayer[PLAYERTEX_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTexturePlayer = NULL;				// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayer = NULL;				// 頂点バッファのポインタ
 PLAYER g_player;
 D3DXVECTOR3 g_posPast;											// プレイヤーの初期位置				
@@ -69,14 +69,6 @@ XINPUT_VIBRATION* g_pJoyVibration;
 XINPUT_STATE* g_pState = GetJoypadState();
 PLAYERSTATE g_subState;
 int g_nCounterSubState;
-
-const char* TEXTURE_PLAYER[MAX_PLAYERTEX]
-{
-	"data\\TEXTURE\\CHARACTER\\player_left.png",
-	"data\\TEXTURE\\CHARACTER\\player_right.png",
-	"data\\TEXTURE\\CHARACTER\\player_up.png",
-	"data\\TEXTURE\\CHARACTER\\player_down.png"
-};
 
 //================================================================================================================
 // プレイヤーの初期化処理
@@ -133,20 +125,8 @@ void InitPlayer(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-							  "data\\TEXTURE\\CHARACTER\\player_left.png",
-							  &g_apTexturePlayer[PLAYERTEX_LEFT]);
-
-	D3DXCreateTextureFromFile(pDevice,
-							  "data\\TEXTURE\\CHARACTER\\player_right.png",
-							  &g_apTexturePlayer[PLAYERTEX_RIGHT]);
-
-	D3DXCreateTextureFromFile(pDevice,
-							"data\\TEXTURE\\CHARACTER\\player_up.png",
-							&g_apTexturePlayer[PLAYERTEX_UP]);
-
-	D3DXCreateTextureFromFile(pDevice,
-							"data\\TEXTURE\\CHARACTER\\player_down.png",
-							&g_apTexturePlayer[PLAYERTEX_DOWN]);
+							  "data\\TEXTURE\\CHARACTER\\player.png",
+							  &g_pTexturePlayer);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -206,14 +186,12 @@ void InitPlayer(void)
 void UninitPlayer(void)
 {
 	// テクスチャの破棄(必ず行うこと！！！)
-	for (int nCnt = 0; nCnt < PLAYERTEX_MAX; nCnt++)
+	if (g_pTexturePlayer != NULL)
 	{
-		if (g_apTexturePlayer[nCnt] != NULL)
-		{
-			g_apTexturePlayer[nCnt]->Release();
-			g_apTexturePlayer[nCnt] = NULL;
-		}
+		g_pTexturePlayer->Release();
+		g_pTexturePlayer = NULL;
 	}
+	
 
 	// 頂点バッファの破棄(必ず行うこと！！！)
 	if (g_pVtxBuffPlayer != NULL)
@@ -517,6 +495,11 @@ void UpdatePlayer(void)
 
 #endif
 
+	pVtx[0].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.0f));
+	pVtx[1].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.0f));
+	pVtx[2].tex = D3DXVECTOR2((0.25f * g_player.tex), (1.0f));
+	pVtx[3].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (1.0f));
+
 	// 頂点バッファをアンロックする
 	g_pVtxBuffPlayer->Unlock();
 
@@ -545,7 +528,7 @@ void DrawPlayer(void)
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	// テクスチャの設定
-	pDevice->SetTexture(0, g_apTexturePlayer[g_player.tex]);
+	pDevice->SetTexture(0, g_pTexturePlayer);
 
 	if (g_player.bDisp == true)
 	{// 表示するなら
