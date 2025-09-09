@@ -31,6 +31,9 @@
 #include "mage.h"
 #include "item.h"
 
+// プロトタイプ宣言
+int AddBonusScore(void);
+
 // グローバル変数
 bool g_bPause;										// ポーズ状態のON/OFF
 int g_nCounter;
@@ -232,7 +235,6 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
-				AddRanking(GetScore());
 				SetFade(MODE_GAMEOVER);
 			}
 		}
@@ -246,8 +248,7 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
-				AddScore(1000000);
-				AddScore(GetTimer() * 10000);
+				AddRanking(GetScore());
 				SetFade(MODE_RESULT);
 			}
 		}
@@ -284,7 +285,9 @@ void UpdateGame(void)
 			UpdateFadeStage();
 
 			g_nCounter++;
-			if (((g_nCounter % 60) == 0) && GetFadeStage() == FADESTAGE_NONE)
+			if (((g_nCounter % 60) == 0) 
+				&& GetFadeStage() == FADESTAGE_NONE
+				&& g_gameState == GAMESTATE_NORMAL)
 			{
 				AddTimer(-1);
 				if (GetTimer() <= 0)
@@ -473,7 +476,50 @@ void SetGameTutorial(bool bUse)
 	g_bUseTutorial = bUse;
 }
 
+//================================================================================================================
+// チュートリアルの実行状況の取得
+//================================================================================================================
 bool GetGameTutorial(void)
 {
 	return g_bUseTutorial;
+}
+
+//================================================================================================================
+// ボーナス得点の追加処理
+//================================================================================================================
+int AddBonusScore(void)
+{
+	int nScore = GetScore();
+	int nClearedStage = GetClearStageNum();
+	int nRemainingTime = GetTimer();
+	int nRemainingStock = GetStock();
+	int nKillcountEnemy = GetKillcountEnemy();
+	bool bHaveSecretItem = GetHaveSecret();
+
+	if (nClearedStage < STAGE_MAX)
+	{
+		nScore += (nClearedStage * 10000);		// 1ステージクリアすると+10000
+	}
+	else if (nClearedStage == STAGE_MAX)
+	{
+		nScore += 1000000;						// 全クリすると+100000
+	}
+
+	nScore += (nRemainingTime * 2000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
+
+	if (nKillcountEnemy > 0)
+	{
+		nScore += nKillcountEnemy * 1000;					// 敵を一体倒すごとに+1000
+	}
+	else
+	{
+		nScore += 1000000;									// 不殺の精神達成で+200000 (敵を一体も倒さずに時間切れした場合)
+	}
+
+	if (bHaveSecretItem == true)
+	{
+		nScore *= 1.5f;										// 隠しアイテムを持っていたら、スコアを1.5倍に
+	}
+
+	return nScore;
 }

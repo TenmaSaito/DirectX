@@ -1,18 +1,18 @@
 //================================================================================================================
 //
-// DirectXのゲームオーバー用ヘッダファイル [result.h]
+// DirectXのゲームオーバー時の背景用ヘッダファイル [gameoverBg.h]
 // Author : TENMA
 //
 //================================================================================================================
-#ifndef _GAMEOVER_H_
-#define _GAMEOVER_H_
+#ifndef _GAMEOVERBG_H_
+#define _GAMEOVERBG_H_
 
 #include "main.h"
 
 // プロトタイプ宣言
-void InitGameover(void);
-void UninitGameover(void);
-void UpdateGameover(void);
-void DrawGameover(void);
+void InitGameoverBg(void);
+void UninitGameoverBg(void);
+void UpdateGameoverBg(void);
+void DrawGameoverBg(void);
 
 #endif

@@ -1,0 +1,23 @@
+#=================================================
+#
+# 実績の解除状況(Achievements.txt)
+# Author : TENMA SAITO
+#
+#=================================================
+START_SCRIPT
+
+#=================================================
+# 実績の解除状況
+#=================================================
+CHECK_ACHIEVEMENTS
+
+SECRET_ITEM		=	FALSE	# シークレットアイテムを獲得する
+ALLSTAGE_CLEAR 	= 	FALSE	# 一度のゲームで全ステージクリアする
+PEACEFULL 		= 	FALSE	# 敵を誰一人倒さず終了する
+MAGINER 		= 	FALSE	# 一度のゲームで三種の魔法をすべて使う
+POWEROFJUSTICE	=	FALSE	# バリアを一回も使わずにクリアする
+PERFECT_CLEAR	=	FALSE	# 一度もダメージを食らうことなく、全ステージをクリアする
+
+END_CHECK
+
+END_SCRIPT

@@ -1,18 +1,18 @@
 //================================================================================================================
 //
-// DirectXのゲームオーバー用ヘッダファイル [result.h]
+// DirectXのゲームオーバー時エフェクトのヘッダファイル [gameoverEffect.h]
 // Author : TENMA
 //
 //================================================================================================================
-#ifndef _GAMEOVER_H_
-#define _GAMEOVER_H_
+#ifndef _GAMEOVEREFFECT_H_
+#define _GAMEOVEREFFECT_H_
 
 #include "main.h"
 
 // プロトタイプ宣言
-void InitGameover(void);
-void UninitGameover(void);
-void UpdateGameover(void);
-void DrawGameover(void);
+void InitGameoverEffect(void);
+void UninitGameoverEffect(void);
+void UpdateGameoverEffect(void);
+void DrawGameoverEffect(void);
 
 #endif

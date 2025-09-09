@@ -30,7 +30,7 @@ void InitScore(void)
 		&g_pTextureScore);
 
 	g_posScore = D3DXVECTOR3(980.0f, 62.5f, 0.0f);		// 位置を初期化
-	g_nScore = 0;								// 値を初期化
+	g_nScore = 0;										// 値を初期化
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * NUM_PLACE,			// NUM_PLACE分の頂点を作成

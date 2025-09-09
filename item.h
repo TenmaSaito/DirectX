@@ -20,9 +20,10 @@ typedef enum
 	ITEMTYPE_HEAL,				// プレイヤーの回復アイテム
 	ITEMTYPE_HOMING,			// チャージ技の変更アイテム(ホーミング)
 	ITEMTYPE_BOMB,				// チャージ技の変更アイテム(ボム)
-	ITEMTYPE_LASER,			// チャージ技の変更アイテム(レーザー)
+	ITEMTYPE_LASER,				// チャージ技の変更アイテム(レーザー)
 	ITEMTYPE_KEY,				// アイテム 鍵
-	ITEMTYPE_ULTIMATE_COIN,	// アイテム 凄いコイン
+	ITEMTYPE_ULTIMATE_COIN,		// アイテム 凄いコイン
+	ITEMTYPE_SECRET,			// 使用用途が分からないアイテム(スコア倍率アップ)
 	ITEMTYPE_MAX
 }ITEMTYPE;
 

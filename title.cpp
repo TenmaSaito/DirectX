@@ -78,7 +78,7 @@ void UpdateTitle(void)
 	}
 
 	g_dwCurrentTimeTitle = timeGetTime();
-	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 20000)
+	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 2000)
 	{
 		if (GetFade() == FADE_NONE)
 		{

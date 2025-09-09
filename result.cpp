@@ -61,7 +61,7 @@ void UpdateResult(void)
 	UpdateRanking();
 
 	// リザルト背景の更新処理
-	UpdateRanking();
+	UpdateResultBg();
 
 	// Enterでタイトル画面へ進む
 	if ((GetJoypadPress(JOYKEY_START) == true || GetKeyboardTrigger(DIK_RETURN)) == true && GetFade() == FADE_NONE)

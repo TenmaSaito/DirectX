@@ -18,5 +18,6 @@ void DrawRanking(void);
 void SetRanking(void);
 int GetRanking(void);
 void AddRanking(int nScore);
+void EnableScoreMove(bool bUseMove);
 
 #endif

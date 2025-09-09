@@ -16,17 +16,11 @@
     <Filter Include="ソース ファイル\game">
       <UniqueIdentifier>{739d8179-1a8d-498e-9c2d-a433ee2b3f73}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\result">
-      <UniqueIdentifier>{433dfdaf-ed11-4fbf-84a4-65b87f6fe049}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\title">
       <UniqueIdentifier>{434fb8bc-ff4e-43a5-86b9-047fd29f6c98}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\main">
       <UniqueIdentifier>{9f1d47ec-37e8-40e8-9788-76dbb11522d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\gameover">
-      <UniqueIdentifier>{7a1a7e68-fae3-4795-86e1-cfa051203f19}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\game\character">
       <UniqueIdentifier>{789f68a3-f3fe-43ef-87ff-8c866e62f78c}</UniqueIdentifier>
@@ -52,12 +46,6 @@
     <Filter Include="ヘッダー ファイル\title">
       <UniqueIdentifier>{7b704bb8-2920-4719-a2d0-da53b830895f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\result">
-      <UniqueIdentifier>{17ed0c99-f1ad-43f6-aa08-324888b7cd2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\gameover">
-      <UniqueIdentifier>{8e211f70-cb8e-4484-9d0e-2b7108ce4a70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\main">
       <UniqueIdentifier>{68ba1fde-9df1-432d-85bb-f48b2b34de2f}</UniqueIdentifier>
     </Filter>
@@ -79,11 +67,29 @@
     <Filter Include="ヘッダー ファイル\game\stage">
       <UniqueIdentifier>{2dc99a95-8613-4495-8a6d-1d922efc9019}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\gameclear">
+    <Filter Include="ソース ファイル\gameend">
+      <UniqueIdentifier>{c0435b56-44c5-412d-91df-1dd6f841d0ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\gameend\gameover">
+      <UniqueIdentifier>{7a1a7e68-fae3-4795-86e1-cfa051203f19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\gameend\gameclear">
       <UniqueIdentifier>{8cffb497-5d7e-43a5-910b-0f0df0a6175d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\gameclear">
+    <Filter Include="ソース ファイル\gameend\result">
+      <UniqueIdentifier>{433dfdaf-ed11-4fbf-84a4-65b87f6fe049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gameend">
+      <UniqueIdentifier>{04ea3c01-776c-462f-b3dd-8b8f611e9a1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gameend\gameover">
+      <UniqueIdentifier>{8e211f70-cb8e-4484-9d0e-2b7108ce4a70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gameend\gameclear">
       <UniqueIdentifier>{9f5660b9-b911-4d81-94fa-c336f344d588}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\gameend\result">
+      <UniqueIdentifier>{17ed0c99-f1ad-43f6-aa08-324888b7cd2a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -91,7 +97,7 @@
       <Filter>ソース ファイル\game</Filter>
     </ClCompile>
     <ClCompile Include="result.cpp">
-      <Filter>ソース ファイル\result</Filter>
+      <Filter>ソース ファイル\gameend\result</Filter>
     </ClCompile>
     <ClCompile Include="title.cpp">
       <Filter>ソース ファイル\title</Filter>
@@ -112,7 +118,7 @@
       <Filter>ソース ファイル\main</Filter>
     </ClCompile>
     <ClCompile Include="gameover.cpp">
-      <Filter>ソース ファイル\gameover</Filter>
+      <Filter>ソース ファイル\gameend\gameover</Filter>
     </ClCompile>
     <ClCompile Include="enemy.cpp">
       <Filter>ソース ファイル\game\character</Filter>
@@ -163,10 +169,10 @@
       <Filter>ソース ファイル\game\object</Filter>
     </ClCompile>
     <ClCompile Include="ranking.cpp">
-      <Filter>ソース ファイル\result</Filter>
+      <Filter>ソース ファイル\gameend\result</Filter>
     </ClCompile>
     <ClCompile Include="resultbg.cpp">
-      <Filter>ソース ファイル\result</Filter>
+      <Filter>ソース ファイル\gameend\result</Filter>
     </ClCompile>
     <ClCompile Include="placeChar.cpp">
       <Filter>ソース ファイル\game\object</Filter>
@@ -190,13 +196,22 @@
       <Filter>ソース ファイル\game\object</Filter>
     </ClCompile>
     <ClCompile Include="gameclear.cpp">
-      <Filter>ソース ファイル\gameclear</Filter>
+      <Filter>ソース ファイル\gameend\gameclear</Filter>
     </ClCompile>
     <ClCompile Include="gameclearBg.cpp">
-      <Filter>ソース ファイル\gameclear</Filter>
+      <Filter>ソース ファイル\gameend\gameclear</Filter>
     </ClCompile>
     <ClCompile Include="gameclearEffect.cpp">
-      <Filter>ソース ファイル\gameclear</Filter>
+      <Filter>ソース ファイル\gameend\gameclear</Filter>
+    </ClCompile>
+    <ClCompile Include="gameoverBg.cpp">
+      <Filter>ソース ファイル\gameend\gameover</Filter>
+    </ClCompile>
+    <ClCompile Include="gameoverEffect.cpp">
+      <Filter>ソース ファイル\gameend\gameover</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultScore.cpp">
+      <Filter>ソース ファイル\gameend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -246,7 +261,7 @@
       <Filter>ヘッダー ファイル\main</Filter>
     </ClInclude>
     <ClInclude Include="gameover.h">
-      <Filter>ヘッダー ファイル\gameover</Filter>
+      <Filter>ヘッダー ファイル\gameend\gameover</Filter>
     </ClInclude>
     <ClInclude Include="input.h">
       <Filter>ヘッダー ファイル\main</Filter>
@@ -261,7 +276,7 @@
       <Filter>ヘッダー ファイル\main</Filter>
     </ClInclude>
     <ClInclude Include="result.h">
-      <Filter>ヘッダー ファイル\result</Filter>
+      <Filter>ヘッダー ファイル\gameend\result</Filter>
     </ClInclude>
     <ClInclude Include="sound.h">
       <Filter>ヘッダー ファイル\main</Filter>
@@ -279,10 +294,10 @@
       <Filter>ヘッダー ファイル\game\object</Filter>
     </ClInclude>
     <ClInclude Include="ranking.h">
-      <Filter>ヘッダー ファイル\result</Filter>
+      <Filter>ヘッダー ファイル\gameend\result</Filter>
     </ClInclude>
     <ClInclude Include="resultbg.h">
-      <Filter>ヘッダー ファイル\result</Filter>
+      <Filter>ヘッダー ファイル\gameend\result</Filter>
     </ClInclude>
     <ClInclude Include="placeChar.h">
       <Filter>ヘッダー ファイル\game\object</Filter>
@@ -306,13 +321,22 @@
       <Filter>ヘッダー ファイル\game\object</Filter>
     </ClInclude>
     <ClInclude Include="gameclear.h">
-      <Filter>ヘッダー ファイル\gameclear</Filter>
+      <Filter>ヘッダー ファイル\gameend\gameclear</Filter>
     </ClInclude>
     <ClInclude Include="gameclearBg.h">
-      <Filter>ヘッダー ファイル\gameclear</Filter>
+      <Filter>ヘッダー ファイル\gameend\gameclear</Filter>
     </ClInclude>
     <ClInclude Include="gameclearEffect.h">
-      <Filter>ヘッダー ファイル\gameclear</Filter>
+      <Filter>ヘッダー ファイル\gameend\gameclear</Filter>
+    </ClInclude>
+    <ClInclude Include="gameoverBg.h">
+      <Filter>ヘッダー ファイル\gameend\gameover</Filter>
+    </ClInclude>
+    <ClInclude Include="gameoverEffect.h">
+      <Filter>ヘッダー ファイル\gameend\gameover</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultScore.h">
+      <Filter>ヘッダー ファイル\gameend</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

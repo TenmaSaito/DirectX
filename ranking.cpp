@@ -1,17 +1,21 @@
 //================================================================================================================
 //
-// DirectXのスコア処理 [ranking.cpp]
+// DirectXのランキング処理 [ranking.cpp]
 // Author : TENMA
 //
 //================================================================================================================
 #include "ranking.h"
 #include "score.h"
+#include "input.h"
 
 // マクロ定義
 #define NUM_PLACE			(8)				// スコアの桁数
 #define NUM_WIDTH			(25)			// 一桁の横幅
 #define NUM_HEIGHT			(35)			// 一桁の縦幅
 #define MAX_RANKING			(5)				// 表示する順位の数
+#define FIRSTMOVE_RANKING	(4)				// 最初に右から出て来る順位
+#define MOVE_SPD			D3DXVECTOR3(15.0f,0.0f,0.0f)								// 移動する速さ
+#define GOAL_POS			D3DXVECTOR3(700.0f, 120.0f * (nCntRanking + 1), 0.0f)		// 最終的なスコアの位置
 
 // ランキング構造体の定義
 typedef struct
@@ -22,10 +26,11 @@ typedef struct
 	int nRanking;							// 順位
 	bool bAdd;								// 追加されたスコアか
 	bool bUse;								// 使われているか
-}RANKING;
+	bool bMove;								// 画面内に入ってくるか
+}RANKING, *PRANKING;
 
 // プロトタイプ宣言
-void CheckRanking(RANKING *pRanking);
+void CheckRanking(PRANKING pRanking);
 int Compare(const void* a, const void* b);
 
 // グローバル変数
@@ -34,6 +39,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRanking = NULL;	// 頂点バッファのポインタ
 RANKING g_aRanking[MAX_RANKING];					// ランキング構造体の宣言
 int g_nScoreCurrent;								// 今回のスコア
 int g_nCounterRanking;								// 汎用カウンター
+int g_nCurrentMoveRanking;							// 現在動いている順位
 
 //================================================================================================================
 // ランキングの初期化処理
@@ -42,7 +48,7 @@ void InitRanking(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;			// デバイスのポインタ
 	int nCntRanking;
-	RANKING *pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[0];
 
 	// デバイスの取得
 	pDevice = GetDevice();
@@ -50,7 +56,7 @@ void InitRanking(void)
 	// 構造体の初期化
 	for (nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 	{
-		pRanking->pos = D3DXVECTOR3(700.0f, 120.0f * (nCntRanking + 1), 0.0f);
+		pRanking->pos = D3DXVECTOR3(1300.0f, 120.0f * (nCntRanking + 1), 0.0f);
 		pRanking->col = D3DXCOLOR_NULL;
 		pRanking->nScore = 0;
 		pRanking->nRanking = 1;
@@ -59,6 +65,7 @@ void InitRanking(void)
 	}
 
 	g_nCounterRanking = 0;
+	g_nCurrentMoveRanking = FIRSTMOVE_RANKING;
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
@@ -161,18 +168,38 @@ void UninitRanking(void)
 void UpdateRanking(void)
 {
 	// 後で書きたきゃ書け
-	RANKING* pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[0];
 	VERTEX_2D* pVtx;
+
+	if (GetKeyboardAny() == true
+		|| GetJoypadAny() == true)
+	{
+		for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
+		{
+			pRanking->pos = GOAL_POS;
+		}
+
+		g_nCurrentMoveRanking = -1;
+		pRanking = &g_aRanking[0];
+	}
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffRanking->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 	{
+		if (g_nCurrentMoveRanking == nCntRanking)
+		{
+			pRanking->pos -= MOVE_SPD;
+			if (pRanking->pos.x <= 700.0f)
+			{
+				pRanking->pos.x = 700.0f;
+				g_nCurrentMoveRanking--;
+			}
+		}
+
 		if (pRanking->bAdd == true)
 		{
-			// 頂点バッファをロックし、頂点情報へのポインタを取得
-			g_pVtxBuffRanking->Lock(0, 0, (void**)&pVtx, 0);
-
-			pVtx += 4 * NUM_PLACE * nCntRanking;
-
 			if ((g_nCounterRanking % 400) <= 200)
 			{
 				pRanking->col.a -= 0.005f;
@@ -189,20 +216,37 @@ void UpdateRanking(void)
 					pRanking->col.a = 1.0f;
 				}
 			}
-
-			for (int nCntCol = 0; nCntCol < NUM_PLACE; nCntCol++)
-			{
-				// 頂点カラーの設定
-				pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
-				pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
-				pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
-				pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
-
-				pVtx += 4;
-			}
-
-			g_pVtxBuffRanking->Unlock();
 		}
+
+		for (int nCntCol = 0; nCntCol < NUM_PLACE; nCntCol++)
+		{
+			// 頂点座標の設定(座標設定は必ず右回りで！！！)
+			pVtx[0].pos.x = pRanking->pos.x + ((NUM_WIDTH * 2) * nCntCol) - NUM_WIDTH;
+			pVtx[0].pos.y = pRanking->pos.y - NUM_HEIGHT;
+			pVtx[0].pos.z = 0.0f;
+
+			pVtx[1].pos.x = pRanking->pos.x + ((NUM_WIDTH * 2) * nCntCol) + NUM_WIDTH;
+			pVtx[1].pos.y = pRanking->pos.y - NUM_HEIGHT;
+			pVtx[1].pos.z = 0.0f;
+
+			pVtx[2].pos.x = pRanking->pos.x + ((NUM_WIDTH * 2) * nCntCol) - NUM_WIDTH;
+			pVtx[2].pos.y = pRanking->pos.y + NUM_HEIGHT;
+			pVtx[2].pos.z = 0.0f;
+
+			pVtx[3].pos.x = pRanking->pos.x + ((NUM_WIDTH * 2) * nCntCol) + NUM_WIDTH;
+			pVtx[3].pos.y = pRanking->pos.y + NUM_HEIGHT;
+			pVtx[3].pos.z = 0.0f;
+
+			// 頂点カラーの設定
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pRanking->col.a);
+
+			pVtx += 4;
+		}
+
+		g_pVtxBuffRanking->Unlock();
 	}
 
 	g_nCounterRanking++;
@@ -243,7 +287,7 @@ void DrawRanking(void)
 void SetRanking(void)
 {
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
-	RANKING* pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[0];
 	int aTexU[MAX_RANKING][NUM_PLACE];				//各桁の数字を収納
 	int nCntRanking;
 
@@ -290,7 +334,7 @@ int GetRanking(void)
 //================================================================================================================
 void AddRanking(int nScore)
 {
-	RANKING* pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[0];
 	FILE* pFile;
 	HWND hWnd = GetActiveWindow();
 	int aScore[MAX_RANKING + 1] = {};
@@ -340,14 +384,14 @@ void AddRanking(int nScore)
 //================================================================================================================
 // ランキングの読み込み処理
 //================================================================================================================
-void CheckRanking(RANKING* pRanking)
+void CheckRanking(PRANKING pRanking)
 {
 	FILE* pFile;
-	HWND hWnd = GetActiveWindow();
+	HWND hWnd = NULL;
 	int aBuffer[MAX_RANKING];		// スコアの一時保管場所
 
 	pFile = fopen("data\\RANKING\\Ranking.bin", "rb");
-	if (pFile == NULL) { MessageBox(hWnd, "ランキングデータの読み込みに失敗", "失敗", MB_ICONWARNING);  return; }
+	if (pFile == NULL) { if (SUCCEEDED(GetHandleWindow(&hWnd))) { MessageBox(hWnd, "ランキングデータの読み込みに失敗", "失敗", MB_ICONWARNING); }  return; }
 
 	fread(aBuffer, sizeof(int), MAX_RANKING, pFile);
 	fclose(pFile);

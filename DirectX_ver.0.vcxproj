@@ -158,6 +158,8 @@
     <ClCompile Include="gameclearBg.cpp" />
     <ClCompile Include="gameclearEffect.cpp" />
     <ClCompile Include="gameover.cpp" />
+    <ClCompile Include="gameoverBg.cpp" />
+    <ClCompile Include="gameoverEffect.cpp" />
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="heart.cpp" />
     <ClCompile Include="input.cpp" />
@@ -173,6 +175,7 @@
     <ClCompile Include="ranking.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="resultbg.cpp" />
+    <ClCompile Include="ResultScore.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="stage.cpp" />
@@ -197,6 +200,8 @@
     <ClInclude Include="gameclearBg.h" />
     <ClInclude Include="gameclearEffect.h" />
     <ClInclude Include="gameover.h" />
+    <ClInclude Include="gameoverBg.h" />
+    <ClInclude Include="gameoverEffect.h" />
     <ClInclude Include="gauge.h" />
     <ClInclude Include="heart.h" />
     <ClInclude Include="input.h" />
@@ -213,6 +218,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="resultbg.h" />
+    <ClInclude Include="ResultScore.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="stage.h" />

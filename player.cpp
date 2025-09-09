@@ -908,7 +908,7 @@ void KeyboardPress(void)
 			{
 				if (g_player.aCouldDo[PLAYERDO_CHARGE] == true)
 				{
-					SetPlaceChar(D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y - 50.0f, 0.0f), POLY_SIZE(200.0f, 50.0f), CHARTEX_FULLCHARGE, 120);
+					SetPlaceChar(D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y - 50.0f, 0.0f), POLY_SIZE(400.0f, 50.0f), CHARTEX_FULLCHARGE, 120);
 					g_player.bCharge = true;
 					PlaySound(SOUND_LABEL_SE_FULLCHARGE);
 				}

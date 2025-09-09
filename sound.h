@@ -13,7 +13,7 @@
 #define SOUND_BGMSTART		(SOUND_LABEL_BGM000)		// BGMの開始位置
 #define SOUND_SESTART		(SOUND_LABEL_SE_SHOT)		// SEの開始位置
 #define SOUND_MENUSTART		(SOUND_LABEL_SE_ENTER)		// MENU用SEの開始位置
-#define SOUND_STANDARD		(0.01f)						// 初期音量
+#define SOUND_STANDARD		(0.5f)						// 初期音量
 
 //*****************************************************************************
 // サウンド一覧 (sound.cppのsoundinfoにも追加する！)

@@ -383,6 +383,14 @@ void CollisionPlayer(ITEM* pItem)
 			pItem->bUse = false;
 
 			break;
+
+		case ITEMTYPE_SECRET:
+
+			SetEnableHaveSecret(true);
+
+			pItem->bUse = false;
+
+			break;
 		}
 	}
 }

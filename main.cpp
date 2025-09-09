@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 		0,										// 0
 		0,										// 0
 		hInstance,								// インスタンスハンドル
-		LoadIcon(NULL,IDI_APPLICATION),			// タスクバーのアイコン
+		LoadIcon(hInstance,(LPCSTR)IDI_ICON2),	// タスクバーのアイコン
 		LoadCursor(NULL,IDC_ARROW),				// マウスカーソル
 		(HBRUSH)(COLOR_WINDOW + 1),				// クライアント領域の背景色
 		NULL,									// メニューバー

@@ -17,5 +17,6 @@ void DrawStock(void);
 
 void SetStock(void);
 void AddStock(int nValue);
+int GetStock(void);
 
 #endif

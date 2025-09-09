@@ -63,6 +63,7 @@ float g_fLengthEnemy;										// ‘ÎŠpü‚Ì’·‚³
 float g_fAngleEnemy;										// ‘ÎŠpü‚ÌŠp“x
 bool g_bUseCollisonBlock;									// “–‚½‚è”»’è‚ð•\Ž¦‚·‚é‚©
 int g_nCounterEnemy;										// “G‚Ì‘”
+int g_nKillcountEnemy;										// “|‚³‚ê‚½“G‚Ì‘”
 
 const char* g_aEnemyTex[ENEMYTEX_MAX]
 {
@@ -114,6 +115,7 @@ void InitEnemy(void)
 
 	g_bUseCollisonBlock = false;						// •\Ž¦‚µ‚È‚¢
 	g_nCounterEnemy = 0;								// ‘”‚ðƒŠƒZƒbƒg
+	g_nKillcountEnemy = 0;								// ‘”‚ðƒŠƒZƒbƒg
 
 	// ’¸“_ƒoƒbƒtƒ@‚Ì¶¬
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_ENEMY,			// MAX_Enemy•ª‚Ì’¸“_‚ðì¬
@@ -1165,6 +1167,7 @@ void HitEnemy(int nCntEnemy, int nCntDamage)
 
 			g_aEnemy[nCntEnemy].state = ENEMYSTATE_DEATH;			// Ž€–Só‘Ô‚É
 			g_nCounterEnemy--;
+			g_nKillcountEnemy++;
 
 			switch (g_aEnemy[nCntEnemy].bullet)
 			{
@@ -1309,4 +1312,12 @@ void DestroyEnemy(void)
 			SetParticle(pEnemy->pos, D3DXCOLOR_NULL, 5, D3DX_PI, -D3DX_PI, 10);
 		}
 	}
+}
+
+//================================================================================================================
+// “G“¯Žm‚Ì“–‚½‚è”»’è(Enemy)
+//================================================================================================================
+int GetKillcountEnemy(void)
+{
+	return g_nKillcountEnemy;
 }
