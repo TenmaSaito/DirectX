@@ -1,20 +1,18 @@
 //================================================================================================================
 //
-// DirectXの移動スコアヘッダーファイル [scoreRank.h]
+// DirectXの太陽のヘッダファイル [sun.h]
 // Author : TENMA
 //
 //================================================================================================================
-#ifndef _SCORERANK_H_
-#define _SCORERANK_H_
+#ifndef SUN_H_
+#define SUN_H_
 
 #include "main.h"
 
 // プロトタイプ宣言
-void InitScoreRank(void);
-void UninitScoreRank(void);
-void UpdateScoreRank(void);
-void DrawScoreRank(void);
-
-void SetScoreRank(D3DXVECTOR3 pos,int nScore);
+void InitSun(void);
+void UninitSun(void);
+void UpdateSun(void);
+void DrawSun(void);
 
 #endif

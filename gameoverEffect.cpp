@@ -12,7 +12,7 @@
 #include "ranking.h"
 
 // マクロ定義
-#define CHARA_SIZE		(200.0f)		// キャラクターのサイズ
+#define CHARA_SIZE		(100.0f)		// キャラクターのサイズ
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureGameoverEffect = NULL;	// テクスチャへのポインタ
@@ -133,20 +133,20 @@ void UpdateGameoverEffect(void)
 	g_pVtxBuffGameoverEffect->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点座標の設定(座標設定は必ず右回りで！！！)
-	pVtx[0].pos.x = g_overEffectPos.x - 50.0f;
-	pVtx[0].pos.y = g_overEffectPos.y - 50.0f;
+	pVtx[0].pos.x = g_overEffectPos.x - CHARA_SIZE;
+	pVtx[0].pos.y = g_overEffectPos.y - CHARA_SIZE;
 	pVtx[0].pos.z = 0.0f;
 
-	pVtx[1].pos.x = g_overEffectPos.x + 50.0f;
-	pVtx[1].pos.y = g_overEffectPos.y - 50.0f;
+	pVtx[1].pos.x = g_overEffectPos.x + CHARA_SIZE;
+	pVtx[1].pos.y = g_overEffectPos.y - CHARA_SIZE;
 	pVtx[1].pos.z = 0.0f;
 
-	pVtx[2].pos.x = g_overEffectPos.x - 50.0f;
-	pVtx[2].pos.y = g_overEffectPos.y + 50.0f;
+	pVtx[2].pos.x = g_overEffectPos.x - CHARA_SIZE;
+	pVtx[2].pos.y = g_overEffectPos.y + CHARA_SIZE;
 	pVtx[2].pos.z = 0.0f;
 
-	pVtx[3].pos.x = g_overEffectPos.x + 50.0f;
-	pVtx[3].pos.y = g_overEffectPos.y + 50.0f;
+	pVtx[3].pos.x = g_overEffectPos.x + CHARA_SIZE;
+	pVtx[3].pos.y = g_overEffectPos.y + CHARA_SIZE;
 	pVtx[3].pos.z = 0.0f;
 
 	if (g_nCounterGameoverEffect % 30 == 0)

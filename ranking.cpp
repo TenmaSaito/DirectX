@@ -132,7 +132,7 @@ void InitRanking(void)
 	
 	g_pVtxBuffRanking->Unlock();
 	
-	if (GetModeExac() == MODE_GAME || GetModeExac() == MODE_GAMEOVER)
+	if (GetModeExac() == MODE_GAMECLEAR || GetModeExac() == MODE_GAMEOVER)
 	{
 		AddRanking(GetScore());
 	}

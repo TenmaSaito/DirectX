@@ -8,12 +8,15 @@
 #include "gameclear.h"
 #include "gameclearBg.h"
 #include "gameclearEffect.h"
+#include "sun.h"
 #include "input.h"
 #include "sound.h"
 #include "fade.h"
+#include "score.h"
+#include "ResultScore.h"
 
 // マクロ定義
-#define FADE_COUNT		(120)						// リザルト画面へ遷移するまでの時間
+#define FADE_COUNT		(6000)						// リザルト画面へ遷移するまでの時間
 
 // グローバル変数
 int g_nCounterGameclear = 0;						// リザルト画面へ遷移するまでのカウンター
@@ -25,6 +28,15 @@ void InitGameclear(void)
 {
 	g_nCounterGameclear = 0;
 
+	InitGameclearBg();
+	InitGameclearEffect();
+
+	InitResultScore();
+
+	InitSun();
+
+	SetResultScore(D3DXVECTOR3(1480.0f, 500.0f, 0.0f), GetScore());
+
 	// タイトル画面のBGM再生
 	PlaySound(SOUND_LABEL_BGM004);
 }
@@ -34,6 +46,11 @@ void InitGameclear(void)
 //================================================================================================================
 void UninitGameclear(void)
 {
+	UninitGameclearBg();
+	UninitGameclearEffect();
+	UninitSun();
+	UninitResultScore();
+
 	// BGMの停止
 	StopSound();
 }
@@ -43,6 +60,11 @@ void UninitGameclear(void)
 //================================================================================================================
 void UpdateGameclear(void)
 {
+	UpdateGameclearBg();
+	UpdateGameclearEffect();
+	UpdateSun();
+	UpdateResultScore();
+
 	// Enterでタイトル画面へ進む
 	if ((GetJoypadAny() == true
 		|| GetKeyboardTrigger(DIK_RETURN) == true
@@ -61,5 +83,8 @@ void UpdateGameclear(void)
 //================================================================================================================
 void DrawGameclear(void)
 {
-
+	DrawGameclearBg();
+	DrawGameclearEffect();
+	DrawResultScore();
+	DrawSun();
 }

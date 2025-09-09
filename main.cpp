@@ -528,6 +528,11 @@ void Update(void)
 		UpdateGameover();
 
 		break;
+
+	case MODE_GAMECLEAR:
+		UpdateGameclear();
+
+		break;
 	}
 
 	// フェードの更新処理

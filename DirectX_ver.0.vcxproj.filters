@@ -213,6 +213,12 @@
     <ClCompile Include="ResultScore.cpp">
       <Filter>ソース ファイル\gameend</Filter>
     </ClCompile>
+    <ClCompile Include="sun.cpp">
+      <Filter>ソース ファイル\gameend\gameclear</Filter>
+    </ClCompile>
+    <ClCompile Include="scoreRank.cpp">
+      <Filter>ソース ファイル\gameend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h">
@@ -336,6 +342,12 @@
       <Filter>ヘッダー ファイル\gameend\gameover</Filter>
     </ClInclude>
     <ClInclude Include="ResultScore.h">
+      <Filter>ヘッダー ファイル\gameend</Filter>
+    </ClInclude>
+    <ClInclude Include="sun.h">
+      <Filter>ヘッダー ファイル\gameend\gameclear</Filter>
+    </ClInclude>
+    <ClInclude Include="scoreRank.h">
       <Filter>ヘッダー ファイル\gameend</Filter>
     </ClInclude>
   </ItemGroup>

@@ -235,6 +235,7 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
+				AddRanking(AddBonusScore());
 				SetFade(MODE_GAMEOVER);
 			}
 		}
@@ -248,8 +249,8 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
-				AddRanking(GetScore());
-				SetFade(MODE_RESULT);
+				AddRanking(AddBonusScore());
+				SetFade(MODE_GAMECLEAR);
 			}
 		}
 		

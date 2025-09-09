@@ -7,11 +7,19 @@
 #include "main.h"
 #include "GameclearEffect.h"
 #include "input.h"
+#include "ResultScore.h"
+#include "fade.h"
+#include "ranking.h"
+
+// マクロ定義
+#define CHARA_SIZE		(100.0f)		// キャラクターのサイズ
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureGameclearEffect = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameclearEffect = NULL;	// 頂点バッファのポインタ
 D3DXVECTOR3 g_clearEffectPos = D3DXVECTOR3_NULL;			// クリア時エフェクトの位置
+int g_nCounterGameclearEffect;
+int g_nAnimationCounterClear;
 
 //================================================================================================================
 // ゲームオーバー画面の初期化処理
@@ -25,7 +33,7 @@ void InitGameclearEffect(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-							  "data\\TEXTURE\\CHARACTER\\player_gameclear.png",
+							  "data\\TEXTURE\\CHARACTER\\player_animation_gameclear.png",
 							  &g_pTextureGameclearEffect);
 
 	// 頂点バッファの生成
@@ -36,16 +44,31 @@ void InitGameclearEffect(void)
 								&g_pVtxBuffGameclearEffect,
 								NULL);
 
+	g_nCounterGameclearEffect = 0;
+	g_clearEffectPos = D3DXVECTOR3(1380.0f, 500.0f, 0.0f);
+	g_nAnimationCounterClear = 0;
+
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffGameclearEffect->Lock(0, 0, (void**)&pVtx, 0);
 
 	// 頂点座標の設定(座標設定は必ず右回りで！！！)
-	pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
+	pVtx[0].pos.x = g_clearEffectPos.x - CHARA_SIZE;
+	pVtx[0].pos.y = g_clearEffectPos.y - CHARA_SIZE;
+	pVtx[0].pos.z = 0.0f;
+
+	pVtx[1].pos.x = g_clearEffectPos.x + CHARA_SIZE;
+	pVtx[1].pos.y = g_clearEffectPos.y - CHARA_SIZE;
+	pVtx[1].pos.z = 0.0f;
+
+	pVtx[2].pos.x = g_clearEffectPos.x - CHARA_SIZE;
+	pVtx[2].pos.y = g_clearEffectPos.y + CHARA_SIZE;
+	pVtx[2].pos.z = 0.0f;
+
+	pVtx[3].pos.x = g_clearEffectPos.x + CHARA_SIZE;
+	pVtx[3].pos.y = g_clearEffectPos.y + CHARA_SIZE;
+	pVtx[3].pos.z = 0.0f;
 
 	// rhwの設定
 	pVtx[0].rhw = 1.0f;
@@ -61,9 +84,9 @@ void InitGameclearEffect(void)
 
 	// テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(0.5f, 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(0.5f, 1.0f);
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffGameclearEffect->Unlock();
@@ -94,7 +117,52 @@ void UninitGameclearEffect(void)
 //================================================================================================================
 void UpdateGameclearEffect(void)
 {
+	if (g_clearEffectPos.x >= -CHARA_SIZE && GetFade() == FADE_NONE)
+	{
+		g_clearEffectPos.x -= 5.0f;
+		if (g_clearEffectPos.x >= 300.0f)
+		{
+			MoveResuktScore(D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
+		}
+	}
 
+	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffGameclearEffect->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点座標の設定(座標設定は必ず右回りで！！！)
+	pVtx[0].pos.x = g_clearEffectPos.x - CHARA_SIZE;
+	pVtx[0].pos.y = g_clearEffectPos.y - CHARA_SIZE;
+	pVtx[0].pos.z = 0.0f;
+
+	pVtx[1].pos.x = g_clearEffectPos.x + CHARA_SIZE;
+	pVtx[1].pos.y = g_clearEffectPos.y - CHARA_SIZE;
+	pVtx[1].pos.z = 0.0f;
+
+	pVtx[2].pos.x = g_clearEffectPos.x - CHARA_SIZE;
+	pVtx[2].pos.y = g_clearEffectPos.y + CHARA_SIZE;
+	pVtx[2].pos.z = 0.0f;
+
+	pVtx[3].pos.x = g_clearEffectPos.x + CHARA_SIZE;
+	pVtx[3].pos.y = g_clearEffectPos.y + CHARA_SIZE;
+	pVtx[3].pos.z = 0.0f;
+
+	if (g_nCounterGameclearEffect % 30 == 0)
+	{
+		g_nAnimationCounterClear = g_nAnimationCounterClear ^ 1;
+
+		// テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.5f * g_nAnimationCounterClear, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(0.5f * g_nAnimationCounterClear + 0.5f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.5f * g_nAnimationCounterClear, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(0.5f * g_nAnimationCounterClear + 0.5f, 1.0f);
+	}
+
+	g_nCounterGameclearEffect++;
+
+	// 頂点バッファをアンロックする
+	g_pVtxBuffGameclearEffect->Unlock();
 }
 
 //================================================================================================================

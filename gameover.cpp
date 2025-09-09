@@ -22,15 +22,13 @@ int g_nCurrentScore = 0;
 //================================================================================================================
 void InitGameover(void)
 {
-	g_nCurrentScore = GetScore();
-
 	InitGameoverBg();
 
 	InitGameoverEffect();
 
 	InitResultScore();
 
-	SetResultScore(D3DXVECTOR3(1480.0f,500.0f,0.0f),g_nCurrentScore);
+	SetResultScore(D3DXVECTOR3(1480.0f,500.0f,0.0f), GetScore());
 
 	// É^ÉCÉgÉãâÊñ ÇÃBGMçƒê∂
 	PlaySound(SOUND_LABEL_BGM004);

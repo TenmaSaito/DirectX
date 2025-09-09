@@ -177,9 +177,11 @@
     <ClCompile Include="resultbg.cpp" />
     <ClCompile Include="ResultScore.cpp" />
     <ClCompile Include="score.cpp" />
+    <ClCompile Include="scoreRank.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="stock.cpp" />
+    <ClCompile Include="sun.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="titlebg.cpp" />
@@ -220,9 +222,11 @@
     <ClInclude Include="resultbg.h" />
     <ClInclude Include="ResultScore.h" />
     <ClInclude Include="score.h" />
+    <ClInclude Include="scoreRank.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="stage.h" />
     <ClInclude Include="stock.h" />
+    <ClInclude Include="sun.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="titlebg.h" />
