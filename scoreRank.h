@@ -4,19 +4,18 @@
 // Author : TENMA
 //
 //================================================================================================================
-#ifndef _RESULTSCORE_H_
-#define _RESULTSCORE_H_
+#ifndef _SCORERANK_H_
+#define _SCORERANK_H_
 
 #include "main.h"
 
 // プロトタイプ宣言
-void InitResultScore(void);
-void UninitResultScore(void);
-void UpdateResultScore(void);
-void DrawResultScore(void);
+void InitScoreRank(void);
+void UninitScoreRank(void);
+void UpdateScoreRank(void);
+void DrawScoreRank(void);
 
-void SetResultScore(D3DXVECTOR3 pos,int nResultScore);
-int GetResultScore(void);
-void MoveResuktScore(D3DXVECTOR3 move);
+void SetScoreRank(D3DXVECTOR3 pos, int nScore);
 
 #endif
+

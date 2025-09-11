@@ -15,4 +15,6 @@ void UninitGameoverEffect(void);
 void UpdateGameoverEffect(void);
 void DrawGameoverEffect(void);
 
+bool GetEnableGameoverEffect(void);
+
 #endif

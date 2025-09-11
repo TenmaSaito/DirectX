@@ -12,6 +12,8 @@
 #include "game.h"
 #include "titlebg.h"
 #include "titleSelect.h"
+#include "titlelogo.h"
+#include "titleanimation.h"
 
 // タイトル構造体
 typedef struct
@@ -25,7 +27,8 @@ typedef struct
 Title g_Title;									// タイトル構造体の作成
 DWORD g_dwCurrentTimeTitle;						// 現在の時間
 DWORD g_dwExacLastTimeTitle;					// タイトル画面に移行した瞬間の時間
-bool g_bEnableTitleSelect = false;						// セレクト画面が表示されているかどうか
+bool g_bEnableTitleSelect = false;				// セレクト画面が表示されているかどうか
+bool g_bEnableTitleLogo = false;
 
 //================================================================================================================
 // 背景の初期化処理
@@ -37,6 +40,7 @@ void InitTitle(void)
 	g_Title.nPatternAnim = 0;
 	g_Title.bUse = true;
 	g_bEnableTitleSelect = false;
+	g_bEnableTitleLogo = false;
 
 	g_dwCurrentTimeTitle = timeGetTime();
 	g_dwExacLastTimeTitle = timeGetTime();
@@ -46,6 +50,10 @@ void InitTitle(void)
 
 	// 選択画面の初期化処理
 	InitTitleSelect();
+
+	InitTitleLogo();
+
+	InitTitleAnimation();
 
 	// タイトル画面のBGM再生
 	PlaySound(SOUND_LABEL_BGM001);
@@ -62,6 +70,10 @@ void UninitTitle(void)
 	// 選択画面の終了処理
 	UninitTitleSelect();
 
+	UninitTitleLogo();
+
+	UninitTitleAnimation();
+
 	// BGMの停止
 	StopSound();
 }
@@ -71,14 +83,23 @@ void UninitTitle(void)
 //================================================================================================================
 void UpdateTitle(void)
 {
-	if (GetFade() == FADE_NONE && g_bEnableTitleSelect == false)
+	if (GetFade() == FADE_NONE
+		&& g_bEnableTitleLogo == false)
+	{
+		SetTitleLogo();
+	}
+
+	if (GetFade() == FADE_NONE 
+		&& g_bEnableTitleSelect == false
+		&& g_bEnableTitleLogo == true)
 	{
 		SetTitleSelect(true);
 		g_bEnableTitleSelect = true;
 	}
 
+
 	g_dwCurrentTimeTitle = timeGetTime();
-	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 2000)
+	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 200000)
 	{
 		if (GetFade() == FADE_NONE)
 		{
@@ -93,6 +114,10 @@ void UpdateTitle(void)
 	}
 
 	UpdateTitleSelect();
+
+	UpdateTitleLogo();
+
+	UpdateTitleAnimation();
 }
 
 //================================================================================================================
@@ -101,7 +126,16 @@ void UpdateTitle(void)
 void DrawTitle(void)
 {
 	// タイトル画面の背景の描画処理
+	DrawTitleAnimation();
+
 	DrawTitleBg();
 
 	DrawTitleSelect();
+
+	DrawTitleLogo();
+}
+
+void SetEnableTitleLogo(bool bComplete)
+{
+	g_bEnableTitleLogo = bComplete;
 }

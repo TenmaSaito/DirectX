@@ -13,6 +13,7 @@
 #include "gameoverEffect.h"
 #include "ResultScore.h"
 #include "score.h"
+#include "scoreRank.h"
 
 // グローバル変数
 int g_nCurrentScore = 0;
@@ -27,6 +28,8 @@ void InitGameover(void)
 	InitGameoverEffect();
 
 	InitResultScore();
+
+	InitScoreRank();
 
 	SetResultScore(D3DXVECTOR3(1480.0f,500.0f,0.0f), GetScore());
 
@@ -45,6 +48,8 @@ void UninitGameover(void)
 
 	UninitResultScore();
 
+	UninitScoreRank();
+
 	// BGMの停止
 	StopSound();
 }
@@ -54,18 +59,22 @@ void UninitGameover(void)
 //================================================================================================================
 void UpdateGameover(void)
 {
+	// Enterでタイトル画面へ進む
+	if ((GetJoypadPress(JOYKEY_START) == true 
+		|| GetKeyboardTrigger(DIK_RETURN)) == true 
+		&& (GetFade() == FADE_NONE && GetEnableGameoverEffect() == false))
+	{
+		PlaySound(SOUND_LABEL_SE_ENTER);
+		SetFade(MODE_RESULT);
+	}
+
 	UpdateGameoverBg();
 
 	UpdateGameoverEffect();
 
 	UpdateResultScore();
 
-	// Enterでタイトル画面へ進む
-	if ((GetJoypadPress(JOYKEY_START) == true || GetKeyboardTrigger(DIK_RETURN)) == true && GetFade() == FADE_NONE)
-	{
-		PlaySound(SOUND_LABEL_SE_ENTER);
-		SetFade(MODE_RESULT);
-	}
+	UpdateScoreRank();
 }
 
 //================================================================================================================
@@ -78,4 +87,6 @@ void DrawGameover(void)
 	DrawGameoverEffect();
 
 	DrawResultScore();
+
+	DrawScoreRank();
 }

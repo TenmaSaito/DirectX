@@ -15,4 +15,6 @@ void UninitGameclearEffect(void);
 void UpdateGameclearEffect(void);
 void DrawGameclearEffect(void);
 
+bool GetEnableClearEffect(void);
+
 #endif

@@ -1,20 +1,18 @@
 //================================================================================================================
 //
-// DirectXのタイトルヘッダファイル [title.h]
+// DirectXのタイトル画面のアニメーション処理のヘッダファイル [titelanimation.h]
 // Author : TENMA
 //
 //================================================================================================================
-#ifndef _TITLE_H_
-#define _TITLE_H_
+#ifndef _TITLEANIMATION_H_
+#define _TITLEANIMATION_H_
 
 #include "main.h"
 
 // プロトタイプ宣言
-void InitTitle(void);
-void UninitTitle(void);
-void UpdateTitle(void);
-void DrawTitle(void);
-
-void SetEnableTitleLogo(bool bComplete);
+void InitTitleAnimation(void);
+void UninitTitleAnimation(void);
+void UpdateTitleAnimation(void);
+void DrawTitleAnimation(void);
 
 #endif

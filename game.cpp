@@ -499,28 +499,30 @@ int AddBonusScore(void)
 
 	if (nClearedStage < STAGE_MAX)
 	{
-		nScore += (nClearedStage * 10000);		// 1ステージクリアすると+10000
+		nScore += (nClearedStage * 20000);		// 1ステージクリアすると+20000
 	}
 	else if (nClearedStage == STAGE_MAX)
 	{
-		nScore += 1000000;						// 全クリすると+100000
+		nScore += 200000;						// 全クリすると+200000
 	}
 
-	nScore += (nRemainingTime * 2000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
+	nScore += (nRemainingTime * 20000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
 
 	if (nKillcountEnemy > 0)
 	{
-		nScore += nKillcountEnemy * 1000;					// 敵を一体倒すごとに+1000
+		nScore += nKillcountEnemy * 5000;					// 敵を一体倒すごとに+1000
 	}
 	else
 	{
-		nScore += 1000000;									// 不殺の精神達成で+200000 (敵を一体も倒さずに時間切れした場合)
+		nScore += 100000;									// 不殺の精神達成で+100000 (敵を一体も倒さずに時間切れした場合)
 	}
 
 	if (bHaveSecretItem == true)
 	{
-		nScore *= 1.5f;										// 隠しアイテムを持っていたら、スコアを1.5倍に
+		nScore *= 1.75f;										// 隠しアイテムを持っていたら、スコアを1.75倍に
 	}
+
+	AddScore((nScore - GetScore()));
 
 	return nScore;
 }

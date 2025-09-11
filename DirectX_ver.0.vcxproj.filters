@@ -219,6 +219,12 @@
     <ClCompile Include="scoreRank.cpp">
       <Filter>ソース ファイル\gameend</Filter>
     </ClCompile>
+    <ClCompile Include="titlelogo.cpp">
+      <Filter>ソース ファイル\title</Filter>
+    </ClCompile>
+    <ClCompile Include="titleanimation.cpp">
+      <Filter>ソース ファイル\title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h">
@@ -349,6 +355,12 @@
     </ClInclude>
     <ClInclude Include="scoreRank.h">
       <Filter>ヘッダー ファイル\gameend</Filter>
+    </ClInclude>
+    <ClInclude Include="titleanimation.h">
+      <Filter>ヘッダー ファイル\title</Filter>
+    </ClInclude>
+    <ClInclude Include="titlelogo.h">
+      <Filter>ヘッダー ファイル\title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

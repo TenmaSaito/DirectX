@@ -28,20 +28,12 @@ typedef struct
 }TITLESELECT;
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_apTextureTitleSelect[TITLESELECTTYPE_MAX] = {};	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureTitleSelect = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitleSelect = NULL;						// 頂点バッファのポインタ
 TITLESELECT g_aTitleSelect[TITLESELECTTYPE_MAX];							// タイトルセレクト構造体の宣言
 int g_nTitleSelect;
 int g_nCounterSelectState;
 bool g_bUseSelect;															// ポーズ画面が使われているかどうか							
-
-const char* g_TITLESELECTTEX[TITLESELECTTYPE_MAX]
-{
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\GAME_START.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\TUTORIAL.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\GAME_END.png",
-	"data\\TEXTURE\\CHARACTER\\CHARTEX\\GAME_START.png"
-};
 
 //================================================================================================================
 // 背景の初期化処理
@@ -53,17 +45,25 @@ void InitTitleSelect(void)
 	int nCntTitleSelect;
 
 	// 各変数の初期化
-	for (nCntTitleSelect = 0; nCntTitleSelect < TITLESELECTTYPE_MAX; nCntTitleSelect++, pTitleSelect++)
+	for (nCntTitleSelect = 0; nCntTitleSelect < TITLESELECTTYPE_BOOKSTART; nCntTitleSelect++, pTitleSelect++)
 	{
-		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.16f, SCREEN_HEIGHT * 0.558f * (nCntTitleSelect + 1), 0.0f);
+		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.3f, SCREEN_HEIGHT * 0.3f, 0.0f);
 		pTitleSelect->col = D3DXCOLOR_NULL;
 		pTitleSelect->type = (TITLESELECTTYPE)nCntTitleSelect;
 		pTitleSelect->bSelect = false;
-
-		D3DXCreateTextureFromFile(pDevice,
-			g_TITLESELECTTEX[nCntTitleSelect],
-			&g_apTextureTitleSelect[nCntTitleSelect]);
 	}
+
+	for (nCntTitleSelect = TITLESELECTTYPE_BOOKSTART; nCntTitleSelect < TITLESELECTTYPE_MAX; nCntTitleSelect++, pTitleSelect++)
+	{
+		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.4f + (50.0f * (nCntTitleSelect + 1)), 0.0f);
+		pTitleSelect->col = D3DXCOLOR_NULL;
+		pTitleSelect->type = (TITLESELECTTYPE)nCntTitleSelect;
+		pTitleSelect->bSelect = false;
+	}
+
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\CHARACTER\\TITLE\\TITLE_SELECT.png",
+		&g_pTextureTitleSelect);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * TITLESELECTTYPE_MAX,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -76,6 +76,7 @@ void InitTitleSelect(void)
 	g_nTitleSelect = TITLESELECTTYPE_START;
 	g_nCounterSelectState = SELECTWAIT_STATE;
 	g_aTitleSelect[g_nTitleSelect].bSelect = true;
+	g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
 
 	VERTEX_2D* pVtx = NULL;					// 頂点情報へのポインタ
 
@@ -88,19 +89,19 @@ void InitTitleSelect(void)
 	{
 		// 頂点座標の設定(座標設定は必ず右回りで！！！)
 		pVtx[0].pos.x = pTitleSelect->pos.x - (SELECTSIZE_WIDTH * 0.5f);
-		pVtx[0].pos.y = pTitleSelect->pos.y - (SELECTSIZE_HEIGHT * 0.5f) + ((SELECTSIZE_HEIGHT + 10.0f) * nCntTitleSelect);
+		pVtx[0].pos.y = pTitleSelect->pos.y - (SELECTSIZE_HEIGHT * 0.5f);
 		pVtx[0].pos.z = 0.0f;
 
 		pVtx[1].pos.x = pTitleSelect->pos.x + (SELECTSIZE_WIDTH * 0.5f);
-		pVtx[1].pos.y = pTitleSelect->pos.y - (SELECTSIZE_HEIGHT * 0.5f) + ((SELECTSIZE_HEIGHT + 10.0f) * nCntTitleSelect);
+		pVtx[1].pos.y = pTitleSelect->pos.y - (SELECTSIZE_HEIGHT * 0.5f);
 		pVtx[1].pos.z = 0.0f;
 
 		pVtx[2].pos.x = pTitleSelect->pos.x - (SELECTSIZE_WIDTH * 0.5f);
-		pVtx[2].pos.y = pTitleSelect->pos.y + (SELECTSIZE_HEIGHT * 0.5f) + ((SELECTSIZE_HEIGHT + 10.0f) * nCntTitleSelect);
+		pVtx[2].pos.y = pTitleSelect->pos.y + (SELECTSIZE_HEIGHT * 0.5f);
 		pVtx[2].pos.z = 0.0f;
 
 		pVtx[3].pos.x = pTitleSelect->pos.x + (SELECTSIZE_WIDTH * 0.5f);
-		pVtx[3].pos.y = pTitleSelect->pos.y + (SELECTSIZE_HEIGHT * 0.5f) + ((SELECTSIZE_HEIGHT + 10.0f) * nCntTitleSelect);
+		pVtx[3].pos.y = pTitleSelect->pos.y + (SELECTSIZE_HEIGHT * 0.5f);
 		pVtx[3].pos.z = 0.0f;
 
 		// rhwの設定
@@ -116,10 +117,10 @@ void InitTitleSelect(void)
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.125f * nCntTitleSelect);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.125f * nCntTitleSelect);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.125f * nCntTitleSelect + 0.125f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.125f * nCntTitleSelect + 0.125f);
 
 		pVtx += 4;
 	}
@@ -134,15 +135,13 @@ void InitTitleSelect(void)
 //================================================================================================================
 void UninitTitleSelect(void)
 {
-	for (int nCntTitleSelect = 0; nCntTitleSelect < TITLESELECTTYPE_MAX; nCntTitleSelect++)
+	
+	if (g_pTextureTitleSelect != NULL)
 	{
-		if (g_apTextureTitleSelect[nCntTitleSelect] != NULL)
-		{
-			g_apTextureTitleSelect[nCntTitleSelect]->Release();
-			g_apTextureTitleSelect[nCntTitleSelect] = NULL;
-		}
+		g_pTextureTitleSelect->Release();
+		g_pTextureTitleSelect = NULL;
 	}
-
+	
 	// 頂点バッファの破棄(必ず行うこと！！！)
 	if (g_pVtxBuffTitleSelect != NULL)
 	{
@@ -162,41 +161,64 @@ void UpdateTitleSelect(void)
 
 	for (int nCntSelect = 0; nCntSelect < TITLESELECTTYPE_MAX; nCntSelect++, pTitleSelect++)
 	{
-		if (pTitleSelect->bSelect == true)
+		if (pTitleSelect->type >= TITLESELECTTYPE_START && pTitleSelect->type <= TITLESELECTTYPE_EXIT)
 		{
-			pTitleSelect->col.a = 1.0f;
+			if (pTitleSelect->bSelect == true)
+			{
+				if (pTitleSelect->col.a >= 1.0f) continue;
+				pTitleSelect->col.a += 0.05f;
+				pTitleSelect->pos.y -= 10.0f;
+			}
+			else
+			{
+				if (pTitleSelect->col.a <= 0.0f) continue;
+				pTitleSelect->col.a -= 0.05f;
+				pTitleSelect->pos.y += 10.0f;
+			}
 		}
-		else
+		else if (pTitleSelect->type >= TITLESELECTTYPE_BOOKSTART && pTitleSelect->type <= TITLESELECTTYPE_BOOKEXIT)
 		{
-			pTitleSelect->col.a = 0.3f;
+			if (pTitleSelect->bSelect == false)
+			{
+				if (pTitleSelect->col.a <= 0.3f) continue;
+				pTitleSelect->col.a -= 0.05f;
+			}
+			else
+			{
+				if (pTitleSelect->col.a >= 1.0f) continue;
+				pTitleSelect->col.a += 0.05f;
+			}
 		}
 	}
 
-	if (g_nTitleSelect != TITLESELECTTYPE_NONE && g_nCounterSelectState == SELECTWAIT_STATE && GetFade() == FADE_NONE)
+	if (g_nTitleSelect != TITLESELECTTYPE_MAX && g_nCounterSelectState == SELECTWAIT_STATE && GetFade() == FADE_NONE)
 	{
 		if (GetKeyboardRepeat(DIK_S) == true
 			|| GetJoypadRepeat(JOYKEY_DOWN) == true)
 		{
 			PlaySound(SOUND_LABEL_SE_SELECT);
 			g_aTitleSelect[g_nTitleSelect].bSelect = false;
+			g_aTitleSelect[g_nTitleSelect + 3].bSelect = false;
 			g_nTitleSelect++;
-			if (g_nTitleSelect >= TITLESELECTTYPE_NONE)
+			if (g_nTitleSelect >= TITLESELECTTYPE_BOOKSTART)
 			{
 				g_nTitleSelect = TITLESELECTTYPE_START;
 			}
 			g_aTitleSelect[g_nTitleSelect].bSelect = true;
-
+			g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
 		}
 		else if (GetKeyboardRepeat(DIK_W) == true
 			|| GetJoypadRepeat(JOYKEY_UP) == true)
 		{
 			g_aTitleSelect[g_nTitleSelect].bSelect = false;
+			g_aTitleSelect[g_nTitleSelect + 3].bSelect = false;
 			g_nTitleSelect--;
 			if (g_nTitleSelect < TITLESELECTTYPE_START)
 			{
 				g_nTitleSelect = TITLESELECTTYPE_EXIT;
 			}
 			g_aTitleSelect[g_nTitleSelect].bSelect = true;
+			g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
 
 			PlaySound(SOUND_LABEL_SE_SELECT);
 		}
@@ -209,7 +231,7 @@ void UpdateTitleSelect(void)
 			PlaySound(SOUND_LABEL_SE_ENTER);
 		}
 	}
-	
+
 	if(g_nCounterSelectState < SELECTWAIT_STATE)
 	{
 		switch (g_nTitleSelect)
@@ -283,6 +305,23 @@ void UpdateTitleSelect(void)
 
 	for (int nCntVtx = 0; nCntVtx < TITLESELECTTYPE_MAX; nCntVtx++,pTitleSelect++)
 	{
+		// 頂点座標の設定(座標設定は必ず右回りで！！！)
+		pVtx[0].pos.x = pTitleSelect->pos.x - (SELECTSIZE_WIDTH * 0.5f);
+		pVtx[0].pos.y = pTitleSelect->pos.y - (SELECTSIZE_HEIGHT * 0.5f);
+		pVtx[0].pos.z = 0.0f;
+
+		pVtx[1].pos.x = pTitleSelect->pos.x + (SELECTSIZE_WIDTH * 0.5f);
+		pVtx[1].pos.y = pTitleSelect->pos.y - (SELECTSIZE_HEIGHT * 0.5f);
+		pVtx[1].pos.z = 0.0f;
+
+		pVtx[2].pos.x = pTitleSelect->pos.x - (SELECTSIZE_WIDTH * 0.5f);
+		pVtx[2].pos.y = pTitleSelect->pos.y + (SELECTSIZE_HEIGHT * 0.5f);
+		pVtx[2].pos.z = 0.0f;
+
+		pVtx[3].pos.x = pTitleSelect->pos.x + (SELECTSIZE_WIDTH * 0.5f);
+		pVtx[3].pos.y = pTitleSelect->pos.y + (SELECTSIZE_HEIGHT * 0.5f);
+		pVtx[3].pos.z = 0.0f;
+
 		// 頂点カラーの設定
 		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pTitleSelect->col.a);
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, pTitleSelect->col.a);
@@ -310,12 +349,12 @@ void DrawTitleSelect(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 	
-	for (int nCntTitleSelect = 0; nCntTitleSelect < TITLESELECTTYPE_NONE; nCntTitleSelect++, pSelect++)
+	for (int nCntTitleSelect = 0; nCntTitleSelect < TITLESELECTTYPE_MAX; nCntTitleSelect++, pSelect++)
 	{
 		if (g_bUseSelect == true)
 		{
 			// テクスチャの設定(使わないならNULLを入れる！！！！)
-			pDevice->SetTexture(0, g_apTextureTitleSelect[pSelect->type]);
+			pDevice->SetTexture(0, g_pTextureTitleSelect);
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類

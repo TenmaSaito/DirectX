@@ -10,6 +10,7 @@
 #include "ResultScore.h"
 #include "fade.h"
 #include "ranking.h"
+#include "score.h"
 
 // ƒ}ƒNƒ’è‹`
 #define CHARA_SIZE		(100.0f)		// ƒLƒƒƒ‰ƒNƒ^[‚ÌƒTƒCƒY
@@ -20,6 +21,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameclearEffect = NULL;	// ’¸“_ƒoƒbƒtƒ@‚Ìƒ|ƒCƒ
 D3DXVECTOR3 g_clearEffectPos = D3DXVECTOR3_NULL;			// ƒNƒŠƒAƒGƒtƒFƒNƒg‚ÌˆÊ’u
 int g_nCounterGameclearEffect;
 int g_nAnimationCounterClear;
+bool g_bMoveClearEffect;
 
 //================================================================================================================
 // ƒQ[ƒ€ƒI[ƒo[‰æ–Ê‚Ì‰Šú‰»ˆ—
@@ -47,6 +49,7 @@ void InitGameclearEffect(void)
 	g_nCounterGameclearEffect = 0;
 	g_clearEffectPos = D3DXVECTOR3(1380.0f, 500.0f, 0.0f);
 	g_nAnimationCounterClear = 0;
+	g_bMoveClearEffect = true;
 
 	VERTEX_2D* pVtx;					// ’¸“_î•ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
 
@@ -117,12 +120,23 @@ void UninitGameclearEffect(void)
 //================================================================================================================
 void UpdateGameclearEffect(void)
 {
+	if (GetKeyboardAny() == true)
+	{
+		g_clearEffectPos.x = 300.0f;
+		SetResultScore(D3DXVECTOR3(300.0f, 0.0f, 0.0f), GetScore());
+		g_bMoveClearEffect = false;
+	}
+
 	if (g_clearEffectPos.x >= -CHARA_SIZE && GetFade() == FADE_NONE)
 	{
 		g_clearEffectPos.x -= 5.0f;
 		if (g_clearEffectPos.x >= 300.0f)
 		{
 			MoveResuktScore(D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
+		}
+		else
+		{
+			g_bMoveClearEffect = false;
 		}
 	}
 
@@ -188,4 +202,9 @@ void DrawGameclearEffect(void)
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// ƒvƒŠƒ~ƒeƒBƒu‚Ìí—Ş
 					       0,						// •`‰æ‚·‚éÅ‰‚Ì’¸“_ƒCƒ“ƒfƒbƒNƒX
 						   2);						// •`‰æ‚·‚éƒvƒŠƒ~ƒeƒBƒu‚Ì”
+}
+
+bool GetEnableClearEffect(void)
+{
+	return g_bMoveClearEffect;
 }

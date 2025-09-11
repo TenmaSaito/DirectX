@@ -14,6 +14,7 @@
 #include "fade.h"
 #include "score.h"
 #include "ResultScore.h"
+#include "scoreRank.h"
 
 // マクロ定義
 #define FADE_COUNT		(6000)						// リザルト画面へ遷移するまでの時間
@@ -35,6 +36,8 @@ void InitGameclear(void)
 
 	InitSun();
 
+	InitScoreRank();
+
 	SetResultScore(D3DXVECTOR3(1480.0f, 500.0f, 0.0f), GetScore());
 
 	// タイトル画面のBGM再生
@@ -50,6 +53,7 @@ void UninitGameclear(void)
 	UninitGameclearEffect();
 	UninitSun();
 	UninitResultScore();
+	UninitScoreRank();
 
 	// BGMの停止
 	StopSound();
@@ -64,12 +68,13 @@ void UpdateGameclear(void)
 	UpdateGameclearEffect();
 	UpdateSun();
 	UpdateResultScore();
+	UpdateScoreRank();
 
 	// Enterでタイトル画面へ進む
 	if ((GetJoypadAny() == true
 		|| GetKeyboardTrigger(DIK_RETURN) == true
 		|| g_nCounterGameclear >= FADE_COUNT) == true 
-		&& GetFade() == FADE_NONE)
+		&& (GetFade() == FADE_NONE && GetEnableClearEffect() == false))
 	{
 		PlaySound(SOUND_LABEL_SE_ENTER);
 		SetFade(MODE_RESULT);
@@ -87,4 +92,5 @@ void DrawGameclear(void)
 	DrawGameclearEffect();
 	DrawResultScore();
 	DrawSun();
+	DrawScoreRank();
 }

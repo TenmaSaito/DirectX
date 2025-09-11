@@ -10,6 +10,8 @@
 #include "ResultScore.h"
 #include "fade.h"
 #include "ranking.h"
+#include "score.h"
+#include "scoreRank.h"
 
 // マクロ定義
 #define CHARA_SIZE		(100.0f)		// キャラクターのサイズ
@@ -20,6 +22,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGameoverEffect = NULL;	// 頂点バッファのポイン
 D3DXVECTOR3 g_overEffectPos = D3DXVECTOR3_NULL;				// クリア時エフェクトの位置
 int g_nCounterGameoverEffect;
 int g_nAnimationCounter;	
+bool g_bMoveOverEffect;										// エフェクトが動いているか
 
 //================================================================================================================
 // ゲームオーバー画面の初期化処理
@@ -48,6 +51,7 @@ void InitGameoverEffect(void)
 
 	g_overEffectPos = D3DXVECTOR3(1380.0f,500.0f,0.0f);
 	g_nAnimationCounter = 0;
+	g_bMoveOverEffect = true;
 
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 
@@ -120,10 +124,22 @@ void UpdateGameoverEffect(void)
 {
 	if (g_overEffectPos.x >= -CHARA_SIZE && GetFade() == FADE_NONE)
 	{
+		if (GetKeyboardTrigger(DIK_RETURN) == true)
+		{
+			g_overEffectPos.x = -CHARA_SIZE;
+			SetResultScore(D3DXVECTOR3(300.0f, 500.0f, 0.0f), GetScore());
+			g_bMoveOverEffect = false;
+		}
+
 		g_overEffectPos.x -= 5.0f;
 		if (g_overEffectPos.x >= 300.0f)
 		{
 			MoveResuktScore(D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
+		}
+		else
+		{
+			SetResultScore(D3DXVECTOR3(300.0f, 500.0f, 0.0f), GetScore());
+			g_bMoveOverEffect = false;
 		}
 	}
 
@@ -189,4 +205,9 @@ void DrawGameoverEffect(void)
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
 					       0,						// 描画する最初の頂点インデックス
 						   2);						// 描画するプリミティブの数
+}
+
+bool GetEnableGameoverEffect(void)
+{
+	return g_bMoveOverEffect;
 }

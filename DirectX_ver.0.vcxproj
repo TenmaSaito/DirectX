@@ -184,7 +184,9 @@
     <ClCompile Include="sun.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="titleanimation.cpp" />
     <ClCompile Include="titlebg.cpp" />
+    <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titleSelect.cpp" />
     <ClCompile Include="tutorial.cpp" />
   </ItemGroup>
@@ -229,7 +231,9 @@
     <ClInclude Include="sun.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="titleanimation.h" />
     <ClInclude Include="titlebg.h" />
+    <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titleSelect.h" />
     <ClInclude Include="tutorial.h" />
   </ItemGroup>
