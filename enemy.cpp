@@ -1173,25 +1173,25 @@ void HitEnemy(int nCntEnemy, int nCntDamage)
 			{
 			case ENEMYBULLET_NONE:
 
-				AddScore(150);
+				AddScore(5000);
 
 				break;
 
 			case ENEMYBULLET_NORMALBULLET:
 
-				AddScore(300);
+				AddScore(15000);
 
 				break;
 
 			case ENEMYBULLET_BOMBBULLET:
 
-				AddScore(500);
+				AddScore(20000);
 
 				break;
 
 			case ENEMYBULLET_HOMINGBULLET:
 
-				AddScore(500);
+				AddScore(20000);
 
 				break;
 

@@ -67,7 +67,7 @@ void UpdateResult(void)
 	if ((GetJoypadPress(JOYKEY_START) == true || GetKeyboardTrigger(DIK_RETURN)) == true && GetFade() == FADE_NONE)
 	{
 		PlaySound(SOUND_LABEL_SE_ENTER);
-		SetFade(MODE_TITLE);
+		SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
 	}
 
 	g_dwCurrentTimeResult = timeGetTime();
@@ -75,7 +75,7 @@ void UpdateResult(void)
 	{
 		if (GetFade() == FADE_NONE)
 		{
-			SetFade(MODE_TITLE);
+			SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
 		}
 	}
 }

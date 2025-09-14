@@ -250,6 +250,11 @@ void UpdatePlayer(void)
 					SetStock();
 				}
 			}
+
+			for (int nCntPlayer = 0; nCntPlayer < PLAYERDO_MAX; nCntPlayer++)
+			{
+				g_player.aCouldDo[nCntPlayer] = true;
+			}
 		}
 
 		break;
@@ -321,6 +326,8 @@ void UpdatePlayer(void)
 				g_player.state = PLAYERSTATE_APPEAR;
 				g_player.nLife = MAX_LIFE;
 				g_player.nCounterState = APPEAR_STATE;
+				g_player.aCouldDo[PLAYERDO_CHARGE] = false;
+				g_player.aCouldDo[PLAYERDO_BARRIAR] = false;
 			}
 		}
 		else
@@ -830,7 +837,7 @@ void KeyboardPress(void)
 
 	if (g_player.g_nIDDirection != -1)GetPlayerRot(&g_player);
 
-	if (g_player.aCouldDo[PLAYERDO_SHOT] == true && g_player.state != PLAYERSTATE_APPEAR)
+	if (g_player.aCouldDo[PLAYERDO_SHOT] == true)
 	{
 		if ((GetKeyboardRepeat(DIK_SPACE) == true || GetJoypadRepeat(JOYKEY_A) == true)
 			&& g_player.nCounterBarrier == 0)

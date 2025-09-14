@@ -235,8 +235,8 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
-				AddRanking(AddBonusScore());
-				SetFade(MODE_GAMEOVER);
+				AddBonusScore();
+				SetFade(MODE_GAMEOVER, FADE_TYPE_NORMAL);
 			}
 		}
 
@@ -249,8 +249,8 @@ void UpdateGame(void)
 		{
 			if (GetFade() == FADE_NONE)
 			{
-				AddRanking(AddBonusScore());
-				SetFade(MODE_GAMECLEAR);
+				AddBonusScore();
+				SetFade(MODE_GAMECLEAR, FADE_TYPE_NORMAL);
 			}
 		}
 		
@@ -499,20 +499,16 @@ int AddBonusScore(void)
 
 	if (nClearedStage < STAGE_MAX)
 	{
-		nScore += (nClearedStage * 20000);		// 1ステージクリアすると+20000
+		nScore += (nClearedStage * 20000);					// 1ステージクリアすると+20000
 	}
 	else if (nClearedStage == STAGE_MAX)
 	{
-		nScore += 200000;						// 全クリすると+200000
+		nScore += 200000;									// 全クリすると+200000
 	}
 
 	nScore += (nRemainingTime * 20000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
 
-	if (nKillcountEnemy > 0)
-	{
-		nScore += nKillcountEnemy * 5000;					// 敵を一体倒すごとに+1000
-	}
-	else
+	if (nKillcountEnemy == 0)
 	{
 		nScore += 100000;									// 不殺の精神達成で+100000 (敵を一体も倒さずに時間切れした場合)
 	}

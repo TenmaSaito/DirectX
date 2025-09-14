@@ -10,10 +10,13 @@
 #include "sound.h"
 
 // グローバル変数
+LPDIRECT3DTEXTURE9		g_pTextureFade = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffFade = NULL;	// 頂点バッファのポインタ
 FADE g_fade;									// フェードの種類
 MODE g_modeNext;								// 画面(モード)の種類
 D3DXCOLOR g_colorFade;							// ポリゴンの色
+FADE_TYPE g_typeFade;							// フェードのタイプ
+bool g_bUseTexture;								// テクスチャを使うか
 
 //================================================================================================================
 // 背景の初期化処理
@@ -27,6 +30,14 @@ void InitFade(MODE modeNext)
 	g_modeNext = modeNext;				// 次の画面を設定
 
 	g_colorFade.a = 1.0f;				// alpha値を初期化
+
+	g_typeFade = FADE_TYPE_NORMAL;		//　通常フェードに設定
+
+	g_bUseTexture = false;				// テクスチャを未使用に設定
+
+	D3DXCreateTextureFromFile(pDevice,
+		"data\\TEXTURE\\FADE\\LODING.png",
+		&g_pTextureFade);
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -59,9 +70,14 @@ void InitFade(MODE modeNext)
 	pVtx[2].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, g_colorFade.a);
 	pVtx[3].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, g_colorFade.a);
 
+	// テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
 	// 頂点バッファをアンロックする
 	g_pVtxBuffFade->Unlock();
-
 }
 
 //================================================================================================================
@@ -122,10 +138,10 @@ void UpdateFade(void)
 		g_pVtxBuffFade->Lock(0, 0, (void**)&pVtx, 0);
 
 		// 頂点カラーの設定
-		pVtx[0].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, g_colorFade.a);
-		pVtx[1].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, g_colorFade.a);
-		pVtx[2].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, g_colorFade.a);
-		pVtx[3].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, g_colorFade.a);
+		pVtx[0].col = g_colorFade;
+		pVtx[1].col = g_colorFade;
+		pVtx[2].col = g_colorFade;
+		pVtx[3].col = g_colorFade;
 
 		// 頂点バッファをアンロックする
 		g_pVtxBuffFade->Unlock();
@@ -145,8 +161,20 @@ void DrawFade(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	// テクスチャの設定(使わないならNULLを入れる！！！！)
-	pDevice->SetTexture(0, NULL);
+	switch (g_typeFade)
+	{
+	case FADE_TYPE_NORMAL:
+		// テクスチャの設定(使わないならNULLを入れる！！！！)
+		pDevice->SetTexture(0, NULL);
+
+		break;
+
+	case FADE_TYPE_TEXTURE:
+		// テクスチャの設定(使わないならNULLを入れる！！！！)
+		pDevice->SetTexture(0, g_pTextureFade);
+
+		break;
+	}
 
 	// ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
@@ -155,13 +183,34 @@ void DrawFade(void)
 }
 
 // フェードの設定
-void SetFade(MODE modeNext)
+void SetFade(MODE modeNext, FADE_TYPE type)
 {
 	g_fade = FADE_OUT;
 
 	g_modeNext = modeNext;
 
-	g_colorFade.a = 0.0f;
+	switch (type)
+	{
+	case FADE_TYPE_NORMAL:
+
+		g_colorFade = NORMAL_FADE;
+		g_typeFade = FADE_TYPE_NORMAL;
+		g_bUseTexture = false;
+
+		break;
+
+	case FADE_TYPE_TEXTURE:
+
+		g_colorFade = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
+		g_typeFade = FADE_TYPE_TEXTURE;
+		g_bUseTexture = true;
+
+		break;
+
+	default:
+
+		break;
+	}
 }
 
 // フェードの取得

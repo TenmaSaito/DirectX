@@ -225,6 +225,9 @@
     <ClCompile Include="titleanimation.cpp">
       <Filter>ソース ファイル\title</Filter>
     </ClCompile>
+    <ClCompile Include="title_Mage.cpp">
+      <Filter>ソース ファイル\title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h">
@@ -360,6 +363,9 @@
       <Filter>ヘッダー ファイル\title</Filter>
     </ClInclude>
     <ClInclude Include="titlelogo.h">
+      <Filter>ヘッダー ファイル\title</Filter>
+    </ClInclude>
+    <ClInclude Include="title_Mage.h">
       <Filter>ヘッダー ファイル\title</Filter>
     </ClInclude>
   </ItemGroup>

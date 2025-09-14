@@ -9,6 +9,10 @@
 
 #include "main.h"
 
+// マクロ定義
+#define SELECTSIZE_WIDTH		(SCREEN_WIDTH * 0.4f)			// 横のサイズ
+#define SELECTSIZE_HEIGHT		(SCREEN_HEIGHT * 0.085f)		// 縦のサイズ
+
 // 選択肢の種類
 typedef enum
 {
@@ -18,6 +22,9 @@ typedef enum
 	TITLESELECTTYPE_BOOKSTART,		// 選ばれていない時のスタート
 	TITLESELECTTYPE_BOOKTUTORIAL,	// 上と同じチュートリアル
 	TITLESELECTTYPE_BOOKEXIT,		// 同じく終了
+	TITLESELECTTYPE_START_SHADOW,	// ゲーム開始の影
+	TITLESELECTTYPE_TUTORIAL_SHADOW,	// チュートリアルの影
+	TITLESELECTTYPE_EXIT_SHADOW,	// 終了の影
 	TITLESELECTTYPE_MAX
 }TITLESELECTTYPE;
 

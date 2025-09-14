@@ -77,7 +77,7 @@ void UpdateGameclear(void)
 		&& (GetFade() == FADE_NONE && GetEnableClearEffect() == false))
 	{
 		PlaySound(SOUND_LABEL_SE_ENTER);
-		SetFade(MODE_RESULT);
+		SetFade(MODE_RESULT, FADE_TYPE_NORMAL);
 	}
 
 	g_nCounterGameclear++;

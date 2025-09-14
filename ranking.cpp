@@ -16,6 +16,9 @@
 #define FIRSTMOVE_RANKING	(4)				// 最初に右から出て来る順位
 #define MOVE_SPD			D3DXVECTOR3(15.0f,0.0f,0.0f)								// 移動する速さ
 #define GOAL_POS			D3DXVECTOR3(700.0f, 120.0f * (nCntRanking + 1), 0.0f)		// 最終的なスコアの位置
+#define FILENAME_RANKING	"data\\RANKING\\Ranking.bin"			// ランキング保存用ファイル名
+#define FILENAME_RESET		"data\\RANKING\\Ranking_Reset.bin"		// リセット用バイナリファイル名
+#define RESET_COMMAND_NUM	(7)				// スコアリセット時に入力するキーの合計数
 
 // ランキング構造体の定義
 typedef struct
@@ -32,6 +35,7 @@ typedef struct
 // プロトタイプ宣言
 void CheckRanking(PRANKING pRanking);
 int Compare(const void* a, const void* b);
+void ResetRanking(void);
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureRanking = NULL;	// テクスチャへのポインタ
@@ -40,7 +44,8 @@ RANKING g_aRanking[MAX_RANKING];					// ランキング構造体の宣言
 int g_nScoreCurrent;								// 今回のスコア
 int g_nCounterRanking;								// 汎用カウンター
 int g_nCurrentMoveRanking;							// 現在動いている順位
-
+bool g_aTrigger[RESET_COMMAND_NUM];					// 指定のキーが入力されたか
+	
 //================================================================================================================
 // ランキングの初期化処理
 //================================================================================================================
@@ -171,6 +176,11 @@ void UpdateRanking(void)
 	PRANKING pRanking = &g_aRanking[0];
 	VERTEX_2D* pVtx;
 
+	if (GetKeyboardTrigger(DIK_R) == true)
+	{
+		ResetRanking();
+	}
+
 	if (GetKeyboardAny() == true
 		|| GetJoypadAny() == true)
 	{
@@ -200,9 +210,9 @@ void UpdateRanking(void)
 
 		if (pRanking->bAdd == true)
 		{
-			if ((g_nCounterRanking % 400) <= 200)
+			if ((g_nCounterRanking % 15) <= 7)
 			{
-				pRanking->col.a -= 0.005f;
+				pRanking->col.a -= 0.08f;
 				if (pRanking->col.a < 0.0f)
 				{
 					pRanking->col.a = 0.0f;
@@ -210,7 +220,7 @@ void UpdateRanking(void)
 			}
 			else
 			{
-				pRanking->col.a += 0.005f;
+				pRanking->col.a += 0.08f;
 				if (pRanking->col.a > 1.0f)
 				{
 					pRanking->col.a = 1.0f;
@@ -391,7 +401,18 @@ void CheckRanking(PRANKING pRanking)
 	int aBuffer[MAX_RANKING];		// スコアの一時保管場所
 
 	pFile = fopen("data\\RANKING\\Ranking.bin", "rb");
-	if (pFile == NULL) { if (SUCCEEDED(GetHandleWindow(&hWnd))) { MessageBox(hWnd, "ランキングデータの読み込みに失敗", "失敗", MB_ICONWARNING); }  return; }
+	if (pFile == NULL) 
+	{ 
+		// ファイルの読み込みに失敗した場合、既定のランキングデータを代入
+		for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
+		{
+			pRanking->nRanking = nCntRanking;
+			pRanking->nScore = 600000 * (0.5f * nCntRanking);
+			if (pRanking->nScore == 0) pRanking->bUse = false;
+		}
+
+		return;
+	}
 
 	fread(aBuffer, sizeof(int), MAX_RANKING, pFile);
 	fclose(pFile);
@@ -405,6 +426,9 @@ void CheckRanking(PRANKING pRanking)
 	}
 }
 
+//================================================================================================================
+// 比較関数
+//================================================================================================================
 int Compare(const void* a, const void* b)
 {
 	int ret;
@@ -422,4 +446,21 @@ int Compare(const void* a, const void* b)
 	}
 
 	return ret;
+}
+
+//================================================================================================================
+// ランキングのリセット処理
+//================================================================================================================
+void ResetRanking(void)
+{
+	HWND hWnd; 
+	BOOL BSUCCEED = CopyFileA(FILENAME_RESET, FILENAME_RANKING, FALSE);		// リセット用のバイナリファイルで現在のスコアファイルを上書き
+
+	GetHandleWindow(&hWnd);
+#ifdef _DEBUG
+	if (BSUCCEED == FALSE)
+	{
+		MessageBox(hWnd, "FAILED", "ERORR", MB_ICONERROR);
+	}
+#endif
 }

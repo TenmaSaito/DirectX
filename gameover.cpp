@@ -65,7 +65,7 @@ void UpdateGameover(void)
 		&& (GetFade() == FADE_NONE && GetEnableGameoverEffect() == false))
 	{
 		PlaySound(SOUND_LABEL_SE_ENTER);
-		SetFade(MODE_RESULT);
+		SetFade(MODE_RESULT, FADE_TYPE_NORMAL);
 	}
 
 	UpdateGameoverBg();

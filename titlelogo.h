@@ -16,5 +16,6 @@ void UpdateTitleLogo(void);
 void DrawTitleLogo(void);
 
 void SetTitleLogo(void);
+bool GetCompleteLogo(void);
 
 #endif

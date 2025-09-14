@@ -9,6 +9,9 @@
 
 #include "main.h"
 
+// マクロ定義
+#define NORMAL_FADE			D3DXCOLOR(0.0f,0.0f,0.0f,0.0f)		// 通常の暗転フェード
+
 // フェードの種類
 typedef enum
 {
@@ -18,13 +21,27 @@ typedef enum
 	FADE_MAX
 }FADE;
 
+// フェードの概要
+typedef enum
+{
+	FADE_TYPE_NORMAL = 0,	// 通常フェード
+	FADE_TYPE_TEXTURE,		// テクスチャの張られたポリゴンによるフェード
+	FADE_TYPE_MAX
+}FADE_TYPE;
+
 // プロトタイプ宣言
 void InitFade(MODE modeNext);
 void UninitFade(void);
 void UpdateFade(void);
 void DrawFade(void);
 
-void SetFade(MODE modeNext);
+/// <summary>
+/// 指定された種類のポリゴンで画面全体をフェードイン,アウトさせる関数です。
+/// </summary>
+/// <param name="modeNext">フェードアウト後に移行しているモード</param>
+/// <param name="type">フェードの種類</param>
+void SetFade(MODE modeNext, FADE_TYPE type);
+
 FADE GetFade(void);
 
 #endif

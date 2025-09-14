@@ -16,5 +16,6 @@ void UpdateTitle(void);
 void DrawTitle(void);
 
 void SetEnableTitleLogo(bool bComplete);
+bool GetEnableTitleSelect(void);
 
 #endif

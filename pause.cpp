@@ -275,14 +275,14 @@ void UpdatePause(void)
 #endif
 			case SELECTTYPE_RESTART:
 
-				SetFade(MODE_GAME);
+				SetFade(MODE_GAME, FADE_TYPE_NORMAL);
 				g_Select = SELECTTYPE_NONE;
 
 				break;
 
 			case SELECTTYPE_EXIT:
 
-				SetFade(MODE_TITLE);
+				SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
 				g_Select = SELECTTYPE_NONE;
 
 				break;

@@ -188,6 +188,7 @@
     <ClCompile Include="titlebg.cpp" />
     <ClCompile Include="titlelogo.cpp" />
     <ClCompile Include="titleSelect.cpp" />
+    <ClCompile Include="title_Mage.cpp" />
     <ClCompile Include="tutorial.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +236,7 @@
     <ClInclude Include="titlebg.h" />
     <ClInclude Include="titlelogo.h" />
     <ClInclude Include="titleSelect.h" />
+    <ClInclude Include="title_Mage.h" />
     <ClInclude Include="tutorial.h" />
   </ItemGroup>
   <ItemGroup>

@@ -6,18 +6,25 @@
 //================================================================================================================
 #include "scoreRank.h"
 #include "input.h"
+#include "enemy.h"
 
 // マクロ定義
 #define RANK_SIZE			(70)				// ランクのサイズ
+#define RANK_SS_SCORE		(800000)			// SSランクのスコアの基準
+#define RANK_S_SCORE		(650000)			// Sランクのスコア基準
+#define RANK_A_SCORE		(500000)			// Aランクのスコア基準
+#define RANK_B_SCORE		(400000)			// Bランクのスコア基準
+#define RANK_C_SCORE		(200000)			// Cランクのスコア基準
 
 // ランクの種類
 typedef enum
 {
-	RANKTYPE_C = 0,
-	RANKTYPE_B,
-	RANKTYPE_A,
-	RANKTYPE_S,
-	RANKTYPE_SS,
+	RANKTYPE_C = 0,			// Cランク
+	RANKTYPE_B,				// Bランク
+	RANKTYPE_A,				// Aランク
+	RANKTYPE_S,				// Sランク
+	RANKTYPE_SS,			// SSランク
+	RANKTYPE_PEACEFULL,		// Pランク
 	RANKTYPE_MAX
 }RANKTYPE;
 
@@ -49,7 +56,7 @@ void InitScoreRank(void)
 	g_bUseRank = false;
 
 	// 頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,			// NUM_PLACE分の頂点を作成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * 2,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -166,7 +173,7 @@ void DrawScoreRank(void)
 	{
 		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
-			0,								// 描画する最初の頂点インデックス
+			0,											// 描画する最初の頂点インデックス
 			2);											// 描画するプリミティブの数
 	}
 }
@@ -178,25 +185,29 @@ void SetScoreRank(D3DXVECTOR3 pos, int nScoreRank)
 	g_posScoreRank = pos;
 	g_bUseRank = true;
 
-	if (nScoreRank >= 600000)
+	if (nScoreRank >= RANK_SS_SCORE)
 	{
 		g_Rank = RANKTYPE_SS;
 	}
-	else if (nScoreRank >= 500000)
+	else if (nScoreRank >= RANK_S_SCORE)
 	{
 		g_Rank = RANKTYPE_S;
 	}
-	else if (nScoreRank >= 400000)
+	else if (nScoreRank >= RANK_A_SCORE)
 	{
 		g_Rank = RANKTYPE_A;
 	}
-	else if (nScoreRank >= 200000)
+	else if (nScoreRank >= RANK_B_SCORE)
 	{
 		g_Rank = RANKTYPE_B;
 	}
-	else
+	else if (nScoreRank < RANK_C_SCORE)
 	{
 		g_Rank = RANKTYPE_C;
+	}
+	else if (GetKillcountEnemy() == 0)
+	{
+		g_Rank = RANKTYPE_PEACEFULL;
 	}
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得

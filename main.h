@@ -23,6 +23,7 @@
 #pragma comment(lib,"xinput.lib")			// ジョイパッド処理に必要
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "log.h"
 
@@ -60,13 +61,17 @@ typedef struct
 // @brief ポリゴンのサイズ指定構造体 
 // @param x : 横幅
 // @param y : 縦幅
+// @param hx : 横幅の半分
+// @param hy : 縦幅の半分
 typedef struct POLY_SIZE
 {
 	float x;
 	float y;
+	float hx;
+	float hy;
 
-	POLY_SIZE() : x(0.0f), y(0.0f) {};
-	POLY_SIZE(float px, float py) : x(px), y(py) {};
+	POLY_SIZE() : x(0.0f), y(0.0f), hx(0.0f), hy(0.0f) {};
+	POLY_SIZE(float px, float py) : x(px), y(py), hx(px * 0.5f), hy(py * 0.5f) {};
 }POLY_SIZE;
 
 // プロトタイプ宣言

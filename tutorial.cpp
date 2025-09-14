@@ -532,7 +532,7 @@ void UpdateTutorial(void)
 				pPlayer->state = PLAYERSTATE_NORMAL;
 				pPlayer->nLife = MAX_LIFE;
 				SetHeart();
-				SetFade(MODE_GAME);
+				SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
 			}
 		}
 

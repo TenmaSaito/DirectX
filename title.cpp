@@ -14,6 +14,7 @@
 #include "titleSelect.h"
 #include "titlelogo.h"
 #include "titleanimation.h"
+#include "title_Mage.h"
 
 // タイトル構造体
 typedef struct
@@ -55,6 +56,8 @@ void InitTitle(void)
 
 	InitTitleAnimation();
 
+	InitTitleMage();
+
 	// タイトル画面のBGM再生
 	PlaySound(SOUND_LABEL_BGM001);
 }
@@ -74,6 +77,8 @@ void UninitTitle(void)
 
 	UninitTitleAnimation();
 
+	UninitTitleMage();
+
 	// BGMの停止
 	StopSound();
 }
@@ -89,6 +94,8 @@ void UpdateTitle(void)
 		SetTitleLogo();
 	}
 
+	UpdateTitleLogo();
+	UpdateTitleSelect();
 	if (GetFade() == FADE_NONE 
 		&& g_bEnableTitleSelect == false
 		&& g_bEnableTitleLogo == true)
@@ -99,11 +106,11 @@ void UpdateTitle(void)
 
 
 	g_dwCurrentTimeTitle = timeGetTime();
-	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 200000)
+	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 10000)
 	{
 		if (GetFade() == FADE_NONE)
 		{
-			SetFade(MODE_RESULT);
+			SetFade(MODE_RESULT, FADE_TYPE_NORMAL);
 		}
 	}
 
@@ -113,11 +120,9 @@ void UpdateTitle(void)
 		g_dwExacLastTimeTitle = g_dwCurrentTimeTitle;
 	}
 
-	UpdateTitleSelect();
-
-	UpdateTitleLogo();
-
 	UpdateTitleAnimation();
+
+	UpdateTitleMage();
 }
 
 //================================================================================================================
@@ -133,9 +138,16 @@ void DrawTitle(void)
 	DrawTitleSelect();
 
 	DrawTitleLogo();
+
+	DrawTitleMage();
 }
 
 void SetEnableTitleLogo(bool bComplete)
 {
 	g_bEnableTitleLogo = bComplete;
+}
+
+bool GetEnableTitleSelect(void)
+{
+	return g_bEnableTitleSelect;
 }

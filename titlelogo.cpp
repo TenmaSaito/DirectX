@@ -25,8 +25,9 @@ typedef struct
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_apTextureTitleLogo[2] = {};	// テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitleLogo = NULL;	// 頂点バッファのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTitleLogo = NULL;		// 頂点バッファのポインタ
 TITLELOGO g_aTitleLogo[2];
+bool g_bCompleteLogo;									// ロゴの出現完了状態
 
 //================================================================================================================
 // 背景の初期化処理
@@ -67,6 +68,7 @@ void InitTitleLogo(void)
 	pTitleLogo->size.y = LOGO_HEIGHT1;
 	pTitleLogo->col = D3DXCOLOR_NULL;
 	pTitleLogo->bUse = false;
+	g_bCompleteLogo = false;
 
 	// 頂点座標の設定(座標設定は必ず右回りで！！！)
 	pVtx[0].pos.x = pTitleLogo->pos.x - LOGO_WIDTH1;
@@ -109,7 +111,7 @@ void InitTitleLogo(void)
 	
 	// 出現
 
-	pTitleLogo->pos = D3DXVECTOR3(900.0f, 225.0f, 0.0f);
+	pTitleLogo->pos = D3DXVECTOR3(900.0f, 200.0f, 0.0f);
 	pTitleLogo->size = D3DXVECTOR3_NULL;
 	pTitleLogo->col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
 	pTitleLogo->bUse = false;
@@ -195,6 +197,7 @@ void UpdateTitleLogo(void)
 		pTitleLogo[1].bUse = true;
 		pTitleLogo[1].size.x = LOGO_WIDTH2;
 		pTitleLogo[1].size.y = LOGO_HEIGHT2;
+		g_bCompleteLogo = true;
 	}
 
 	for (int nCntTitleLogo = 0; nCntTitleLogo < 2; nCntTitleLogo++, pTitleLogo++)
@@ -205,13 +208,13 @@ void UpdateTitleLogo(void)
 			{
 			case 0:
 
-				if (pTitleLogo->pos.y < 150.0f)
+				if (pTitleLogo->pos.y < 100.0f)
 				{
 					pTitleLogo->pos.y += 5.0f;
 				}
 				else
 				{
-					pTitleLogo->pos.y = 150.0f;
+					pTitleLogo->pos.y = 100.0f;
 					pTitleLogo[1].bUse = true;
 				}
 
@@ -244,6 +247,7 @@ void UpdateTitleLogo(void)
 				{
 					pTitleLogo->col.a = 1.0f;
 					SetEnableTitleLogo(true);
+					g_bCompleteLogo = true;
 				}
 
 				if (pTitleLogo->size.x < LOGO_WIDTH2)
@@ -330,4 +334,10 @@ void DrawTitleLogo(void)
 void SetTitleLogo(void)
 {
 	g_aTitleLogo[0].bUse = true;
+}
+
+// ロゴの出現状態
+bool GetCompleteLogo(void)
+{
+	return g_bCompleteLogo;
 }
