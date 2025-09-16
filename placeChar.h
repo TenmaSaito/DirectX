@@ -32,6 +32,7 @@ typedef enum
 	CHARTEX_STEP7_BRIEF,			// 7の説明文
 	CHARTEX_TUTORIAL_COMPLETE,		// チュートリアル終了
 	CHARTEX_SUCCESS,				// 成功時表示
+	CHARTEX_ABLE_TELEPORT,			// テレポート可能
 	CHARTEX_MAX
 }CHARTEX;
 

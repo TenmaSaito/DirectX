@@ -228,6 +228,9 @@
     <ClCompile Include="title_Mage.cpp">
       <Filter>ソース ファイル\title</Filter>
     </ClCompile>
+    <ClCompile Include="moon.cpp">
+      <Filter>ソース ファイル\gameend\gameover</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h">
@@ -367,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="title_Mage.h">
       <Filter>ヘッダー ファイル\title</Filter>
+    </ClInclude>
+    <ClInclude Include="moon.h">
+      <Filter>ヘッダー ファイル\gameend\gameover</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

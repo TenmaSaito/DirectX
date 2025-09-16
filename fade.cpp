@@ -109,9 +109,13 @@ void UpdateFade(void)
 				g_fade = FADE_NONE;
 			}
 
-			if (GetKeyboardTrigger(DIK_RETURN) == true && g_modeNext == MODE_TITLE)
+			if ((GetKeyboardTrigger(DIK_RETURN) == true
+				|| GetJoypadTrigger(JOYKEY_A) == true
+				|| GetJoypadTrigger(JOYKEY_START) == true) 
+				&& g_modeNext == MODE_TITLE)
 			{
 				g_colorFade.a = 0.0f;
+				SetVolume(SOUND_STANDARD, SETSOUND_MAX);
 			}
 		}
 		else if(g_fade == FADE_OUT)

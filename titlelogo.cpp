@@ -189,7 +189,9 @@ void UpdateTitleLogo(void)
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffTitleLogo->Lock(0, 0, (void**)&pVtx, 0);
 
-	if (GetKeyboardTrigger(DIK_RETURN) == true)
+	if (GetKeyboardTrigger(DIK_RETURN) == true
+		|| GetJoypadTrigger(JOYKEY_A) == true
+		|| GetJoypadTrigger(JOYKEY_START) == true)
 	{
 		pTitleLogo[0].pos.y = 150.0f;
 		pTitleLogo[0].bUse = true;

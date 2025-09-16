@@ -30,9 +30,6 @@ void InitResult(void)
 	g_dwCurrentTimeResult = timeGetTime();
 	g_dwExacLastTimeTitleResult = timeGetTime();
 
-	// タイトル画面のBGM再生
-	PlaySound(SOUND_LABEL_BGM000);
-
 	// ランキングの表示
 	SetRanking();
 }
@@ -47,9 +44,6 @@ void UninitResult(void)
 
 	// ランキングの終了処理
 	UninitRanking();
-
-	// BGMの停止
-	StopSound();
 }
 
 //================================================================================================================
@@ -64,10 +58,14 @@ void UpdateResult(void)
 	UpdateResultBg();
 
 	// Enterでタイトル画面へ進む
-	if ((GetJoypadPress(JOYKEY_START) == true || GetKeyboardTrigger(DIK_RETURN)) == true && GetFade() == FADE_NONE)
+	if ((GetJoypadTrigger(JOYKEY_A) == true
+		|| GetJoypadTrigger(JOYKEY_START) == true
+		|| GetKeyboardTrigger(DIK_RETURN)) == true 
+		&& GetFade() == FADE_NONE)
 	{
 		PlaySound(SOUND_LABEL_SE_ENTER);
 		SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
+		FadeSound(SOUND_LABEL_TITLE);
 	}
 
 	g_dwCurrentTimeResult = timeGetTime();

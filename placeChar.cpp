@@ -7,7 +7,8 @@
 #include "placeChar.h"
 
 // マクロ定義
-#define MAX_FADETEX				 (32)			// テクスチャの同時出現可能最大数
+#define MAX_FADETEX				(32)			// テクスチャの同時出現可能最大数
+#define TEX_SPACE				(0.05f)			// テクスチャの隙間
 
 // 自然消滅テクスチャ構造体の定義
 typedef struct
@@ -101,10 +102,10 @@ void InitPlaceChar(void)
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+		pVtx[0].tex = D3DXVECTOR2(0.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
 
 		pVtx += 4;				// 頂点データのポインタを4つ分進める
 	}
@@ -182,10 +183,10 @@ void UpdatePlaceChar(void)
 			pVtx[3].col = pFadeTex->col;
 
 			// テクスチャ座標の設定
-			pVtx[0].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
-			pVtx[1].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
-			pVtx[2].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
-			pVtx[3].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+			pVtx[0].tex = D3DXVECTOR2(0.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex);
+			pVtx[1].tex = D3DXVECTOR2(1.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex);
+			pVtx[2].tex = D3DXVECTOR2(0.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+			pVtx[3].tex = D3DXVECTOR2(1.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
 
 			pFadeTex->nLife--;
 			if (pFadeTex->nLife <= 0)
@@ -277,10 +278,10 @@ void SetPlaceChar(D3DXVECTOR3 pos, POLY_SIZE size, CHARTEX tex, int nCounter)
 		pVtx[3].col = pFadeTex->col;
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.05f * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+		pVtx[0].tex = D3DXVECTOR2(0.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, TEX_SPACE * g_aFadeTex[nCntPlaceChar].tex + 0.05f);
 
 		pFadeTex->bUse = true;
 

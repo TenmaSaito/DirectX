@@ -110,9 +110,6 @@ void InitGame(void)
 	// 自然消滅テクスチャの初期化処理
 	InitPlaceChar();
 
-	// ゲーム画面のBGM再生
-	PlaySound(SOUND_LABEL_BGM003);
-
 	SetScore(NULL);
 
 	SetTimer(GAUGE_MAX);
@@ -237,6 +234,7 @@ void UpdateGame(void)
 			{
 				AddBonusScore();
 				SetFade(MODE_GAMEOVER, FADE_TYPE_NORMAL);
+				FadeSound(SOUND_LABEL_GAMEOVER);
 			}
 		}
 
@@ -251,6 +249,7 @@ void UpdateGame(void)
 			{
 				AddBonusScore();
 				SetFade(MODE_GAMECLEAR, FADE_TYPE_NORMAL);
+				FadeSound(SOUND_LABEL_GAMECLEAR);
 			}
 		}
 		

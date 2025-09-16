@@ -5,6 +5,7 @@
 //
 //=============================================================================
 #include "sound.h"
+#include "fade.h"
 
 //*****************************************************************************
 // サウンド情報の構造体定義
@@ -30,15 +31,22 @@ IXAudio2SourceVoice *g_apSourceVoice[SOUND_LABEL_MAX] = {};	// ソースボイス
 BYTE *g_apDataAudio[SOUND_LABEL_MAX] = {};					// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 bool g_aPlayAudio[SOUND_LABEL_MAX] = {};					// 再生状況
+float g_fVolumeAudio;										// 現在の音量
+SOUND_LABEL g_PlaySound;									// 再生中の音源
+SOUND_LABEL	g_FadelabelExac;								// フェードアウト時に再生されている音源
+SOUND_LABEL g_Fadelabel;									// フェードイン時に再生する音源
+FADE g_CurrentFadeSound;									// 現在のフェード状態
+int g_nCounterSound;										// 汎用カウンター
 
 // サウンドの情報(sound.hのLABELに追加したらここにも追加する！)
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
-	{"data/BGM/bgm000.wav", -1},		// BGM0
-	{"data/BGM/bgm001.wav", -1},		// BGM1
-	{"data/BGM/bgm002.wav", -1},		// BGM2
-	{"data/BGM/mainbattle_1.wav",-1},	// BGM3
-	{"data/BGM/gameover.wav",-1},		// BGM4
+	{"data/BGM/BGM_TITLE.wav", -1},					// タイトル画面のBGM
+	{"data/BGM/BGM_GAME_NORMAL.wav", -1},			// ゲームプレイ時の通常BGM
+	{"data/BGM/BGM_GAME_NOMORETIME.wav", -1},		// 制限時間が迫った時のBGM
+	{"data/BGM/BGM_GAMECLEAR.wav",-1},				// ゲームクリア時のBGM
+	{"data/BGM/BGM_GAMEOVER.wav",-1},				// ゲームオーバー時のBGM
+	{"data/BGM/BGM_GAME_TUTORIAL.wav",-1},			// チュートリアル時のBGM
 	{"data/SE/shot000.wav", 0},			// 弾発射音
 	{"data/SE/hit000.wav", 0},			// ヒット音
 	{"data/SE/explosion000.wav", 0},	// 爆発音
@@ -50,9 +58,9 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/OpenDoorSE.wav", 0},		// 鍵の取得音
 	{"data/SE/SelectSE.wav", 0},		// 鍵の取得音
 	{"data/SE/ChargeSE.wav", 0},		// 鍵の取得音
-	{"data/SE/FullChargeSE.wav", -1},		// 鍵の取得音
-	{"data/SE/ShotSE.wav", 0},		// 鍵の取得音
-	{"data/SE/ChargeShotSE.wav", 0},		// 鍵の取得音
+	{"data/SE/FullChargeSE.wav", -1},	// 鍵の取得音
+	{"data/SE/ShotSE.wav", 0},			// 鍵の取得音
+	{"data/SE/ChargeShotSE.wav", 0},	// 鍵の取得音
 };
 
 //=============================================================================
@@ -227,9 +235,27 @@ HRESULT InitSound(HWND hWnd)
 		if (g_apSourceVoice[nCntSound] != NULL)
 		{
 			// 音量を設定
-			g_apSourceVoice[nCntSound]->SetVolume(SOUND_STANDARD, XAUDIO2_COMMIT_NOW);
+			g_apSourceVoice[nCntSound]->SetVolume(0.0f, XAUDIO2_COMMIT_NOW);
 		}
 	}
+
+	// 初期音量を代入
+	g_fVolumeAudio = 0.0f;
+
+	// フェードイン時の音源を設定(初期)
+	g_Fadelabel = SOUND_LABEL_TITLE;
+
+	// フェードアウト時の音源を設定(初期)
+	g_FadelabelExac = SOUND_LABEL_TITLE;
+
+	// 再生中の音源の初期化
+	g_PlaySound = SOUND_LABEL_TITLE;
+
+	// フェードインに設定
+	g_CurrentFadeSound = FADE_IN;
+
+	// カウンターを初期化
+	g_nCounterSound = 0;
 
 	return S_OK;
 }
@@ -273,6 +299,82 @@ void UninitSound(void)
 }
 
 //=============================================================================
+// 更新処理
+//=============================================================================
+void UpdateSound(void)
+{
+	if (g_CurrentFadeSound != FADE_NONE)
+	{
+		if (g_CurrentFadeSound == FADE_IN && GetFade() == FADE_IN)
+		{
+			g_fVolumeAudio += 0.01f;
+			if (g_nCounterSound == 0)
+			{
+				PlaySound(g_Fadelabel);
+				g_nCounterSound--;
+			}
+			else
+			{
+				g_nCounterSound--;
+			}
+
+			for (int nCntSound = 0; nCntSound < SOUND_LABEL_MAX; nCntSound++)
+			{
+				if (g_apSourceVoice[nCntSound] != NULL)
+				{
+					// 音量を設定
+					g_apSourceVoice[nCntSound]->SetVolume(g_fVolumeAudio, XAUDIO2_COMMIT_NOW);
+				}
+			}
+
+			if (g_fVolumeAudio >= SOUND_STANDARD)
+			{
+				g_CurrentFadeSound = FADE_NONE;
+				g_fVolumeAudio = SOUND_STANDARD;
+				for (int nCntSound = 0; nCntSound < SOUND_LABEL_MAX; nCntSound++)
+				{
+					if (g_apSourceVoice[nCntSound] != NULL)
+					{
+						// 音量を設定
+						g_apSourceVoice[nCntSound]->SetVolume(g_fVolumeAudio, XAUDIO2_COMMIT_NOW);
+					}
+				}
+			}
+		}
+		else if (g_CurrentFadeSound == FADE_OUT)
+		{
+			g_fVolumeAudio -= 0.01f;
+			for (int nCntSound = 0; nCntSound < SOUND_LABEL_MAX; nCntSound++)
+			{
+				if (g_apSourceVoice[nCntSound] != NULL)
+				{
+					// 音量を設定
+					g_apSourceVoice[nCntSound]->SetVolume(g_fVolumeAudio, XAUDIO2_COMMIT_NOW);
+				}
+			}
+
+			if (g_fVolumeAudio <= 0.0f)
+			{
+				g_CurrentFadeSound = FADE_IN;
+				g_fVolumeAudio = 0.0f;
+				for (int nCntSound = 0; nCntSound < SOUND_LABEL_MAX; nCntSound++)
+				{
+					if (g_apSourceVoice[nCntSound] != NULL)
+					{
+						// 音量を設定
+						g_apSourceVoice[nCntSound]->SetVolume(g_fVolumeAudio, XAUDIO2_COMMIT_NOW);
+					}
+				}
+
+				g_nCounterSound = 6;
+
+				StopSound();
+			}
+		}
+	}
+}
+
+//=============================================================================
 // セグメント再生(再生中なら停止)
 //=============================================================================
 HRESULT PlaySound(SOUND_LABEL label)
@@ -306,6 +408,11 @@ HRESULT PlaySound(SOUND_LABEL label)
 
 	// 再生状況をtrueに
 	g_aPlayAudio[label] = true;
+
+	if (label >= SOUND_BGMSTART && label < SOUND_SESTART)
+	{
+		g_PlaySound = label;
+	}
 
 	return S_OK;
 }
@@ -472,9 +579,24 @@ void SetVolume(float volume, SETSOUND sound)
 
 		break;
 
+	case SETSOUND_MAX:
+
+		for (int nCntSound = 0; nCntSound < SOUND_LABEL_MAX; nCntSound++)
+		{
+			if (g_apSourceVoice[nCntSound] != NULL)
+			{
+				// 音量を設定
+				g_apSourceVoice[nCntSound]->SetVolume(volume, XAUDIO2_COMMIT_NOW);
+			}
+		}
+
+		break;
+
 	default:
 		break;
 	}
+
+	g_fVolumeAudio = volume;
 }
 
 //=============================================================================
@@ -494,4 +616,22 @@ float GetVolume(SETSOUND sound)
 	}
 	
 	return fVolume;
+}
+
+//=============================================================================
+// 音楽のフェード処理
+//=============================================================================
+void FadeSound(SOUND_LABEL label)
+{
+	g_CurrentFadeSound = FADE_OUT;			// フェードアウト状態に
+	g_Fadelabel = label;					// フェードイン時のBGMを指定
+	g_FadelabelExac = g_PlaySound;			// フェードアウト時のBGMを取得
+}
+
+//=============================================================================
+// 現在再生中のBGMの取得
+//=============================================================================
+SOUND_LABEL GetPlaySound(void)
+{
+	return g_PlaySound;
 }

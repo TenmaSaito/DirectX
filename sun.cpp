@@ -41,7 +41,7 @@ void InitSun(void)
 								&g_pVtxBuffSun,
 								NULL);
 
-	g_sunPos = D3DXVECTOR3(1180.0f, 100.0f, 0.0f);
+	g_sunPos = D3DXVECTOR3(1080.0f, 100.0f, 0.0f);
 	g_nAnimatonCounterSun = 0; 
 	g_nCounterSun = 0;
 

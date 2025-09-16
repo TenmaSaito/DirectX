@@ -854,23 +854,22 @@ void UpdateEnemy(void)
 				break;
 			}
 
-			if (pEnemy->tex == ENEMYTEX_SLIME)
+			// テクスチャアニメーション
+			if ((int)timeGetTime() % 1000 >= 500)
 			{
-				if ((int)timeGetTime() % 1000 >= 500)
-				{
-					pVtx[0].tex.x = 0.5f;
-					pVtx[1].tex.x = 1.0f;
-					pVtx[2].tex.x = 0.5f;
-					pVtx[3].tex.x = 1.0f;
-				}
-				else
-				{
-					pVtx[0].tex.x = 0.0f;
-					pVtx[1].tex.x = 0.5f;
-					pVtx[2].tex.x = 0.0f;
-					pVtx[3].tex.x = 0.5f;
-				}
+				pVtx[0].tex.x = 0.5f;
+				pVtx[1].tex.x = 1.0f;
+				pVtx[2].tex.x = 0.5f;
+				pVtx[3].tex.x = 1.0f;
 			}
+			else
+			{
+				pVtx[0].tex.x = 0.0f;
+				pVtx[1].tex.x = 0.5f;
+				pVtx[2].tex.x = 0.0f;
+				pVtx[3].tex.x = 0.5f;
+			}
+			
 
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
 			pVtx[0].pos.x = (pEnemy->pos.x + pos.x) + sinf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;

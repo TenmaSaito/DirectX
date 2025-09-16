@@ -538,6 +538,9 @@ void Update(void)
 	// フェードの更新処理
 	UpdateFade();
 
+	// サウンドの更新処理
+	UpdateSound();
+
 	// ログの更新処理
 	UpdateLog();
 }
@@ -743,7 +746,7 @@ void DrawDebug(void)
 
 	wsprintf(&aStr[9][0], "Y:%d\n", pos.y);
 
-	wsprintf(&aStr[10][0], "Enemy:%d\n", GetTotalEnemy());
+	wsprintf(&aStr[10][0], "Volume:%d\n", (int)(GetVolume(SETSOUND_GAME) * 100.0f));
 
 
 	// 文字列を結合

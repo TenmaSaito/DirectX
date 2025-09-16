@@ -39,9 +39,6 @@ void InitGameclear(void)
 	InitScoreRank();
 
 	SetResultScore(D3DXVECTOR3(1480.0f, 500.0f, 0.0f), GetScore());
-
-	// タイトル画面のBGM再生
-	PlaySound(SOUND_LABEL_BGM004);
 }
 
 //================================================================================================================
@@ -54,9 +51,6 @@ void UninitGameclear(void)
 	UninitSun();
 	UninitResultScore();
 	UninitScoreRank();
-
-	// BGMの停止
-	StopSound();
 }
 
 //================================================================================================================
@@ -71,7 +65,8 @@ void UpdateGameclear(void)
 	UpdateScoreRank();
 
 	// Enterでタイトル画面へ進む
-	if ((GetJoypadAny() == true
+	if ((GetJoypadTrigger(JOYKEY_A) == true
+		|| GetJoypadTrigger(JOYKEY_START) == true
 		|| GetKeyboardTrigger(DIK_RETURN) == true
 		|| g_nCounterGameclear >= FADE_COUNT) == true 
 		&& (GetFade() == FADE_NONE && GetEnableClearEffect() == false))

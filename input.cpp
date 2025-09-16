@@ -11,6 +11,9 @@
 #define NUM_MOUSE_MAX		(3)				// ボタンの最大数
 #define THUMB_SLOW			(12)			// GetJoyThumbSlowでの遅延する数
 #define STROKE_KEY_MAX		(288)			// キー及びボタン、スティックの最大数
+#define REPEAT_TIME			(30)			// リピートの待機期間
+#define UP_DEADZONE			(5000)			// 値が正の時のデッドゾーン
+#define DOWN_DEADZONE		(-5000)			// 値が負の時のデッドゾーン
 
 // グローバル変数
 LPDIRECTINPUT8 g_pInput = NULL;					// DirectInputオブジェクトのポインタ
@@ -26,6 +29,7 @@ XINPUT_STATE g_joykeyStateTrigger;				// ジョイパッドのトリガー情報
 XINPUT_STATE g_joykeyStateRelease;				// ジョイパッドのリリース情報
 int g_nCounterRepeatJoypad[JOYKEY_MAX] = {};	// ジョイパッドのリピートのカウント
 bool g_bUseJoykeyAny;							// ジョイキーの押下情報
+int g_nCounterJoyThumbRepeat[JOYTHUMB_MAX] = {};// ジョイパッドスティックのリピートカウント
 int g_nCounterJoyThumb[JOYTHUMB_MAX] = {};		// ジョイパッドのスティックの遅延カウント
 XINPUT_VIBRATION g_joyVibration;				// ジョイパッドのバイブレーション情報
 _XINPUT_KEYSTROKE g_keyStroke;					// 仮想キーのストローク状態
@@ -264,6 +268,32 @@ void UpdateJoypad(void)
 				g_bUseJoykeyAny = true;
 			}
 		}
+
+		
+		if (g_joykeyState.Gamepad.sThumbLX >= DOWN_DEADZONE && g_joykeyState.Gamepad.sThumbLX <= UP_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[JOYTHUMB_LX_UP] = 0;
+			g_nCounterJoyThumbRepeat[JOYTHUMB_LX_DOWN] = 0;
+		}
+		
+		if (g_joykeyState.Gamepad.sThumbLY >= DOWN_DEADZONE && g_joykeyState.Gamepad.sThumbLY <= UP_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[JOYTHUMB_LY_UP] = 0;
+			g_nCounterJoyThumbRepeat[JOYTHUMB_LY_DOWN] = 0;
+		}
+		
+		if (g_joykeyState.Gamepad.sThumbRX >= DOWN_DEADZONE && g_joykeyState.Gamepad.sThumbRX <= UP_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[JOYTHUMB_RX_UP] = 0;
+			g_nCounterJoyThumbRepeat[JOYTHUMB_RX_DOWN] = 0;
+		}
+		
+		if (g_joykeyState.Gamepad.sThumbRY >= DOWN_DEADZONE && g_joykeyState.Gamepad.sThumbRY <= UP_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[JOYTHUMB_RY_UP] = 0;
+			g_nCounterJoyThumbRepeat[JOYTHUMB_RY_DOWN] = 0;
+		}
+		
 	}
 }
 
@@ -484,45 +514,175 @@ bool GetJoyThumbSlow(JOYTHUMB Thumb)
 	}
 }
 
-bool GetJoythumbRepeat(WORD VirtualKey)
+bool GetJoyThumbRepeat(JOYTHUMB Thumb)
 {
-	if (XInputGetKeystroke(NULL, NULL, &g_keyStroke) == ERROR_SUCCESS)
+	switch (Thumb)
 	{
-		if (g_keyStroke.VirtualKey == VirtualKey)
+	case JOYTHUMB_LX_UP:
+		if (g_joykeyState.Gamepad.sThumbLX > UP_DEADZONE)
 		{
-			if (g_keyStroke.Flags == 5)
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
 			{
-				g_aStroke[VirtualKey]++;
-				if (g_aStroke[VirtualKey] == 1)
-				{
-					return true;
-				}
-				else if (g_aStroke[VirtualKey] >= 2 && g_aStroke[VirtualKey] <= 100)
-				{
-					return false;
-				}
-				else if (g_aStroke[VirtualKey] > 100)
-				{
-					if (g_aStroke[VirtualKey] % 30 == 0)
-					{
-						return true;
-					}
-					else
-					{
-						return false;
-					}
-				}
+				return true;
 			}
-			else if (g_keyStroke.Flags == XINPUT_KEYSTROKE_KEYUP)
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
 			{
-				g_aStroke[VirtualKey] = 0;
 				return false;
 			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{
+				return true;
+			}
 		}
-	}
-	else
-	{
+
+		break;
+
+	case JOYTHUMB_LX_DOWN:
+		if (g_joykeyState.Gamepad.sThumbLX < DOWN_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
+			{
+				return true;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
+			{
+				return false;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{
+				return true;
+			}
+		}
+
+		break;
+
+	case JOYTHUMB_LY_UP:
+		if (g_joykeyState.Gamepad.sThumbLY > UP_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
+			{
+				return true;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
+			{
+				return false;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{
+				return true;
+			}
+		}
+
+		break;
+
+	case JOYTHUMB_LY_DOWN:
+		if (g_joykeyState.Gamepad.sThumbLY < DOWN_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
+			{
+				return true;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
+			{
+				return false;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{				
+				return true;
+			}
+		}
+
+		break;
+
+	case JOYTHUMB_RX_UP:
+		if (g_joykeyState.Gamepad.sThumbRX > UP_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
+			{
+				return true;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
+			{
+				return false;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{
+				return true;
+			}
+		}
+
+		break;
+
+	case JOYTHUMB_RX_DOWN:
+		if (g_joykeyState.Gamepad.sThumbRX < DOWN_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
+			{
+				return true;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
+			{
+				return false;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{
+				return true;
+			}
+		}
+
+		break;
+
+	case JOYTHUMB_RY_UP:
+		if (g_joykeyState.Gamepad.sThumbRY > UP_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
+			{
+				return true;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
+			{
+				return false;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{
+				return true;
+			}
+		}
+
+		break;
+
+	case JOYTHUMB_RY_DOWN:
+		if (g_joykeyState.Gamepad.sThumbRY < DOWN_DEADZONE)
+		{
+			g_nCounterJoyThumbRepeat[Thumb]++;
+			if (g_nCounterJoyThumbRepeat[Thumb] == 1)
+			{
+				return true;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > 1 && g_nCounterJoyThumbRepeat[Thumb] <= REPEAT_TIME)
+			{
+				return false;
+			}
+			else if (g_nCounterJoyThumbRepeat[Thumb] > REPEAT_TIME)
+			{
+				return true;
+			}
+		}
+
+		break;
+
+	default:
+
 		return false;
+
+		break;
 	}
 }
 

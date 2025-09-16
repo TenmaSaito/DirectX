@@ -309,6 +309,7 @@ void UpdatePlayer(void)
 		g_player.bDisp = false;
 		EnableMageDraw(false);
 
+		StopSound(SOUND_LABEL_SE_FULLCHARGE);
 		AddGauge(-pGauge[g_player.nGaugeNo].nPercentGauge, g_player.nGaugeNo);
 		g_player.nCounterBulletCharge = 0;
 		g_player.nCounterBarrier = 0;

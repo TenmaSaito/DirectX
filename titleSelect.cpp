@@ -49,6 +49,7 @@ int g_nCounterSelect;														// セレクト画面の汎用カウンター
 bool g_bUseSelect;															// ポーズ画面が使われているかどうか							
 bool g_bMoveSelectUpper;													// 上方向に動くかどうか
 bool g_bMoveSelectLeft;														// 左方向に動くかどうか
+bool g_bMoveSelect[2];															// 選択肢が動いてるかどうか
 
 //================================================================================================================
 // 背景の初期化処理
@@ -106,6 +107,8 @@ void InitTitleSelect(void)
 	g_bMoveSelectUpper = true;
 	g_bMoveSelectLeft = true;
 	g_bUseSelect = false;
+	g_bMoveSelect[0] = false;
+	g_bMoveSelect[1] = false;
 
 	VERTEX_2D* pVtx = NULL;					// 頂点情報へのポインタ
 
@@ -195,13 +198,13 @@ void UpdateTitleSelect(void)
 		{
 			if (pTitleSelect->bSelect == true)
 			{
-				if (pTitleSelect->col.a >= 1.0f) continue;
+				if (pTitleSelect->col.a >= 1.0f) { g_bMoveSelect[0] = false; continue; }
 				pTitleSelect->col.a += 0.05f;
 				pTitleSelect->pos.y -= 10.0f;
 			}
 			else
 			{
-				if (pTitleSelect->col.a <= 0.0f) continue;
+				if (pTitleSelect->col.a <= 0.0f) { g_bMoveSelect[1] = false; continue; }
 				pTitleSelect->col.a -= 0.05f;
 				pTitleSelect->pos.y += 10.0f;
 			}
@@ -210,7 +213,11 @@ void UpdateTitleSelect(void)
 		{
 			if (pTitleSelect->bSelect == false)
 			{
-				if (pTitleSelect->col.a <= 0.3f) continue;
+				if (pTitleSelect->col.a <= 0.3f) 
+				{ 
+					continue; 
+				}
+
 				pTitleSelect->col.a -= 0.05f;
 			}
 			else
@@ -223,7 +230,7 @@ void UpdateTitleSelect(void)
 		{
 			if (pTitleSelect->bSelect == true)
 			{
-				if (pTitleSelect->col.a >= SHADOW_ALPHA) continue;
+				if (pTitleSelect->col.a >= SHADOW_ALPHA) { continue; }
 				pTitleSelect->col.a += 0.05f;
 			}
 			else
@@ -234,10 +241,16 @@ void UpdateTitleSelect(void)
 		}
 	}
 
-	if (g_nTitleSelect != TITLESELECTTYPE_MAX && g_nCounterSelectState == SELECTWAIT_STATE && GetEnableTitleSelect() == true)
+	if (g_nTitleSelect != TITLESELECTTYPE_MAX 
+		&& g_nCounterSelectState == SELECTWAIT_STATE 
+		&& GetEnableTitleSelect() == true
+		&& g_bMoveSelect[0] == false
+		&& g_bMoveSelect[1] == false
+		&& GetFade() == FADE_NONE)
 	{
 		if (GetKeyboardRepeat(DIK_S) == true
-			|| GetJoypadRepeat(JOYKEY_DOWN) == true)
+			|| GetJoypadRepeat(JOYKEY_DOWN) == true
+			|| GetJoyThumbRepeat(JOYTHUMB_LY_DOWN) == true)
 		{
 			PlaySound(SOUND_LABEL_SE_SELECT);
 
@@ -260,10 +273,16 @@ void UpdateTitleSelect(void)
 			g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
 			g_aTitleSelect[g_nTitleSelect + 6].bSelect = true;
 			SetTitleMage(SELECTSHADOW_NORMAL, TITLE_MAGETYPE_TEXT);
+
+			g_bMoveSelect[0] = true;
+			g_bMoveSelect[1] = true;
 		}
 		else if (GetKeyboardRepeat(DIK_W) == true
-			|| GetJoypadRepeat(JOYKEY_UP) == true)
+			|| GetJoypadRepeat(JOYKEY_UP) == true
+			|| GetJoyThumbRepeat(JOYTHUMB_LY_UP) == true)
 		{
+			PlaySound(SOUND_LABEL_SE_SELECT);
+
 			// 選択中だった初期化し、未選択状態に
 			g_aTitleSelect[g_nTitleSelect].bSelect = false;
 			g_aTitleSelect[g_nTitleSelect].pos = SELECT_NORMAL;
@@ -284,7 +303,8 @@ void UpdateTitleSelect(void)
 			g_aTitleSelect[g_nTitleSelect + 6].bSelect = true;
 			SetTitleMage(SELECTSHADOW_NORMAL, TITLE_MAGETYPE_TEXT);
 
-			PlaySound(SOUND_LABEL_SE_SELECT);
+			g_bMoveSelect[0] = true;
+			g_bMoveSelect[1] = true;
 		}
 
 		if (GetKeyboardTrigger(DIK_RETURN) == true
@@ -296,14 +316,17 @@ void UpdateTitleSelect(void)
 			LightUpTitleMage(TITLE_MAGETYPE_TEXT);
 		}
 	}
-	else if (GetKeyboardTrigger(DIK_RETURN) == true
+	else if ((GetKeyboardTrigger(DIK_RETURN) == true
 		|| GetJoypadTrigger(JOYKEY_A) == true
 		|| GetJoypadTrigger(JOYKEY_START) == true)
+		&& GetEnableTitleSelect() == false)
 	{
 		g_aTitleSelect[(g_nTitleSelect + 1) % 3].pos.y = SELECT_LOWER;
 		g_aTitleSelect[(g_nTitleSelect + 1) % 3].col.a = 0.0f;
 		g_aTitleSelect[(g_nTitleSelect + 2) % 3].pos.y = SELECT_LOWER;
 		g_aTitleSelect[(g_nTitleSelect + 2) % 3].col.a = 0.0f;
+		g_bMoveSelect[0] = false;
+		g_bMoveSelect[1] = false;
 	}
 
 	if(g_nCounterSelectState < SELECTWAIT_STATE)
@@ -318,6 +341,7 @@ void UpdateTitleSelect(void)
 				{ // ゲームへ進む
 					SetGameTutorial(false);
 					SetFade(MODE_GAME, FADE_TYPE_TEXTURE);
+					FadeSound(SOUND_LABEL_GAME_NORMAL);
 				}
 			}
 			else
@@ -345,6 +369,7 @@ void UpdateTitleSelect(void)
 					SetGameTutorial(true);
 					PlaySound(SOUND_LABEL_SE_ENTER);
 					SetFade(MODE_GAME, FADE_TYPE_TEXTURE);
+					FadeSound(SOUND_LABEL_GAME_TUTORIAL);
 				}
 			}
 			else

@@ -32,9 +32,6 @@ void InitGameover(void)
 	InitScoreRank();
 
 	SetResultScore(D3DXVECTOR3(1480.0f,500.0f,0.0f), GetScore());
-
-	// É^ÉCÉgÉãâÊñ ÇÃBGMçƒê∂
-	PlaySound(SOUND_LABEL_BGM004);
 }
 
 //================================================================================================================
@@ -49,9 +46,6 @@ void UninitGameover(void)
 	UninitResultScore();
 
 	UninitScoreRank();
-
-	// BGMÇÃí‚é~
-	StopSound();
 }
 
 //================================================================================================================

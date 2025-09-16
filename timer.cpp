@@ -9,6 +9,9 @@
 
 // マクロ定義
 #define NUM_PLACE			(3)				// タイマーの桁数
+#define NUM_WIDTH			(25.0f)			// タイマーの数字の横幅
+#define NUM_HEIGHT			(30.0f)			// タイマーの数字の縦幅
+#define NUM_SPACE			(40.0f)			// タイマーの数字の隙間
 #define TIMERGAUGE_COLOR	D3DXCOLOR(1.0f,1.0f,1.0f,1.0f)		// タイマーのゲージの色
 
 // グローバル変数
@@ -32,7 +35,7 @@ void InitTimer(void)
 		"data\\TEXTURE\\CHARACTER\\number003.png",
 		&g_pTextureTimer);
 
-	g_posTimer = D3DXVECTOR3(610.0f, 62.5f, 0.0f);		// 位置を初期化
+	g_posTimer = D3DXVECTOR3(610.0f, 48.0f, 0.0f);		// 位置を初期化
 	g_nTimer = 0;								// 値を初期化
 
 	// 頂点バッファの生成
@@ -51,20 +54,20 @@ void InitTimer(void)
 	for (nCntTimer = 0; nCntTimer < NUM_PLACE; nCntTimer++)
 	{
 		// 頂点座標の設定(座標設定は必ず右回りで！！！)
-		pVtx[0].pos.x = g_posTimer.x + (65.0f * nCntTimer) - 30.0f;
-		pVtx[0].pos.y = g_posTimer.y - 40.0f;
+		pVtx[0].pos.x = g_posTimer.x + (NUM_SPACE * nCntTimer) - NUM_WIDTH;
+		pVtx[0].pos.y = g_posTimer.y - NUM_HEIGHT;
 		pVtx[0].pos.z = 0.0f;
 
-		pVtx[1].pos.x = g_posTimer.x + (65.0f * nCntTimer) + 30.0f;
-		pVtx[1].pos.y = g_posTimer.y - 40.0f;
+		pVtx[1].pos.x = g_posTimer.x + (NUM_SPACE * nCntTimer) + NUM_WIDTH;
+		pVtx[1].pos.y = g_posTimer.y - NUM_HEIGHT;
 		pVtx[1].pos.z = 0.0f;
 
-		pVtx[2].pos.x = g_posTimer.x + (65.0f * nCntTimer) - 30.0f;
-		pVtx[2].pos.y = g_posTimer.y + 40.0f;
+		pVtx[2].pos.x = g_posTimer.x + (NUM_SPACE * nCntTimer) - NUM_WIDTH;
+		pVtx[2].pos.y = g_posTimer.y + NUM_HEIGHT;
 		pVtx[2].pos.z = 0.0f;
 
-		pVtx[3].pos.x = g_posTimer.x + (65.0f * nCntTimer) + 30.0f;
-		pVtx[3].pos.y = g_posTimer.y + 40.0f;
+		pVtx[3].pos.x = g_posTimer.x + (NUM_SPACE * nCntTimer) + NUM_WIDTH;
+		pVtx[3].pos.y = g_posTimer.y + NUM_HEIGHT;
 		pVtx[3].pos.z = 0.0f;
 
 		// rhwの設定
@@ -173,7 +176,7 @@ void SetTimer(int nTimer)
 	}
 
 	// タイマーと同期したゲージを作成
-	g_nGaugeTimer = SetGauge(D3DXVECTOR3(g_posTimer.x - 95.0f, g_posTimer.y, g_posTimer.z), TIMERGAUGE_COLOR, GAUGETYPE_TIMER, GAUGE_MAX, 40.0f);
+	g_nGaugeTimer = SetGauge(D3DXVECTOR3(531.0f, 49.0f, 0.0f), TIMERGAUGE_COLOR, GAUGETYPE_TIMER, GAUGE_MAX, 27.0f);
 
 
 	g_pVtxBuffTimer->Unlock();

@@ -181,8 +181,9 @@ void UpdateRanking(void)
 		ResetRanking();
 	}
 
-	if (GetKeyboardAny() == true
-		|| GetJoypadAny() == true)
+	if (GetKeyboardTrigger(DIK_RETURN) == true
+		|| GetJoypadTrigger(JOYKEY_A) == true
+		|| GetJoypadTrigger(JOYKEY_START) == true)
 	{
 		for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 		{

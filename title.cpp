@@ -59,7 +59,7 @@ void InitTitle(void)
 	InitTitleMage();
 
 	// É^ÉCÉgÉãâÊñ ÇÃBGMçƒê∂
-	PlaySound(SOUND_LABEL_BGM001);
+	PlaySound(SOUND_LABEL_TITLE);
 }
 
 //================================================================================================================
@@ -78,9 +78,6 @@ void UninitTitle(void)
 	UninitTitleAnimation();
 
 	UninitTitleMage();
-
-	// BGMÇÃí‚é~
-	StopSound();
 }
 
 //================================================================================================================

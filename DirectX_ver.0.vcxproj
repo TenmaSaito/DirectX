@@ -167,6 +167,7 @@
     <ClCompile Include="log.cpp" />
     <ClCompile Include="mage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="moon.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="placeChar.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="log.h" />
     <ClInclude Include="mage.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="moon.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="placeChar.h" />
