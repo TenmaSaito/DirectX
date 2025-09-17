@@ -14,6 +14,7 @@
 #include "ResultScore.h"
 #include "score.h"
 #include "scoreRank.h"
+#include "moon.h"
 
 // ÉOÉçÅ[ÉoÉãïœêî
 int g_nCurrentScore = 0;
@@ -31,6 +32,8 @@ void InitGameover(void)
 
 	InitScoreRank();
 
+	InitMoon();
+
 	SetResultScore(D3DXVECTOR3(1480.0f,500.0f,0.0f), GetScore());
 }
 
@@ -46,6 +49,8 @@ void UninitGameover(void)
 	UninitResultScore();
 
 	UninitScoreRank();
+
+	UninitMoon();
 }
 
 //================================================================================================================
@@ -69,6 +74,8 @@ void UpdateGameover(void)
 	UpdateResultScore();
 
 	UpdateScoreRank();
+
+	UpdateMoon();
 }
 
 //================================================================================================================
@@ -77,6 +84,8 @@ void UpdateGameover(void)
 void DrawGameover(void)
 {
 	DrawGameoverBg();
+
+	DrawMoon();
 
 	DrawGameoverEffect();
 

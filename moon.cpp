@@ -9,7 +9,7 @@
 #include "input.h"
 
 // マクロ定義
-#define MOON_SIZE		(200.0f)				// 太陽の大きさ
+#define MOON_SIZE		(100.0f)				// 太陽の大きさ
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureMoon = NULL;	// テクスチャへのポインタ
@@ -41,7 +41,7 @@ void InitMoon(void)
 								&g_pVtxBuffMoon,
 								NULL);
 
-	g_MoonPos = D3DXVECTOR3(480.0f, 100.0f, 0.0f);
+	g_MoonPos = D3DXVECTOR3(180.0f, 100.0f, 0.0f);
 	g_nAnimatonCounterMoon = 0; 
 	g_nCounterMoon = 0;
 

@@ -9,7 +9,7 @@
 #include "input.h"
 
 // マクロ定義
-#define SUN_SIZE		(200.0f)				// 太陽の大きさ
+#define SUN_SIZE		(100.0f)				// 太陽の大きさ
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureSun = NULL;	// テクスチャへのポインタ

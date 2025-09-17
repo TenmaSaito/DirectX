@@ -120,15 +120,15 @@ void UninitGameclearEffect(void)
 //================================================================================================================
 void UpdateGameclearEffect(void)
 {
-	if (GetKeyboardAny() == true)
-	{
-		g_clearEffectPos.x = 300.0f;
-		SetResultScore(D3DXVECTOR3(300.0f, 0.0f, 0.0f), GetScore());
-		g_bMoveClearEffect = false;
-	}
-
 	if (g_clearEffectPos.x >= -CHARA_SIZE && GetFade() == FADE_NONE)
 	{
+		if (GetKeyboardTrigger(DIK_RETURN) == true)
+		{
+			g_clearEffectPos.x = -CHARA_SIZE;
+			SetResultScore(D3DXVECTOR3(300.0f, 500.0f, 0.0f), GetScore());
+			g_bMoveClearEffect = false;
+		}
+
 		g_clearEffectPos.x -= 5.0f;
 		if (g_clearEffectPos.x >= 300.0f)
 		{
@@ -136,6 +136,7 @@ void UpdateGameclearEffect(void)
 		}
 		else
 		{
+			SetResultScore(D3DXVECTOR3(300.0f, 500.0f, 0.0f), GetScore());
 			g_bMoveClearEffect = false;
 		}
 	}

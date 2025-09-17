@@ -14,7 +14,7 @@
 #define NUM_WIDTH			(45)			// 一桁の横幅
 #define NUM_HEIGHT			(55)			// 一桁の縦幅
 #define GOAL_SCOREPOS		D3DXVECTOR3(350.0f, 500.0f, 0.0f)		// スコアの最終位置
-#define RANK_POS			D3DXVECTOR3(WINDOW_MID.x, WINDOW_MID.y - 20.0f, 0.0f)	// ランクの表示位置
+#define RANK_POS			D3DXVECTOR3(WINDOW_MID.x, WINDOW_MID.y - 30.0f, 0.0f)	// ランクの表示位置
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureResultScore = NULL;	// テクスチャへのポインタ

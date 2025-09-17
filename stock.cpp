@@ -26,7 +26,7 @@ void InitStock(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-							"data\\TEXTURE\\CHARACTER\\player.png",
+							"data\\TEXTURE\\CHARACTER\\PLAYER.png",
 							&g_pTextureStock);
 
 	// 頂点バッファの生成
@@ -83,8 +83,8 @@ void InitStock(void)
 		// テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.75f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.75f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.75f, 0.25f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.25f);
 
 		pVtx += 4;
 	}

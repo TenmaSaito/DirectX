@@ -56,6 +56,17 @@
 #define EFFECT_COUNTER		(70)					// 軌跡エフェクトの持続時間
 #define EFFECT_SIZE			(30)					// 軌跡エフェクトのサイズ
 
+#define ANIMATION_SPD		(15)					// アニメーションの速度
+
+// テクスチャアニメーションの種類
+typedef enum
+{
+	TEXTURE_ANIMATION_0 = 0,			// 一番上のテクスチャ
+	TEXTURE_ANIMATION_1,				// 二番目のテクスチャ
+	TEXTURE_ANIMATION_2,				// 三番目のテクスチャ
+	TEXTURE_ANIMATION_MAX
+}TEXTURE_ANIMATION;
+
 // プロトタイプ宣言
 float GetPlayerRot(PLAYER *pPlayer);
 void KeyboardPress(void);
@@ -69,6 +80,9 @@ XINPUT_VIBRATION* g_pJoyVibration;
 XINPUT_STATE* g_pState = GetJoypadState();
 PLAYERSTATE g_subState;
 int g_nCounterSubState;
+TEXTURE_ANIMATION g_nCounterTexAnimationPlayer;					// テクスチャアニメーション時のy座標を決める値
+int g_nCntTexYpos;												// テクスチャ座標の増やし方(1 or -1)
+int g_nCounterPlayer;											// 汎用カウンター
 
 //================================================================================================================
 // プレイヤーの初期化処理
@@ -122,10 +136,13 @@ void InitPlayer(void)
 	g_posPast = g_player.posPlayer;
 	g_subState = PLAYERSTATE_NORMAL;
 	g_nCounterSubState = 0;
+	g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
+	g_nCntTexYpos = 1;
+	g_nCounterPlayer = 0;
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-							  "data\\TEXTURE\\CHARACTER\\player.png",
+							  "data\\TEXTURE\\CHARACTER\\PLAYER.png",
 							  &g_pTexturePlayer);
 
 	// 頂点バッファの生成
@@ -171,10 +188,16 @@ void InitPlayer(void)
 	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f,0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f,0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f,1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f,1.0f);
+	if (g_nCounterTexAnimationPlayer >= TEXTURE_ANIMATION_MAX || g_nCounterTexAnimationPlayer < TEXTURE_ANIMATION_0)
+	{
+		g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
+		g_nCntTexYpos *= -1;
+	}
+
+	pVtx[0].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.25f * g_nCounterTexAnimationPlayer));
+	pVtx[1].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.25f * g_nCounterTexAnimationPlayer));
+	pVtx[2].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.25f * g_nCounterTexAnimationPlayer) + 0.25f);
+	pVtx[3].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.25f * g_nCounterTexAnimationPlayer) + 0.25f);
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffPlayer->Unlock();
@@ -462,6 +485,8 @@ void UpdatePlayer(void)
 	g_player.movePlayer.x += (0.0f - g_player.movePlayer.x) * MOVE_RESIST;
 	g_player.movePlayer.y += (0.0f - g_player.movePlayer.y) * MOVE_RESIST;
 
+	int n = 0;
+
 	if (g_posPast != g_player.posPlayer 
 		&& g_player.state != PLAYERSTATE_WAIT 
 		&& g_player.state != PLAYERSTATE_DEATH)
@@ -503,10 +528,31 @@ void UpdatePlayer(void)
 
 #endif
 
-	pVtx[0].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.0f));
-	pVtx[1].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.0f));
-	pVtx[2].tex = D3DXVECTOR2((0.25f * g_player.tex), (1.0f));
-	pVtx[3].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (1.0f));
+	// テクスチャ座標の設定
+	if (g_nCounterTexAnimationPlayer >= TEXTURE_ANIMATION_MAX || g_nCounterTexAnimationPlayer < TEXTURE_ANIMATION_0)
+	{
+		g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
+		g_nCntTexYpos *= -1;
+	}
+
+	if (g_posPast == g_player.posPlayer)
+	{ // プレイヤーの動きが止まったらテクスチャアニメーションを中止
+		if (g_player.tex == PLAYERTEX_LEFT || g_player.tex == PLAYERTEX_RIGHT)
+		{
+			g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_0;
+			g_nCounterPlayer = 0;
+		}
+		else if (g_player.tex == PLAYERTEX_UP || g_player.tex == PLAYERTEX_DOWN)
+		{
+			g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
+			g_nCounterPlayer = 0;
+		}
+	}
+
+	pVtx[0].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.25f * g_nCounterTexAnimationPlayer));
+	pVtx[1].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.25f * g_nCounterTexAnimationPlayer));
+	pVtx[2].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.25f * g_nCounterTexAnimationPlayer) + 0.25f);
+	pVtx[3].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.25f * g_nCounterTexAnimationPlayer) + 0.25f);
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffPlayer->Unlock();
@@ -776,6 +822,17 @@ void KeyboardPress(void)
 				// プレイヤーの向きを更新
 				g_player.rotPlayer = PLAYERDIRECTION_UP;
 			}
+
+			if (g_nCounterPlayer == 0)
+			{
+				g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
+			}
+
+			g_nCounterPlayer++;
+			if (g_nCounterPlayer % ANIMATION_SPD == 0)
+			{
+				g_nCounterTexAnimationPlayer = (TEXTURE_ANIMATION)(g_nCounterTexAnimationPlayer + (1 * g_nCntTexYpos));
+			}
 		}
 		else if (GetKeyboardPress(DIK_S) == true
 			|| GetJoypadPress(JOYKEY_DOWN) == true
@@ -812,6 +869,17 @@ void KeyboardPress(void)
 				// プレイヤーの向きを更新
 				g_player.rotPlayer = PLAYERDIRECTION_DOWN;
 			}
+
+			if (g_nCounterPlayer == 0)
+			{
+				g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
+			}
+
+			g_nCounterPlayer++;
+			if (g_nCounterPlayer % ANIMATION_SPD == 0)
+			{
+				g_nCounterTexAnimationPlayer = (TEXTURE_ANIMATION)(g_nCounterTexAnimationPlayer + (1 * g_nCntTexYpos));
+			}
 		}
 		else if (GetKeyboardPress(DIK_A) == true
 			|| GetJoypadPress(JOYKEY_LEFT) == true
@@ -823,6 +891,17 @@ void KeyboardPress(void)
 
 			// プレイヤーの向きを更新
 			g_player.rotPlayer = PLAYERDIRECTION_LEFT;
+
+			if (g_nCounterPlayer == 0)
+			{
+				g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_0;
+			}
+
+			g_nCounterPlayer++;
+			if (g_nCounterPlayer % ANIMATION_SPD == 0)
+			{
+				g_nCounterTexAnimationPlayer = (TEXTURE_ANIMATION)(g_nCounterTexAnimationPlayer + (1 * g_nCntTexYpos));
+			}
 		}
 		else if (GetKeyboardPress(DIK_D) == true
 			|| GetJoypadPress(JOYKEY_RIGHT) == true
@@ -833,6 +912,17 @@ void KeyboardPress(void)
 
 			// プレイヤーの向きを更新
 			g_player.rotPlayer = PLAYERDIRECTION_RIGHT;
+
+			if (g_nCounterPlayer == 0)
+			{
+				g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_0;
+			}
+
+			g_nCounterPlayer++;
+			if (g_nCounterPlayer % ANIMATION_SPD == 0)
+			{
+				g_nCounterTexAnimationPlayer = (TEXTURE_ANIMATION)(g_nCounterTexAnimationPlayer + (1 * g_nCntTexYpos));
+			}
 		}
 	}
 
