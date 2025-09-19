@@ -28,7 +28,7 @@
 #define HOMING_NONE		(-1)											// ホーミング弾で敵を追尾しない
 #define HOMING_COUNT	(0)												// ホーミング弾の初期動作のカウント秒数
 #define HOMING_MOVE		(3.0f)											// ホーミング団の初期微動の加速量
-#define HOMING_TIME		(300)											// ホーミング弾の追尾持続時間
+#define HOMING_TIME		(150)											// ホーミング弾の追尾持続時間
 
 #define NORMAL_DAMAGE	(1)												// 通常弾の一発のダメージ
 #define HOMING_DAMAGE	(NORMAL_DAMAGE * 8)								// ホーミング弾の一発のダメージ
@@ -53,6 +53,7 @@ BULLET g_aBullet[MAX_BULLET];						// 弾の情報
 float g_fLengthBullet;								// 対角線の長さ
 float g_fAngleBullet;								// 対角線の角度
 int g_nCounterBullet;								// 汎用カウンター
+float g_nBulletSPD[MAX_BULLET];						// 弾速
 
 //================================================================================================================
 // 弾の初期化
@@ -83,6 +84,7 @@ void InitBullet(void)
 		pBullet->nCounterHomingtime = 0;
 		pBullet->bEffect = false;
 		pBullet->bUse = false;							// 未使用状態に設定
+		g_nBulletSPD[nCntBullet] = 0;
 	}
 
 	g_nCounterBullet = NULL;
@@ -277,6 +279,15 @@ void UpdateBullet(void)
 
 				if (pBullet->shot == SHOTTYPE_HOMING)
 				{
+					if (pBullet->nLife % 75 >= 60 && pBullet->nLife % 75 <= 74)
+					{
+						pBullet->move.y = -6.5f;
+					}
+					else
+					{
+						pBullet->move.y = g_nBulletSPD[nCntBullet];
+					}
+
 					if (pBullet->nCounterHomingtime > 0)
 					{
 						float fRotMove,fRotDest,fRotDiff;
@@ -317,7 +328,7 @@ void UpdateBullet(void)
 					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY1, BULLET_SIZE * 1.25f, 40, false);
 					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY2, BULLET_SIZE, 40, false);
 					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY3, BULLET_SIZE * 2.5f, 50, false);
-					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY4, BULLET_SIZE * 2.5f, 50, false);
+					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,pBullet->col, BULLET_SIZE * 2.5f, 50, false);
 				}
 
 				break;
@@ -436,7 +447,7 @@ void UpdateBullet(void)
 							BOMB_BULLET_LIFE,
 							pBullet->type,
 							SHOTTYPE_BOMBBULLET,
-							D3DXCOLOR_NULL,
+							pBullet->col,
 							true);
 					}
 				}
@@ -512,6 +523,7 @@ void SetBullet(D3DXVECTOR3 pos, float speed, float rot, int nLife, BULLETTYPE ty
 		{
 			pBullet->pos = pos;				// 弾の位置を代入
 			pBullet->move.y = speed;		// 弾の速度を代入
+			g_nBulletSPD[nCntBullet] = speed;
 			pBullet->move.z = rot;			// 弾の向きを代入
 			pBullet->nLife = nLife;			// 弾の寿命を代入
 			pBullet->type = type;			// 弾の種類を代入

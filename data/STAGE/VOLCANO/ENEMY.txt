@@ -23,7 +23,7 @@ POS = 1290.0 10.0 0.0
 TYPE = 0
 SIZE = 100.0 100.0
 BULLET = 2
-TEX = 1
+TEX = 2
 MOVE = 0.0 0.0 0.0
 LIFE = 5
 
@@ -39,7 +39,7 @@ POS = -10.0 710.0 0.0
 TYPE = 0
 SIZE = 100.0 100.0
 BULLET = 2
-TEX = 1
+TEX = 2
 MOVE = 0.0 0.0 0.0
 LIFE = 5
 

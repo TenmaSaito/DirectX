@@ -57,9 +57,6 @@ void InitTitle(void)
 	InitTitleAnimation();
 
 	InitTitleMage();
-
-	// É^ÉCÉgÉãâÊñ ÇÃBGMçƒê∂
-	PlaySound(SOUND_LABEL_TITLE);
 }
 
 //================================================================================================================

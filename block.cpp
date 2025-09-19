@@ -153,6 +153,7 @@ void UpdateBlock(void)
 	VERTEX_2D *pVtx = NULL;
 	BLOCK *pBlock = &g_aBlock[0];
 	PLAYER *pPlayer = GetPlayer();
+	int nTurnExac = GetTurn();
 	
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffBlock->Lock(0, 0, (void**)&pVtx, 0);
@@ -178,6 +179,24 @@ void UpdateBlock(void)
 						SHOTTYPE_NORMAL,
 						D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 						false);
+				}
+			}
+			else if (pBlock->type >= BLOCKTYPE_EXIT_A && pBlock->type <= BLOCKTYPE_EXIT_G)
+			{
+				if (nTurnExac != ALREADY_CLEARED)
+				{
+					pBlock->col.a = 0.0f;
+				}
+				else
+				{
+					if (pBlock->col.a <= 1.0f)
+					{
+						pBlock->col.a += 0.01f;
+						if (pBlock->col.a >= 1.0f)
+						{
+							pBlock->col.a = 1.0f;
+						}
+					}
 				}
 			}
 
@@ -215,10 +234,10 @@ void UpdateBlock(void)
 			pVtx[3].rhw = 1.0f;
 
 			// 頂点カラーの設定
-			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[0].col = pBlock->col;
+			pVtx[1].col = pBlock->col;
+			pVtx[2].col = pBlock->col;
+			pVtx[3].col = pBlock->col;
 
 			pVtx[0].tex = D3DXVECTOR2(0.1f * pBlock->type, 0.0f);
 			pVtx[1].tex = D3DXVECTOR2(0.1f * pBlock->type + 0.1f, 0.0f);
@@ -358,6 +377,7 @@ int SetBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
 
 			pBlock->pos = pos;
 			pBlock->type = type;
+			pBlock->col = D3DXCOLOR_NULL;
 			pBlock->nCounter = 0;
 
 			pBlock->fWidth = fWidth;
@@ -395,6 +415,12 @@ int SetBlock(BLOCKTYPE type, D3DXVECTOR3 pos, float fWidth, float fHeight)
 			pVtx[1].tex = D3DXVECTOR2(0.0909f * pBlock->type + 0.0909f, 0.0f);
 			pVtx[2].tex = D3DXVECTOR2(0.0909f * pBlock->type, 0.0f);
 			pVtx[3].tex = D3DXVECTOR2(0.0909f * pBlock->type + 0.0909f, 0.0f);
+
+			// 頂点カラーの設定
+			pVtx[0].col = pBlock->col;
+			pVtx[1].col = pBlock->col;
+			pVtx[2].col = pBlock->col;
+			pVtx[3].col = pBlock->col;
 
 			// 頂点バッファをアンロックする
 			g_pVtxBuffBlock->Unlock();
@@ -519,8 +545,8 @@ void CollisionPlayer(BLOCK* pBlock)
 		case BLOCKTYPE_EXIT_A:
 
 			if (nCntEnemy <= 0
-				&& nTurnExac == ALREADY_CLEARED 
-				&& GetFadeStage() == FADESTAGE_NONE 
+				&& nTurnExac == ALREADY_CLEARED
+				&& GetFadeStage() == FADESTAGE_NONE
 				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
 			{
 				pPlayer->movePlayer.x = 0.0f;

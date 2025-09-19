@@ -10,6 +10,7 @@
 #include "heart.h"
 #include "sound.h"
 #include "stage.h"
+#include "playerframe.h"
 
 // マクロ定義
 #define MAX_ITEM		(64)			// ブロックの最大数
@@ -327,6 +328,8 @@ void CollisionPlayer(ITEM* pItem)
 			break;
 
 		case ITEMTYPE_HEAL:
+
+			PlaySound(SOUND_LABEL_SE_HEAL);
 			
 			if (pPlayer->nLife < MAX_LIFE)
 			{	// ヒール
@@ -341,6 +344,10 @@ void CollisionPlayer(ITEM* pItem)
 
 		case ITEMTYPE_HOMING:
 
+			ChangeModeFrame(FRAMESTATE_POWER_ITEM);
+
+			PlaySound(SOUND_LABEL_SE_POWER_CHANGE);
+
 			SetPlayerShotType(SHOTTYPE_HOMING);
 
 			pItem->bUse = false;
@@ -349,6 +356,10 @@ void CollisionPlayer(ITEM* pItem)
 
 		case ITEMTYPE_BOMB:
 
+			ChangeModeFrame(FRAMESTATE_POWER_ITEM);
+
+			PlaySound(SOUND_LABEL_SE_POWER_CHANGE);
+
 			SetPlayerShotType(SHOTTYPE_BOMB);
 
 			pItem->bUse = false;
@@ -356,6 +367,10 @@ void CollisionPlayer(ITEM* pItem)
 			break;
 
 		case ITEMTYPE_LASER:
+
+			ChangeModeFrame(FRAMESTATE_POWER_ITEM);
+
+			PlaySound(SOUND_LABEL_SE_POWER_CHANGE);
 
 			SetPlayerShotType(SHOTTYPE_LASER);
 
@@ -385,6 +400,8 @@ void CollisionPlayer(ITEM* pItem)
 			break;
 
 		case ITEMTYPE_SECRET:
+
+			PlaySound(SOUND_LABEL_SE_GETULTIMATECOIN);
 
 			SetEnableHaveSecret(true);
 

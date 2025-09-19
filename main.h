@@ -46,6 +46,7 @@ typedef enum
 	MODE_RESULT,			// リザルト画面
 	MODE_GAMEOVER,			// ゲームオーバー画面
 	MODE_GAMECLEAR,			// ゲームクリア画面
+	MODE_CREDIT,			// クレジット画面
 	MODE_MAX
 }MODE;
 
@@ -72,7 +73,7 @@ typedef struct POLY_SIZE
 
 	POLY_SIZE() : x(0.0f), y(0.0f), hx(0.0f), hy(0.0f) {};
 	POLY_SIZE(float px, float py) : x(px), y(py), hx(px * 0.5f), hy(py * 0.5f) {};
-}POLY_SIZE;
+}POLY_SIZE, *LPPOLY_SIZE;
 
 // プロトタイプ宣言
 LPDIRECT3DDEVICE9 GetDevice(void);

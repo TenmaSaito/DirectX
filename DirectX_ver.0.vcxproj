@@ -148,6 +148,11 @@
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="bullet.cpp" />
+    <ClCompile Include="credit.cpp" />
+    <ClCompile Include="creditBg.cpp" />
+    <ClCompile Include="creditChar.cpp" />
+    <ClCompile Include="creditLogo.cpp" />
+    <ClCompile Include="creditPhoto.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="explosion.cpp" />
@@ -196,6 +201,11 @@
     <ClInclude Include="bg.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="bullet.h" />
+    <ClInclude Include="credit.h" />
+    <ClInclude Include="creditBg.h" />
+    <ClInclude Include="creditChar.h" />
+    <ClInclude Include="creditLogo.h" />
+    <ClInclude Include="creditPhoto.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="explosion.h" />

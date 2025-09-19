@@ -71,7 +71,7 @@ void InitTitleSelect(void)
 
 	for (nCntTitleSelect = TITLESELECTTYPE_BOOKSTART; nCntTitleSelect < TITLESELECTTYPE_START_SHADOW; nCntTitleSelect++, pTitleSelect++)
 	{
-		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.4f + (50.0f * (nCntTitleSelect + 1)), 0.0f);
+		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.3f + (50.0f * (nCntTitleSelect + 1)), 0.0f);
 		pTitleSelect->col = D3DXCOLOR_NULL;
 		pTitleSelect->type = (TITLESELECTTYPE)nCntTitleSelect;
 		pTitleSelect->bSelect = false;
@@ -87,7 +87,7 @@ void InitTitleSelect(void)
 
 
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\CHARACTER\\TITLE\\TITLE_SELECT.png",
+		"data\\TEXTURE\\CHARACTER\\TITLE\\TITLE_SELECT_V2.png",
 		&g_pTextureTitleSelect);
 
 	// 頂点バッファの生成
@@ -102,8 +102,8 @@ void InitTitleSelect(void)
 	g_nCounterSelectState = SELECTWAIT_STATE;
 	g_nCounterSelect = 0;
 	g_aTitleSelect[g_nTitleSelect].bSelect = true;
-	g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
-	g_aTitleSelect[g_nTitleSelect + 6].bSelect = true;
+	g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].bSelect = true;
+	g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].bSelect = true;
 	g_bMoveSelectUpper = true;
 	g_bMoveSelectLeft = true;
 	g_bUseSelect = false;
@@ -149,10 +149,10 @@ void InitTitleSelect(void)
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.125f * (nCntTitleSelect % 6));
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.125f * (nCntTitleSelect % 6));
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.125f * (nCntTitleSelect % 6) + 0.125f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.125f * (nCntTitleSelect % 6) + 0.125f);
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.125f * (nCntTitleSelect % TITLESELECTTYPE_START_SHADOW));
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.125f * (nCntTitleSelect % TITLESELECTTYPE_START_SHADOW));
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 0.125f * (nCntTitleSelect % TITLESELECTTYPE_START_SHADOW) + 0.125f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 0.125f * (nCntTitleSelect % TITLESELECTTYPE_START_SHADOW) + 0.125f);
 
 		pVtx += 4;
 	}
@@ -194,7 +194,7 @@ void UpdateTitleSelect(void)
 	for (int nCntSelect = 0; nCntSelect < TITLESELECTTYPE_MAX; nCntSelect++, pTitleSelect++)
 	{
 		if (g_nCounterSelectState != SELECTWAIT_STATE || GetFade() != FADE_NONE) continue;
-		if (pTitleSelect->type >= TITLESELECTTYPE_START && pTitleSelect->type <= TITLESELECTTYPE_EXIT)
+		if (pTitleSelect->type >= TITLESELECTTYPE_START && pTitleSelect->type < TITLESELECTTYPE_BOOKSTART)
 		{
 			if (pTitleSelect->bSelect == true)
 			{
@@ -209,7 +209,7 @@ void UpdateTitleSelect(void)
 				pTitleSelect->pos.y += 10.0f;
 			}
 		}
-		else if (pTitleSelect->type >= TITLESELECTTYPE_BOOKSTART && pTitleSelect->type <= TITLESELECTTYPE_BOOKEXIT)
+		else if (pTitleSelect->type >= TITLESELECTTYPE_BOOKSTART && pTitleSelect->type < TITLESELECTTYPE_START_SHADOW)
 		{
 			if (pTitleSelect->bSelect == false)
 			{
@@ -226,7 +226,7 @@ void UpdateTitleSelect(void)
 				pTitleSelect->col.a += 0.05f;
 			}
 		}
-		else if (pTitleSelect->type >= TITLESELECTTYPE_START_SHADOW && pTitleSelect->type <= TITLESELECTTYPE_EXIT_SHADOW)
+		else if (pTitleSelect->type >= TITLESELECTTYPE_START_SHADOW && pTitleSelect->type < TITLESELECTTYPE_MAX)
 		{
 			if (pTitleSelect->bSelect == true)
 			{
@@ -257,9 +257,9 @@ void UpdateTitleSelect(void)
 			// 選択中だった初期化し、未選択状態に
 			g_aTitleSelect[g_nTitleSelect].bSelect = false;
 			g_aTitleSelect[g_nTitleSelect].pos = SELECT_NORMAL;
-			g_aTitleSelect[g_nTitleSelect + 3].bSelect = false;
-			g_aTitleSelect[g_nTitleSelect + 6].bSelect = false;
-			g_aTitleSelect[g_nTitleSelect + 6].pos = SELECTSHADOW_NORMAL;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].bSelect = false;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].bSelect = false;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].pos = SELECTSHADOW_NORMAL;
 
 			g_nTitleSelect++;
 			if (g_nTitleSelect >= TITLESELECTTYPE_BOOKSTART)
@@ -268,10 +268,10 @@ void UpdateTitleSelect(void)
 			}
 
 			g_aTitleSelect[g_nTitleSelect].pos = SELECT_UNSELECT;
-			SetTitleMage(D3DXVECTOR3(g_aTitleSelect[g_nTitleSelect + 3].pos.x - 150.0f, g_aTitleSelect[g_nTitleSelect + 3].pos.y, 0.0f), TITLE_MAGETYPE_SELECT);
+			SetTitleMage(D3DXVECTOR3(g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].pos.x - 150.0f, g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].pos.y, 0.0f), TITLE_MAGETYPE_SELECT);
 			g_aTitleSelect[g_nTitleSelect].bSelect = true;
-			g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
-			g_aTitleSelect[g_nTitleSelect + 6].bSelect = true;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].bSelect = true;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].bSelect = true;
 			SetTitleMage(SELECTSHADOW_NORMAL, TITLE_MAGETYPE_TEXT);
 
 			g_bMoveSelect[0] = true;
@@ -286,9 +286,9 @@ void UpdateTitleSelect(void)
 			// 選択中だった初期化し、未選択状態に
 			g_aTitleSelect[g_nTitleSelect].bSelect = false;
 			g_aTitleSelect[g_nTitleSelect].pos = SELECT_NORMAL;
-			g_aTitleSelect[g_nTitleSelect + 3].bSelect = false;
-			g_aTitleSelect[g_nTitleSelect + 6].bSelect = false;
-			g_aTitleSelect[g_nTitleSelect + 6].pos = SELECTSHADOW_NORMAL;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].bSelect = false;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].bSelect = false;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].pos = SELECTSHADOW_NORMAL;
 
 			g_nTitleSelect--;
 			if (g_nTitleSelect < TITLESELECTTYPE_START)
@@ -297,10 +297,10 @@ void UpdateTitleSelect(void)
 			}
 
 			g_aTitleSelect[g_nTitleSelect].pos = SELECT_UNSELECT;
-			SetTitleMage(D3DXVECTOR3(g_aTitleSelect[g_nTitleSelect + 3].pos.x - 150.0f, g_aTitleSelect[g_nTitleSelect + 3].pos.y, 0.0f), TITLE_MAGETYPE_SELECT);
+			SetTitleMage(D3DXVECTOR3(g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].pos.x - 150.0f, g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].pos.y, 0.0f), TITLE_MAGETYPE_SELECT);
 			g_aTitleSelect[g_nTitleSelect].bSelect = true;
-			g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
-			g_aTitleSelect[g_nTitleSelect + 6].bSelect = true;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].bSelect = true;
+			g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].bSelect = true;
 			SetTitleMage(SELECTSHADOW_NORMAL, TITLE_MAGETYPE_TEXT);
 
 			g_bMoveSelect[0] = true;
@@ -321,10 +321,17 @@ void UpdateTitleSelect(void)
 		|| GetJoypadTrigger(JOYKEY_START) == true)
 		&& GetEnableTitleSelect() == false)
 	{
-		g_aTitleSelect[(g_nTitleSelect + 1) % 3].pos.y = SELECT_LOWER;
-		g_aTitleSelect[(g_nTitleSelect + 1) % 3].col.a = 0.0f;
-		g_aTitleSelect[(g_nTitleSelect + 2) % 3].pos.y = SELECT_LOWER;
-		g_aTitleSelect[(g_nTitleSelect + 2) % 3].col.a = 0.0f;
+		g_aTitleSelect[(g_nTitleSelect + 1) % TITLESELECTTYPE_BOOKSTART].pos.y = SELECT_LOWER;
+		g_aTitleSelect[(g_nTitleSelect + 1) % TITLESELECTTYPE_BOOKSTART].col.a = 0.0f;
+		g_aTitleSelect[(g_nTitleSelect + 2) % TITLESELECTTYPE_BOOKSTART].pos.y = SELECT_LOWER;
+		g_aTitleSelect[(g_nTitleSelect + 2) % TITLESELECTTYPE_BOOKSTART].col.a = 0.0f;
+		g_aTitleSelect[(g_nTitleSelect + 3) % TITLESELECTTYPE_BOOKSTART].pos.y = SELECT_LOWER;
+		g_aTitleSelect[(g_nTitleSelect + 3) % TITLESELECTTYPE_BOOKSTART].col.a = 0.0f;
+		for (int nCntTitle = TITLESELECTTYPE_BOOKSTART; nCntTitle < TITLESELECTTYPE_START_SHADOW; nCntTitle++)
+		{
+			g_aTitleSelect[nCntTitle].col.a = 0.3f;
+		}
+
 		g_bMoveSelect[0] = false;
 		g_bMoveSelect[1] = false;
 	}
@@ -367,7 +374,6 @@ void UpdateTitleSelect(void)
 				if (GetFade() == FADE_NONE)
 				{ // チュートリアルへ進む
 					SetGameTutorial(true);
-					PlaySound(SOUND_LABEL_SE_ENTER);
 					SetFade(MODE_GAME, FADE_TYPE_TEXTURE);
 					FadeSound(SOUND_LABEL_GAME_TUTORIAL);
 				}
@@ -381,6 +387,33 @@ void UpdateTitleSelect(void)
 				else
 				{
 					g_aTitleSelect[TITLESELECTTYPE_TUTORIAL].col.a = 1.0f;
+				}
+			}
+
+			g_nCounterSelectState--;
+
+			break;
+
+		case TITLESELECTTYPE_CREDIT:
+
+			if (g_nCounterSelectState <= 0)
+			{
+				if (GetFade() == FADE_NONE)
+				{ // チュートリアルへ進む
+					SetGameTutorial(true);
+					SetFade(MODE_CREDIT, FADE_TYPE_TEXTURE);
+					FadeSound(SOUND_LABEL_CREDIT);
+				}
+			}
+			else
+			{
+				if (g_nCounterSelectState % 20 <= 9)
+				{
+					g_aTitleSelect[TITLESELECTTYPE_CREDIT].col.a = 0.0f;
+				}
+				else
+				{
+					g_aTitleSelect[TITLESELECTTYPE_CREDIT].col.a = 1.0f;
 				}
 			}
 
@@ -409,13 +442,13 @@ void UpdateTitleSelect(void)
 			if (g_bMoveSelectUpper == true)
 			{
 				g_aTitleSelect[g_nTitleSelect].pos.y -= SELECT_MOVE_Y;
-				g_aTitleSelect[g_nTitleSelect + 6].pos.y -= SELECT_MOVE_Y;
+				g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].pos.y -= SELECT_MOVE_Y;
 				if (g_aTitleSelect[g_nTitleSelect].pos.y < SELECT_UPPER - SELECT_MOVE_Y_MAX) g_bMoveSelectUpper = false;
 			}
 			else
 			{
 				g_aTitleSelect[g_nTitleSelect].pos.y += SELECT_MOVE_Y;
-				g_aTitleSelect[g_nTitleSelect + 6].pos.y += SELECT_MOVE_Y;
+				g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].pos.y += SELECT_MOVE_Y;
 				if (g_aTitleSelect[g_nTitleSelect].pos.y > SELECT_UPPER + SELECT_MOVE_Y_MAX) g_bMoveSelectUpper = true;
 			}
 		}
@@ -427,13 +460,13 @@ void UpdateTitleSelect(void)
 			if (g_bMoveSelectUpper == true)
 			{
 				g_aTitleSelect[g_nTitleSelect].pos.x -= SELECT_MOVE_X;
-				g_aTitleSelect[g_nTitleSelect + 6].pos.x -= SELECT_MOVE_X;
+				g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].pos.x -= SELECT_MOVE_X;
 				if (g_aTitleSelect[g_nTitleSelect].pos.x < SELECT_NORMAL.x - SELECT_MOVE_X_MAX) g_bMoveSelectLeft = false;
 			}
 			else
 			{
 				g_aTitleSelect[g_nTitleSelect].pos.x += SELECT_MOVE_X;
-				g_aTitleSelect[g_nTitleSelect + 6].pos.x += SELECT_MOVE_X;
+				g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].pos.x += SELECT_MOVE_X;
 				if (g_aTitleSelect[g_nTitleSelect].pos.x > SELECT_NORMAL.x + SELECT_MOVE_X_MAX) g_bMoveSelectLeft = true;
 			}
 		}
@@ -516,9 +549,9 @@ void SetTitleSelect(bool bUse)
 {
 	g_bUseSelect = bUse;
 
-	SetTitleMage(D3DXVECTOR3(g_aTitleSelect[g_nTitleSelect + 3].pos.x - 150.0f, g_aTitleSelect[g_nTitleSelect + 3].pos.y, 0.0f), TITLE_MAGETYPE_SELECT);
+	SetTitleMage(D3DXVECTOR3(g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].pos.x - 150.0f, g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].pos.y, 0.0f), TITLE_MAGETYPE_SELECT);
 	g_aTitleSelect[g_nTitleSelect].bSelect = true;
-	g_aTitleSelect[g_nTitleSelect + 3].bSelect = true;
-	g_aTitleSelect[g_nTitleSelect + 6].bSelect = true;
+	g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_BOOKSTART].bSelect = true;
+	g_aTitleSelect[g_nTitleSelect + TITLESELECTTYPE_START_SHADOW].bSelect = true;
 	SetTitleMage(SELECTSHADOW_NORMAL, TITLE_MAGETYPE_TEXT);
 }

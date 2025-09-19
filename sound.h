@@ -10,10 +10,15 @@
 #include "main.h"
 
 // マクロ定義
-#define SOUND_BGMSTART		(SOUND_LABEL_TITLE)		// BGMの開始位置
+#define SOUND_BGMSTART		(SOUND_LABEL_TITLE)			// BGMの開始位置
 #define SOUND_SESTART		(SOUND_LABEL_SE_SHOT)		// SEの開始位置
 #define SOUND_MENUSTART		(SOUND_LABEL_SE_ENTER)		// MENU用SEの開始位置
+#define SOUND_STANDARD		(0.75f)						// 初期音量
+
+#ifdef _DEBUG
+#undef SOUND_STANDARD
 #define SOUND_STANDARD		(0.0f)						// 初期音量
+#endif
 
 //*****************************************************************************
 // サウンド一覧 (sound.cppのsoundinfoにも追加する！)
@@ -26,6 +31,7 @@ typedef enum
 	SOUND_LABEL_GAMECLEAR,			// ゲームクリア時のBGM
 	SOUND_LABEL_GAMEOVER,			// ゲームオーバー時のBGM
 	SOUND_LABEL_GAME_TUTORIAL,		// チュートリアル時のBGM
+	SOUND_LABEL_CREDIT,				// クレジットで流れるBGM
 	SOUND_LABEL_SE_SHOT,		// 弾発射音
 	SOUND_LABEL_SE_HIT,			// ヒット音
 	SOUND_LABEL_SE_EXPLOSION,	// 爆発音
@@ -40,6 +46,8 @@ typedef enum
 	SOUND_LABEL_SE_FULLCHARGE,	// チャージ完了
 	SOUND_LABEL_SE_SHOT_1,	// チャージ完了
 	SOUND_LABEL_SE_CHARGE_SHOT,	// チャージ完了
+	SOUND_LABEL_SE_HEAL,		// 回復音
+	SOUND_LABEL_SE_POWER_CHANGE,	// チャージ技アイテムを取った時の音
 	SOUND_LABEL_MAX,
 } SOUND_LABEL;
 

@@ -11,8 +11,8 @@
 // ƒ}ƒNƒ’è‹`
 #define LOGO_WIDTH1			(350.0f)		// ƒƒS‚Ì‰¡• * 0.5f
 #define LOGO_HEIGHT1		(75.0f)			// ƒƒS‚Ìc• * 0.5f
-#define LOGO_WIDTH2			(550.0f)		// ƒƒS‚Ì‰¡• * 0.5f
-#define LOGO_HEIGHT2		(100.0f)		// ƒƒS‚Ìc• * 0.5f
+#define LOGO_WIDTH2			(500.0f)		// ƒƒS‚Ì‰¡• * 0.5f
+#define LOGO_HEIGHT2		(85.0f)		// ƒƒS‚Ìc• * 0.5f
 
 // \‘¢‘Ì‚Ì’è‹`
 typedef struct

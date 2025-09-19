@@ -13,14 +13,20 @@
 #define MAX_BULLET		(512)		// 弾の最大数
 #define BULLET_SPD		(-50.0f)	// 弾の速度
 #define BULLET_SIZE		(30.0f)		// 弾のサイズ
+#define BULLET_COUNT	(100)		// 弾を発射する間隔
 
-#define HOMING_SPD		(-15.0f)	// ホーミングの速さ
-#define BOMB_SPD		(-5.0f)		// ボムの速度
-#define LASER_SPD		(0.0f)		// レーザー始点の速さ
+#define HOMING_SPD			(-15.0f)	// ホーミングの速さ
+#define HOMINGBULLET_COUNT	(150)		// 弾を発射する間隔
+#define BOMB_SPD			(-5.0f)		// ボムの速度
+#define BOMBBULLET_COUNT	(200)		// 弾を発射する間隔
+#define LASER_SPD			(0.0f)		// レーザー始点の速さ
 
 #define HOMING_LIFE		(600)		// ホーミングの体力
 #define BOMB_LIFE		(100)		// ボムの体力
 #define LASER_LIFE		(200)		// レーザーの体力
+
+#define FULL_BURST_LIFE	(1)		// フルバーストの体力
+#define FULL_BURST_SPD	(0)			// 速度
 
 // 弾の種類
 typedef enum

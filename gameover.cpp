@@ -16,14 +16,20 @@
 #include "scoreRank.h"
 #include "moon.h"
 
+// マクロ定義
+#define FADE_COUNT		(600)						// リザルト画面へ遷移するまでの時間
+
 // グローバル変数
 int g_nCurrentScore = 0;
+int g_nCounterGameover = 0;
 
 //================================================================================================================
 // ゲームオーバー画面の初期化処理
 //================================================================================================================
 void InitGameover(void)
 {
+	g_nCounterGameover = 0;
+
 	InitGameoverBg();
 
 	InitGameoverEffect();
@@ -60,7 +66,8 @@ void UpdateGameover(void)
 {
 	// Enterでタイトル画面へ進む
 	if ((GetJoypadPress(JOYKEY_START) == true 
-		|| GetKeyboardTrigger(DIK_RETURN)) == true 
+		|| GetKeyboardTrigger(DIK_RETURN) == true
+		|| g_nCounterGameover >= FADE_COUNT)
 		&& (GetFade() == FADE_NONE && GetEnableGameoverEffect() == false))
 	{
 		PlaySound(SOUND_LABEL_SE_ENTER);
@@ -76,6 +83,8 @@ void UpdateGameover(void)
 	UpdateScoreRank();
 
 	UpdateMoon();
+
+	g_nCounterGameover++;
 }
 
 //================================================================================================================

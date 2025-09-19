@@ -16,6 +16,7 @@
 #include "gauge.h"
 #include "gameover.h"
 #include "gameclear.h"
+#include "credit.h"
 #include "block.h"
 #include "bullet.h"
 #include "resource.h"
@@ -410,6 +411,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	return S_OK;
 
+	SetEnablePlayerFullburst(false);
 }
 
 //================================================================================================================
@@ -533,6 +535,11 @@ void Update(void)
 		UpdateGameclear();
 
 		break;
+
+	case MODE_CREDIT:
+		UpdateCredit();
+
+		break;
 	}
 
 	// フェードの更新処理
@@ -580,6 +587,10 @@ void Draw(void)
 
 		case MODE_GAMECLEAR:
 			DrawGameclear();
+			break;
+
+		case MODE_CREDIT:
+			DrawCredit();
 			break;
 		}
 
@@ -641,6 +652,10 @@ void SetMode(MODE mode)
 	case MODE_GAMECLEAR:
 		UninitGameclear();
 		break;
+
+	case MODE_CREDIT:
+		UninitCredit();
+		break;
 	}
 
 	// 現在のモードを保存
@@ -671,6 +686,10 @@ void SetMode(MODE mode)
 
 	case MODE_GAMECLEAR:
 		InitGameclear();
+		break;
+
+	case MODE_CREDIT:
+		InitCredit();
 		break;
 	}
 
@@ -720,7 +739,6 @@ void DrawDebug(void)
 	PLAYER* pPlayer = GetPlayer();							// プレイヤーの情報
 	XINPUT_VIBRATION *pVibration = GetJoyVibration();		// バイブレーションの情報
 	XINPUT_STATE *pState = GetJoypadState();				// ジョイパッドの情報
-	_XINPUT_KEYSTROKE stroke;
 	Gauge *pGauge = GetGauge();								// ゲージの情報
 	POINT pos = GetMousePos();								// マウスの位置情報
 	int nBullet = GetBulletAll();

@@ -113,5 +113,6 @@ void SetPlayerDo(PLAYERDO playerDo, bool bCould);
 
 PLAYERDIRECTION GetPlayerDirection(void);
 void SetPlayerShotType(SHOTTYPE type);
+void SetEnablePlayerFullburst(bool bUse);
 
 #endif

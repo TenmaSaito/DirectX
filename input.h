@@ -59,6 +59,10 @@ typedef enum
 }MOUSEKEY;
 
 //プロトタイプ宣言
+
+//***************************************************
+// キーボードのプロトタイプ宣言
+//***************************************************
 HRESULT InitKeyboard(HINSTANCE hInstance, HWND hWnd);
 void UninitKeyboard(void);
 void UpdateKeyboard(void);
@@ -68,6 +72,9 @@ bool GetKeyboardRelease(int nKey);
 bool GetKeyboardRepeat(int nKey);
 bool GetKeyboardAny(void);
 
+//***************************************************
+// ジョイパッドのプロトタイプ宣言
+//***************************************************
 HRESULT InitJoypad(void);
 void UninitJoypad(void);
 void UpdateJoypad(void);
@@ -75,7 +82,6 @@ bool GetJoypadPress(JOYKEY Key);
 bool GetJoypadTrigger(JOYKEY Key);
 bool GetJoypadRelease(JOYKEY Key);
 bool GetJoypadRepeat(JOYKEY Key);
-bool GetJoyThumbRepeat(JOYTHUMB Thumb);
 bool GetJoypadAny(void);
 
 XINPUT_VIBRATION *GetJoyVibration(void);
@@ -85,11 +91,16 @@ bool GetJoyThumbLYState(void);
 bool GetJoyThumbRXState(void);
 bool GetJoyThumbRYState(void);
 bool GetJoyThumbSlow(JOYTHUMB Thumb);
+bool GetJoyThumbRepeat(JOYTHUMB Thumb);
 
+//***************************************************
+// マウスのプロトタイプ宣言
+//***************************************************
 HRESULT InitMouse(HWND hWnd);
 void UninitMouse(void);
 void UpdateMouse(void);
 bool GetMousePress(int nButton);
+bool GetMouseTrigger(int nButton);
 bool GetMouseRelease(int nButton);
 POINT GetMousePos(void);
 

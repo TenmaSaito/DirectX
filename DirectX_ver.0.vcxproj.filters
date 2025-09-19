@@ -91,6 +91,12 @@
     <Filter Include="ヘッダー ファイル\gameend\result">
       <UniqueIdentifier>{17ed0c99-f1ad-43f6-aa08-324888b7cd2a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\credit">
+      <UniqueIdentifier>{c692c3eb-6569-4d1b-b559-0c0b5c45f103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\credit">
+      <UniqueIdentifier>{a42e4158-03c4-4df0-891f-4021a1e8273f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp">
@@ -230,6 +236,21 @@
     </ClCompile>
     <ClCompile Include="moon.cpp">
       <Filter>ソース ファイル\gameend\gameover</Filter>
+    </ClCompile>
+    <ClCompile Include="credit.cpp">
+      <Filter>ソース ファイル\credit</Filter>
+    </ClCompile>
+    <ClCompile Include="creditBg.cpp">
+      <Filter>ソース ファイル\credit</Filter>
+    </ClCompile>
+    <ClCompile Include="creditLogo.cpp">
+      <Filter>ソース ファイル\credit</Filter>
+    </ClCompile>
+    <ClCompile Include="creditPhoto.cpp">
+      <Filter>ソース ファイル\credit</Filter>
+    </ClCompile>
+    <ClCompile Include="creditChar.cpp">
+      <Filter>ソース ファイル\credit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +394,21 @@
     </ClInclude>
     <ClInclude Include="moon.h">
       <Filter>ヘッダー ファイル\gameend\gameover</Filter>
+    </ClInclude>
+    <ClInclude Include="credit.h">
+      <Filter>ヘッダー ファイル\credit</Filter>
+    </ClInclude>
+    <ClInclude Include="creditBg.h">
+      <Filter>ヘッダー ファイル\credit</Filter>
+    </ClInclude>
+    <ClInclude Include="creditLogo.h">
+      <Filter>ヘッダー ファイル\credit</Filter>
+    </ClInclude>
+    <ClInclude Include="creditPhoto.h">
+      <Filter>ヘッダー ファイル\credit</Filter>
+    </ClInclude>
+    <ClInclude Include="creditChar.h">
+      <Filter>ヘッダー ファイル\credit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

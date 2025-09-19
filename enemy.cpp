@@ -54,15 +54,18 @@
 // プロトタイプ宣言
 void CollisionPlayer(ENEMY *pEnemy);
 void CollisionEnemy(ENEMY *pEnemy);
+D3DXCOLOR EnemyBulletCol(PENEMY pEnemy);
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_apTextureEnemy[ENEMYTEX_MAX] = {};	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEnemy = NULL;				// 頂点バッファのポインタ
-ENEMY g_aEnemy[MAX_ENEMY];									// 敵の情報
+ENEMY g_aEnemy[MAX_ENEMY];									// 敵の現情報
+POLY_SIZE g_aEnemySizeCopy[MAX_ENEMY];						// 敵の元情報
 float g_fLengthEnemy;										// 対角線の長さ
 float g_fAngleEnemy;										// 対角線の角度
 bool g_bUseCollisonBlock;									// 当たり判定を表示するか
 int g_nCounterEnemy;										// 敵の総数
+int g_nCounterEnemyBullet;									// 敵の弾を撃つ判定
 int g_nKillcountEnemy;										// 倒された敵の総数
 
 const char* g_aEnemyTex[ENEMYTEX_MAX]
@@ -82,6 +85,7 @@ void InitEnemy(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();			// デバイスのポインタ,デバイスの取得
 	ENEMY *pEnemy = &g_aEnemy[0];						// 敵の先頭アドレス
+	LPPOLY_SIZE pSize = &g_aEnemySizeCopy[0];
 
 	// テクスチャの読み込み
 	for (int nCntEnemy = 0; nCntEnemy < ENEMYTEX_MAX; nCntEnemy++)
@@ -93,11 +97,11 @@ void InitEnemy(void)
 	
 
 	// 弾の情報の初期化
-	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++,pEnemy++)
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++,pEnemy++,pSize++)
 	{
 		pEnemy->pos = D3DXVECTOR3_NULL;
 		pEnemy->move = D3DXVECTOR3_NULL;
-		pEnemy->size = POLY_SIZE(ENEMY_SIZE, ENEMY_SIZE);
+		*pSize = pEnemy->size = POLY_SIZE(ENEMY_SIZE, ENEMY_SIZE);
 		pEnemy->fLengthEnemy = sqrtf(powf(pEnemy->size.x, 2.0f) + powf(pEnemy->size.y, 2.0f)) * 0.5f;
 		pEnemy->fAngleEnemy = atan2f(pEnemy->size.x, pEnemy->size.y);
 		pEnemy->fLength = 0.0f;
@@ -116,6 +120,7 @@ void InitEnemy(void)
 	g_bUseCollisonBlock = false;						// 表示しない
 	g_nCounterEnemy = 0;								// 総数をリセット
 	g_nKillcountEnemy = 0;								// 総数をリセット
+	g_nCounterEnemyBullet = 0;							// カウンターをリセット
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_ENEMY,			// MAX_Enemy分の頂点を作成
@@ -207,8 +212,9 @@ void UpdateEnemy(void)
 {
 	ENEMY *pEnemy = &g_aEnemy[0];
 	PLAYER *pPlayer = GetPlayer();
+	LPPOLY_SIZE pSize = &g_aEnemySizeCopy[0];
 
-	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++,pEnemy++)
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++,pEnemy++,pSize++)
 	{
 		if (pEnemy->bUse == true)
 		{
@@ -355,7 +361,7 @@ void UpdateEnemy(void)
 					if ((pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_DEATH && pPlayer->state != PLAYERSTATE_WAIT)
 						&& GetFade() == FADE_NONE)
 					{// プレイヤーが生きていて、且つフェードが終わったら
-						if ((rand() % RAND_PERCENT) == 0)
+						if (g_nCounterEnemyBullet % BULLET_COUNT == 0)
 						{
 							float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
 								(pPlayer->posPlayer.y - pEnemy->pos.y));
@@ -366,7 +372,7 @@ void UpdateEnemy(void)
 								BULLETLIFE_SLIME * 5,
 								BULLETTYPE_ENEMY_1,
 								SHOTTYPE_NORMAL,
-								ENEMY_1_BULLET,
+								EnemyBulletCol(pEnemy),
 								true);
 						}
 					}
@@ -452,7 +458,7 @@ void UpdateEnemy(void)
 					if ((pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_DEATH && pPlayer->state != PLAYERSTATE_WAIT)
 						&& GetFade() == FADE_NONE)
 					{// プレイヤーが生きていて、且つフェードが終わったら
-						if ((rand() % RAND_PERCENT) == 0)
+						if (g_nCounterEnemyBullet % BOMBBULLET_COUNT == 0)
 						{
 							float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
 								(pPlayer->posPlayer.y - pEnemy->pos.y));
@@ -463,8 +469,37 @@ void UpdateEnemy(void)
 								BULLETLIFE_SLIME,
 								BULLETTYPE_ENEMY_1,
 								SHOTTYPE_BOMB,
-								ENEMY_1_BULLET,
+								EnemyBulletCol(pEnemy),
 								true);
+						}
+						else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT >= 150 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= (BOMBBULLET_COUNT - 1))
+						{
+							pEnemy->size.x += 1.0f;
+							pEnemy->size.y += 1.0f;
+						}
+						else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT == 1)
+						{
+							pEnemy->size.x = pSize->x * 0.5f;
+							pEnemy->size.y = pSize->y * 0.5f;
+						}
+						else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT > 1 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= 75)
+						{
+							if (pEnemy->size.x <= pSize->x)
+							{
+								pEnemy->size.x += 3.0f;
+								pEnemy->size.y += 3.0f;
+								if (pEnemy->size.x >= pSize->x)
+								{
+									pEnemy->size = *pSize;
+								}
+							}
+						}
+						else
+						{
+							if (pEnemy->size.x != pSize->x)
+							{
+								pEnemy->size = *pSize;
+							}
 						}
 					}
 
@@ -550,19 +585,48 @@ void UpdateEnemy(void)
 					if ((pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_DEATH && pPlayer->state != PLAYERSTATE_WAIT)
 						&& GetFade() == FADE_NONE)
 					{// プレイヤーが生きていて、且つフェードが終わったら
-						if ((rand() % RAND_PERCENT) == 0)
+						if ((g_nCounterEnemyBullet % HOMINGBULLET_COUNT) == 0)
 						{
 							float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
 								(pPlayer->posPlayer.y - pEnemy->pos.y));
 
 							SetBullet(pEnemy->pos,
-								HOMING_SPD * 0.15f,
+								HOMING_SPD * 0.05f,
 								fLength,
 								BULLETLIFE_SLIME * 5,
 								BULLETTYPE_ENEMY_1,
 								SHOTTYPE_HOMING,
-								ENEMY_1_BULLET,
+								EnemyBulletCol(pEnemy),
 								true);
+						}
+						else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT >= 100 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= (HOMINGBULLET_COUNT - 1))
+						{
+							pEnemy->size.x -= 1.0f;
+							pEnemy->size.y -= 1.0f;
+						}
+						else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT == 1)
+						{
+							pEnemy->size.x = pSize->x * 2.0f;
+							pEnemy->size.y = pSize->y * 2.0f;
+						}
+						else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT > 1 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= 75)
+						{
+							if (pEnemy->size.x >= pSize->x)
+							{
+								pEnemy->size.x -= 3.0f;
+								pEnemy->size.y -= 3.0f;
+								if (pEnemy->size.x <= pSize->x)
+								{
+									pEnemy->size = *pSize;
+								}
+							}
+						}
+						else
+						{
+							if (pEnemy->size.x != pSize->x)
+							{
+								pEnemy->size = *pSize;
+							}
 						}
 					}
 
@@ -870,6 +934,8 @@ void UpdateEnemy(void)
 				pVtx[3].tex.x = 0.5f;
 			}
 			
+			// サイズを更新
+			pEnemy->fLengthEnemy = sqrtf(powf(pEnemy->size.x, 2.0f) + powf(pEnemy->size.y, 2.0f)) * 0.5f;
 
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
 			pVtx[0].pos.x = (pEnemy->pos.x + pos.x) + sinf(D3DX_PI + pEnemy->fAngleEnemy) * pEnemy->fLengthEnemy;
@@ -891,6 +957,8 @@ void UpdateEnemy(void)
 			g_pVtxBuffEnemy->Unlock();
 		}
 	}
+
+	g_nCounterEnemyBullet++;
 }
 
 //================================================================================================================
@@ -1052,6 +1120,7 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type,
 	ENEMY *pEnemy = &g_aEnemy[0];
 	PLAYER* pPlayer = GetPlayer();
 	D3DXVECTOR3 Camerapos = pPlayer->moveposPlayer;
+	LPPOLY_SIZE pSize = &g_aEnemySizeCopy[0];
 
 	g_pVtxBuffEnemy->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -1061,6 +1130,7 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type,
 		{
 			pEnemy->pos = pos;
 			pEnemy->size = size;
+			*pSize = size;
 			pEnemy->fLengthEnemy = sqrtf(powf(pEnemy->size.x, 2.0f) + powf(pEnemy->size.y, 2.0f)) * 0.5f;
 			pEnemy->fAngleEnemy = atan2f(pEnemy->size.x, pEnemy->size.y);
 			pEnemy->state = ENEMYSTATE_APPEAR;
@@ -1319,4 +1389,45 @@ void DestroyEnemy(void)
 int GetKillcountEnemy(void)
 {
 	return g_nKillcountEnemy;
+}
+
+//================================================================================================================
+// 敵の弾の色
+//================================================================================================================
+D3DXCOLOR EnemyBulletCol(PENEMY pEnemy)
+{
+	switch (pEnemy->tex)
+	{
+	case ENEMYTEX_SLIME:
+
+		return D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+
+		break;
+
+	case ENEMYTEX_WATER_ELEMENTS:
+
+		return D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+
+		break;
+
+	case ENEMYTEX_FIRE_ELEMENTS:
+
+		return D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+
+		break;
+
+	case ENEMYTEX_TREE_ELEMENTS:
+
+		return D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+		break;
+
+	case ENEMYTEX_ICE_ELEMENTS:
+
+		return D3DXCOLOR(0.0f, 0.0f, 0.5f, 1.0f);
+
+		break;
+	}
+
+	return D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
 }

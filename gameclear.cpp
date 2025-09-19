@@ -17,7 +17,7 @@
 #include "scoreRank.h"
 
 // マクロ定義
-#define FADE_COUNT		(6000)						// リザルト画面へ遷移するまでの時間
+#define FADE_COUNT		(600)						// リザルト画面へ遷移するまでの時間
 
 // グローバル変数
 int g_nCounterGameclear = 0;						// リザルト画面へ遷移するまでのカウンター
@@ -68,7 +68,7 @@ void UpdateGameclear(void)
 	if ((GetJoypadTrigger(JOYKEY_A) == true
 		|| GetJoypadTrigger(JOYKEY_START) == true
 		|| GetKeyboardTrigger(DIK_RETURN) == true
-		|| g_nCounterGameclear >= FADE_COUNT) == true 
+		|| g_nCounterGameclear >= FADE_COUNT)
 		&& (GetFade() == FADE_NONE && GetEnableClearEffect() == false))
 	{
 		PlaySound(SOUND_LABEL_SE_ENTER);

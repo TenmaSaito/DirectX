@@ -275,6 +275,7 @@ void UpdatePause(void)
 #endif
 			case SELECTTYPE_RESTART:
 
+				FadeSound(SOUND_LABEL_GAME_NORMAL);
 				SetFade(MODE_GAME, FADE_TYPE_NORMAL);
 				g_Select = SELECTTYPE_NONE;
 
@@ -282,6 +283,7 @@ void UpdatePause(void)
 
 			case SELECTTYPE_EXIT:
 
+				FadeSound(SOUND_LABEL_TITLE);
 				SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
 				g_Select = SELECTTYPE_NONE;
 

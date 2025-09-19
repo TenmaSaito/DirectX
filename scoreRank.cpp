@@ -10,9 +10,9 @@
 
 // マクロ定義
 #define RANK_SIZE			(70)				// ランクのサイズ
-#define RANK_SS_SCORE		(800000)			// SSランクのスコアの基準
-#define RANK_S_SCORE		(650000)			// Sランクのスコア基準
-#define RANK_A_SCORE		(500000)			// Aランクのスコア基準
+#define RANK_SS_SCORE		(1200000)			// SSランクのスコアの基準
+#define RANK_S_SCORE		(900000)			// Sランクのスコア基準
+#define RANK_A_SCORE		(700000)			// Aランクのスコア基準
 #define RANK_B_SCORE		(400000)			// Bランクのスコア基準
 #define RANK_C_SCORE		(200000)			// Cランクのスコア基準
 
@@ -40,7 +40,6 @@ bool g_bUseRank;									// ランクを表示するか
 void InitScoreRank(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;			// デバイスのポインタ
-	int nCntScoreRank;
 
 	// デバイスの取得
 	pDevice = GetDevice();
@@ -155,7 +154,6 @@ void UpdateScoreRank(void)
 void DrawScoreRank(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;			// デバイスのポインタ
-	int nCntScoreRank;
 
 	// デバイスの取得
 	pDevice = GetDevice();

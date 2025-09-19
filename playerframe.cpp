@@ -9,6 +9,10 @@
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTexturePlayerFrame = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPlayerFrame = NULL;	// 頂点バッファのポインタ
+FRAMESTATE g_frameState;
+D3DXCOLOR g_frameCol;
+int g_nCounterFrame;
+int g_nCounterStateFrame;
 
 //================================================================================================================
 // 背景の初期化処理
@@ -24,6 +28,11 @@ void InitPlayerFrame(void)
 	D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\PLAYERFRAME.png",
 		&g_pTexturePlayerFrame);
+
+	g_frameState = FRAMESTATE_NORMAL;
+	g_frameCol = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	g_nCounterFrame = 0;
+	g_nCounterStateFrame = 0;
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,			// sizeofの後必ず * 頂点数 を書くこと！
@@ -51,10 +60,10 @@ void InitPlayerFrame(void)
 	pVtx[3].rhw = 1.0f;
 
 	// 頂点カラー設定
-	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);
-	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);
+	pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 
 	// テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -91,7 +100,116 @@ void UninitPlayerFrame(void)
 //================================================================================================================
 void UpdatePlayerFrame(void)
 {
+	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffPlayerFrame->Lock(0, 0, (void**)&pVtx, 0);
+
+	switch (g_frameState)
+	{
+	case FRAMESTATE_NORMAL:
+
+		g_frameCol = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+
+		break;
+
+	case FRAMESTATE_DAMAGE:
+
+		g_frameCol = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+
+		g_nCounterStateFrame--;
+
+		if (g_nCounterStateFrame <= 0)
+		{
+			g_nCounterStateFrame = 0;
+			g_frameState = FRAMESTATE_NORMAL;
+		}
+
+		break;
+
+	case FRAMESTATE_DANGER:
+
+		if (g_nCounterFrame % 60 >= 0 && g_nCounterFrame % 60 < 30)
+		{
+			g_frameCol.r += (1.0f / 30.0f);
+			if (g_frameCol.r > 1.0f)
+			{
+				g_frameCol.r = 1.0f;
+			}
+		}
+		else if (g_nCounterFrame % 60 >= 30 && g_nCounterFrame % 60 < 60)
+		{
+			g_frameCol.r -= (1.0f / 30.0f);
+			if (g_frameCol.r < 0.0f)
+			{
+				g_frameCol.r = 0.0f;
+			}
+		}
+
+		break;
+
+	case FRAMESTATE_DEATH:
+
+		g_frameCol = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+
+		break;
+
+	case FRAMESTATE_APPEAR:
+
+		g_frameCol.r -= 0.005f;
+		g_frameCol.b -= 0.005f;
+		if (g_frameCol.r <= 0.0f)
+		{
+			g_frameCol = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+			g_frameState = FRAMESTATE_NORMAL;
+		}
+
+		break;
+
+	case FRAMESTATE_BARRIAR:
+
+		g_frameCol = D3DXCOLOR(0.0f, 0.0f, 0.25f, 1.0f);
+
+		break;
+
+	case FRAMESTATE_HEAL:
+
+		g_frameCol = D3DXCOLOR(1.0f, 0.0f, 0.5f, 1.0f);
+
+		g_nCounterStateFrame--;
+
+		if (g_nCounterStateFrame <= 0)
+		{
+			g_nCounterStateFrame = 0;
+			g_frameState = FRAMESTATE_NORMAL;
+		}
+
+		break;
+
+	case FRAMESTATE_POWER_ITEM:
+
+		g_frameCol = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+
+		g_nCounterStateFrame--;
+
+		if (g_nCounterStateFrame <= 0)
+		{
+			g_nCounterStateFrame = 0;
+			g_frameState = FRAMESTATE_NORMAL;
+		}
+
+		break;
+	}
+
+	pVtx[0].col = g_frameCol;
+	pVtx[1].col = g_frameCol;
+	pVtx[2].col = g_frameCol;
+	pVtx[3].col = g_frameCol;
+
+	// 頂点バッファをアンロックする
+	g_pVtxBuffPlayerFrame->Unlock();
+
+	g_nCounterFrame++;
 }
 
 //================================================================================================================
@@ -117,4 +235,19 @@ void DrawPlayerFrame(void)
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
 		0,						// 描画する最初の頂点インデックス
 		2);						// 描画するプリミティブの数
+}
+
+void ChangeModeFrame(FRAMESTATE state)
+{
+	g_frameState = state;
+	g_nCounterStateFrame = 60;
+
+	if (state == FRAMESTATE_APPEAR)
+	{
+		g_frameCol = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	else if (state == FRAMESTATE_DANGER)
+	{
+		g_frameCol = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 }

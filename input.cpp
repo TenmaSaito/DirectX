@@ -40,6 +40,7 @@ LPDIRECTINPUTDEVICE8 g_pDevMouse = NULL;		// 入力デバイス(マウス)へのポインタ
 DIMOUSESTATE g_CurrentMouseState;				// マウスの入力情報
 DIMOUSESTATE g_PrevMouseState;					// マウスの過去の入力情報
 BYTE g_aMouseState[NUM_MOUSE_MAX];				// マウスのプレス情報
+BYTE g_aMouseStateTrigger[NUM_MOUSE_MAX];		// マウスのトリガー情報
 BYTE g_aMouseStateRelease[NUM_MOUSE_MAX];		// マウスのリリース情報
 POINT g_mousePos = {};							// マウスの位置
 
@@ -514,6 +515,9 @@ bool GetJoyThumbSlow(JOYTHUMB Thumb)
 	}
 }
 
+//================================================================================================================
+// ジョイパッドのスティックのリピート処理
+//================================================================================================================
 bool GetJoyThumbRepeat(JOYTHUMB Thumb)
 {
 	switch (Thumb)
@@ -684,6 +688,8 @@ bool GetJoyThumbRepeat(JOYTHUMB Thumb)
 
 		break;
 	}
+
+	return false;
 }
 
 //================================================================================================================
@@ -747,7 +753,7 @@ void UpdateMouse(void)
 		for (int nCntMouse = 0; nCntMouse < NUM_MOUSE_MAX; nCntMouse++)
 		{
 			aMouseState[nCntMouse] = g_CurrentMouseState.rgbButtons[nCntMouse];
-
+			g_aMouseStateTrigger[nCntMouse] = ((aMouseState[nCntMouse] ^ g_aMouseState[nCntMouse]) & aMouseState[nCntMouse]);
 			g_aMouseStateRelease[nCntMouse] = (g_aMouseState[nCntMouse] & (g_aMouseState[nCntMouse] ^ aMouseState[nCntMouse]));
 			g_aMouseState[nCntMouse] = aMouseState[nCntMouse];
 		}
@@ -764,6 +770,14 @@ void UpdateMouse(void)
 bool GetMousePress(int nButton)
 {
 	return (g_aMouseState[nButton] & 0x80) ? true : false;
+}
+
+//================================================================================================================
+// マウスのトリガー情報を取得
+//================================================================================================================
+bool GetMouseTrigger(int nButton)
+{
+	return (g_aMouseStateTrigger[nButton] & 0x80) ? true : false;
 }
 
 //================================================================================================================

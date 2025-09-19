@@ -86,7 +86,7 @@ typedef struct
 	int nCounterBullet;			// 弾を発射する間隔
 	int nID;					// 当たり判定のブロックのID
 	bool bUse;					// 使用されているか
-} ENEMY;
+} ENEMY, *PENEMY;
 
 // プロトタイプ宣言　
 void InitEnemy(void);

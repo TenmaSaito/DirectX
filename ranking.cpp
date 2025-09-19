@@ -176,7 +176,12 @@ void UpdateRanking(void)
 	PRANKING pRanking = &g_aRanking[0];
 	VERTEX_2D* pVtx;
 
-	if (GetKeyboardTrigger(DIK_R) == true)
+	if ((GetKeyboardTrigger(DIK_R) == true
+		&& GetKeyboardTrigger(DIK_RSHIFT) == true)
+		||(GetJoypadTrigger(JOYKEY_A) == true
+			&& GetJoypadTrigger(JOYKEY_B) == true
+			&& GetJoypadTrigger(JOYKEY_X) == true
+			&& GetJoypadTrigger(JOYKEY_Y) == true))
 	{
 		ResetRanking();
 	}
@@ -214,9 +219,9 @@ void UpdateRanking(void)
 			if ((g_nCounterRanking % 15) <= 7)
 			{
 				pRanking->col.a -= 0.08f;
-				if (pRanking->col.a < 0.0f)
+				if (pRanking->col.a < 0.5f)
 				{
-					pRanking->col.a = 0.0f;
+					pRanking->col.a = 0.5f;
 				}
 			}
 			else
@@ -300,7 +305,6 @@ void SetRanking(void)
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 	PRANKING pRanking = &g_aRanking[0];
 	int aTexU[MAX_RANKING][NUM_PLACE];				//各桁の数字を収納
-	int nCntRanking;
 
 	for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++,pRanking++)
 	{

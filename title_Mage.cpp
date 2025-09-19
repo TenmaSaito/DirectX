@@ -5,6 +5,7 @@
 //
 //================================================================================================================
 #include "title_Mage.h"
+#include "title.h"
 #include "titleSelect.h"
 #include "titlelogo.h"
 #include "fade.h"
@@ -235,7 +236,7 @@ void DrawTitleMage(void)
 
 	for (int nCntPoly = 0; nCntPoly < TITLE_MAGETYPE_MAX; nCntPoly++)
 	{
-		if (GetCompleteLogo() == true)
+		if (GetEnableTitleSelect() == true)
 		{
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類

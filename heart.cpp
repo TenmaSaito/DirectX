@@ -6,6 +6,7 @@
 //================================================================================================================
 #include "heart.h"
 #include "player.h"
+#include "playerframe.h"
 
 // マクロ定義
 #define HEART_WIDTH		(30.0f)					// ハートの横幅
@@ -191,6 +192,8 @@ void AddHeart(int nValue)
 	{
 		g_nLife++;
 
+		ChangeModeFrame(FRAMESTATE_HEAL);
+
 		// 頂点バッファをロックし、頂点情報へのポインタを取得
 		g_pVtxBuffHeart->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -222,5 +225,14 @@ void AddHeart(int nValue)
 		g_pVtxBuffHeart->Unlock();
 
 		g_nLife--;
+
+		if (g_nLife > 1)
+		{
+			ChangeModeFrame(FRAMESTATE_DAMAGE);
+		}
+		else if (g_nLife == 1)
+		{
+			ChangeModeFrame(FRAMESTATE_DANGER);
+		}
 	}
 }

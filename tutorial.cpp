@@ -16,6 +16,7 @@
 #include "item.h"
 #include "gauge.h"
 #include "heart.h"
+#include "sound.h"
 
 // マクロ定義
 #define MAX_TURN		(3)				// 草原ステージのターン数
@@ -532,6 +533,7 @@ void UpdateTutorial(void)
 				pPlayer->state = PLAYERSTATE_NORMAL;
 				pPlayer->nLife = MAX_LIFE;
 				SetHeart();
+				FadeSound(SOUND_LABEL_TITLE);
 				SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
 			}
 		}

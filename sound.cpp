@@ -47,6 +47,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/BGM/BGM_GAMECLEAR.wav",-1},				// ゲームクリア時のBGM
 	{"data/BGM/BGM_GAMEOVER.wav",-1},				// ゲームオーバー時のBGM
 	{"data/BGM/BGM_GAME_TUTORIAL.wav",-1},			// チュートリアル時のBGM
+	{"data/BGM/BGM_CREDIT.wav",-1},					// クレジット時のBGM
 	{"data/SE/shot000.wav", 0},			// 弾発射音
 	{"data/SE/hit000.wav", 0},			// ヒット音
 	{"data/SE/explosion000.wav", 0},	// 爆発音
@@ -55,12 +56,14 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/CoinSE.wav", 0},			// ノーマルコイン音
 	{"data/SE/Ultimate_CoinSE.wav", 0},	// 凄いコイン音
 	{"data/SE/GetKeySE.wav", 0},		// 鍵の取得音
-	{"data/SE/OpenDoorSE.wav", 0},		// 鍵の取得音
-	{"data/SE/SelectSE.wav", 0},		// 鍵の取得音
-	{"data/SE/ChargeSE.wav", 0},		// 鍵の取得音
-	{"data/SE/FullChargeSE.wav", -1},	// 鍵の取得音
-	{"data/SE/ShotSE.wav", 0},			// 鍵の取得音
-	{"data/SE/ChargeShotSE.wav", 0},	// 鍵の取得音
+	{"data/SE/OpenDoorSE.wav", 0},		// ドアを開ける音
+	{"data/SE/SelectSE.wav", 0},		// 選択音
+	{"data/SE/ChargeSE.wav", 0},		// チャージ中の音
+	{"data/SE/FullChargeSE.wav", -1},	// チャージマックス音
+	{"data/SE/ShotSE.wav", 0},			// ショット音
+	{"data/SE/ChargeShotSE.wav", 0},	// チャージ技の射撃音
+	{"data/SE/HEAL_SE.wav", 0},			// 回復の取得音
+	{"data/SE/POWERITEM_SE.wav", 0},	// チャージ技の取得音
 };
 
 //=============================================================================

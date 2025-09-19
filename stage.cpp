@@ -345,7 +345,6 @@ void SetStage(STAGE stage)
 {
 	PLAYER *pPlayer = GetPlayer();
 	HWND hWnd = NULL;
-	int nID;
 	static bool g_bHaveKeyExac = false;
 
 	if (g_stageExac < STAGE_GRASS || g_stageExac >= STAGE_MAX)
@@ -471,7 +470,7 @@ void SetStage(STAGE stage)
 
 			if (g_bHaveSecret == false)
 			{
-				SetItem(ITEMTYPE_SECRET, D3DXVECTOR3(-310.0f, 710.0f, 0.0f));
+				SetItem(ITEMTYPE_SECRET, D3DXVECTOR3(-310.0f, 610.0f, 0.0f));
 			}
 
 			// Ç‡ÇµÉNÉäÉAçœÇ›Ç≈Ç»ÇØÇÍÇŒ
