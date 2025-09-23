@@ -25,8 +25,13 @@
 //*****************************************************************************
 typedef enum
 {
-	SOUND_LABEL_TITLE = 0,		// タイトル画面のBGM
-	SOUND_LABEL_GAME_NORMAL,		// ゲームプレイ時の通常BGM
+	SOUND_LABEL_TITLE = 0,			// タイトル画面のBGM
+	SOUND_LABEL_GAME_NORMAL,		// ゲームプレイ時の草原BGM
+	SOUND_LABEL_GAME_DESERT,		// ゲームプレイ時の砂漠BGM
+	SOUND_LABEL_GAME_ICE,			// ゲームプレイ時の氷河BGM
+	SOUND_LABEL_GAME_FOREST,		// ゲームプレイ時の森林BGM
+	SOUND_LABEL_GAME_VOLCANO,		// ゲームプレイ時の火山BGM
+	SOUND_LABEL_GAME_SEA,			// ゲームプレイ時の海洋BGM
 	SOUND_LABEL_GAME_NOMORETIME,	// 制限時間が迫った時のBGM
 	SOUND_LABEL_GAMECLEAR,			// ゲームクリア時のBGM
 	SOUND_LABEL_GAMEOVER,			// ゲームオーバー時のBGM
@@ -48,6 +53,7 @@ typedef enum
 	SOUND_LABEL_SE_CHARGE_SHOT,	// チャージ完了
 	SOUND_LABEL_SE_HEAL,		// 回復音
 	SOUND_LABEL_SE_POWER_CHANGE,	// チャージ技アイテムを取った時の音
+	SOUND_LABEL_SE_TELEPORT,		// テレポート音
 	SOUND_LABEL_MAX,
 } SOUND_LABEL;
 

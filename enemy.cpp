@@ -113,7 +113,7 @@ void InitEnemy(void)
 		pEnemy->phaseExac = ENEMYPHASE_1;
 		pEnemy->nCounterState = 0;
 		pEnemy->nCounterBullet = 0;
-		pEnemy->nID = NULL;
+		pEnemy->nBulletRand = NULL;
 		pEnemy->bUse = false;							// 未使用状態に設定
 	}
 
@@ -358,24 +358,106 @@ void UpdateEnemy(void)
 				{
 				case ENEMYSTATE_NORMAL:
 
-					if ((pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_DEATH && pPlayer->state != PLAYERSTATE_WAIT)
-						&& GetFade() == FADE_NONE)
-					{// プレイヤーが生きていて、且つフェードが終わったら
-						if (g_nCounterEnemyBullet % BULLET_COUNT == 0)
-						{
-							float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
-								(pPlayer->posPlayer.y - pEnemy->pos.y));
+					break;
 
-							SetBullet(pEnemy->pos,
-								BULLETSPD_SLIME,
-								fLength,
-								BULLETLIFE_SLIME * 5,
-								BULLETTYPE_ENEMY_1,
-								SHOTTYPE_NORMAL,
-								EnemyBulletCol(pEnemy),
-								true);
-						}
+				case ENEMYSTATE_DAMAGE:
+					pEnemy->nCounterState--;
+					if (pEnemy->nCounterState <= 0)
+					{
+						pEnemy->state = ENEMYSTATE_NORMAL;
+
+						// 頂点カラーの設定
+						pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+						pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+						pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+						pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 					}
+
+					break;
+
+				case ENEMYSTATE_APPEAR:
+
+					pEnemy->nCounterState--;
+					if (pEnemy->nCounterState <= 0)
+					{
+						pEnemy->state = ENEMYSTATE_NORMAL;
+
+						// 頂点カラーの設定
+						pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+						pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+						pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+						pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					}
+					else
+					{
+						// 頂点カラーの設定
+						pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
+						pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
+						pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
+						pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
+					}
+
+					break;
+
+				case ENEMYSTATE_DEATH:
+
+					int nRand = rand() % RAND_PERCENT;
+
+					if (nRand <= 10 && nRand >= 0)
+					{
+						SetItem(ITEMTYPE_COIN, pEnemy->pos);
+					}
+					else if (nRand >= 11 && nRand <= 20)
+					{
+						SetItem(ITEMTYPE_HOMING, pEnemy->pos);
+					}
+					else if (nRand >= 21 && nRand <= 30)
+					{
+						SetItem(ITEMTYPE_BOMB, pEnemy->pos);
+					}
+					else if (nRand >= 31 && nRand <= 40)
+					{
+						SetItem(ITEMTYPE_LASER, pEnemy->pos);
+					}
+					else if (nRand <= 100 && nRand >= 90)
+					{
+						SetItem(ITEMTYPE_HEAL, pEnemy->pos);
+					}
+
+					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
+
+					break;
+				}
+
+				if ((pPlayer->state != PLAYERSTATE_APPEAR 
+					&& pPlayer->state != PLAYERSTATE_DEATH 
+					&& pPlayer->state != PLAYERSTATE_WAIT
+					&& pEnemy->state != ENEMYSTATE_APPEAR)
+					&& GetFade() == FADE_NONE)
+				{// プレイヤーが生きていて、且つフェードが終わったら
+					if ((g_nCounterEnemyBullet % (BULLET_COUNT + pEnemy->nBulletRand)) == 0)
+					{
+						float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
+							(pPlayer->posPlayer.y - pEnemy->pos.y));
+
+						SetBullet(pEnemy->pos,
+							BULLETSPD_SLIME,
+							fLength,
+							BULLETLIFE_SLIME * 5,
+							BULLETTYPE_ENEMY_1,
+							SHOTTYPE_NORMAL,
+							EnemyBulletCol(pEnemy),
+							true);
+					}
+				}
+
+				break;
+
+			case ENEMYBULLET_BOMBBULLET:
+				switch (pEnemy->state)
+				{
+				case ENEMYSTATE_NORMAL:
+					// 通常時
 
 					break;
 
@@ -448,130 +530,55 @@ void UpdateEnemy(void)
 					break;
 				}
 
-				break;
+				if ((pPlayer->state != PLAYERSTATE_APPEAR 
+					&& pPlayer->state != PLAYERSTATE_DEATH 
+					&& pPlayer->state != PLAYERSTATE_WAIT
+					&& pEnemy->state != ENEMYSTATE_APPEAR)
+					&& GetFade() == FADE_NONE)
+				{// プレイヤーが生きていて、且つフェードが終わったら
+					if ((g_nCounterEnemyBullet % (BOMBBULLET_COUNT + pEnemy->nBulletRand)) == 0)
+					{
+						float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
+							(pPlayer->posPlayer.y - pEnemy->pos.y));
 
-			case ENEMYBULLET_BOMBBULLET:
-				switch (pEnemy->state)
-				{
-				case ENEMYSTATE_NORMAL:
-					// 通常時
-					if ((pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_DEATH && pPlayer->state != PLAYERSTATE_WAIT)
-						&& GetFade() == FADE_NONE)
-					{// プレイヤーが生きていて、且つフェードが終わったら
-						if (g_nCounterEnemyBullet % BOMBBULLET_COUNT == 0)
+						SetBullet(pEnemy->pos,
+							BULLETSPD_SLIME,
+							fLength,
+							BULLETLIFE_SLIME,
+							BULLETTYPE_ENEMY_1,
+							SHOTTYPE_BOMB,
+							EnemyBulletCol(pEnemy),
+							true);
+					}
+					else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT >= 150 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= (BOMBBULLET_COUNT - 1))
+					{
+						pEnemy->size.x += 1.0f;
+						pEnemy->size.y += 1.0f;
+					}
+					else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT == 1)
+					{
+						pEnemy->size.x = pSize->x * 0.5f;
+						pEnemy->size.y = pSize->y * 0.5f;
+					}
+					else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT > 1 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= 75)
+					{
+						if (pEnemy->size.x <= pSize->x)
 						{
-							float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
-								(pPlayer->posPlayer.y - pEnemy->pos.y));
-
-							SetBullet(pEnemy->pos,
-								BULLETSPD_SLIME,
-								fLength,
-								BULLETLIFE_SLIME,
-								BULLETTYPE_ENEMY_1,
-								SHOTTYPE_BOMB,
-								EnemyBulletCol(pEnemy),
-								true);
-						}
-						else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT >= 150 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= (BOMBBULLET_COUNT - 1))
-						{
-							pEnemy->size.x += 1.0f;
-							pEnemy->size.y += 1.0f;
-						}
-						else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT == 1)
-						{
-							pEnemy->size.x = pSize->x * 0.5f;
-							pEnemy->size.y = pSize->y * 0.5f;
-						}
-						else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT > 1 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= 75)
-						{
-							if (pEnemy->size.x <= pSize->x)
-							{
-								pEnemy->size.x += 3.0f;
-								pEnemy->size.y += 3.0f;
-								if (pEnemy->size.x >= pSize->x)
-								{
-									pEnemy->size = *pSize;
-								}
-							}
-						}
-						else
-						{
-							if (pEnemy->size.x != pSize->x)
+							pEnemy->size.x += 3.0f;
+							pEnemy->size.y += 3.0f;
+							if (pEnemy->size.x >= pSize->x)
 							{
 								pEnemy->size = *pSize;
 							}
 						}
 					}
-
-					break;
-
-				case ENEMYSTATE_DAMAGE:
-					pEnemy->nCounterState--;
-					if (pEnemy->nCounterState <= 0)
-					{
-						pEnemy->state = ENEMYSTATE_NORMAL;
-
-						// 頂点カラーの設定
-						pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-						pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-						pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-						pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					}
-
-					break;
-
-				case ENEMYSTATE_APPEAR:
-
-					pEnemy->nCounterState--;
-					if (pEnemy->nCounterState <= 0)
-					{
-						pEnemy->state = ENEMYSTATE_NORMAL;
-
-						// 頂点カラーの設定
-						pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-						pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-						pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-						pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-					}
 					else
 					{
-						// 頂点カラーの設定
-						pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
-						pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
-						pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
-						pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f - (float)(pEnemy->nCounterState * 0.01f));
+						if (pEnemy->size.x != pSize->x)
+						{
+							pEnemy->size = *pSize;
+						}
 					}
-
-					break;
-
-				case ENEMYSTATE_DEATH:
-
-					int nRand = rand() % RAND_PERCENT;
-
-					if (nRand <= 10 && nRand >= 0)
-					{
-						SetItem(ITEMTYPE_COIN, pEnemy->pos);
-					}
-					else if (nRand >= 11 && nRand <= 20)
-					{
-						SetItem(ITEMTYPE_HOMING, pEnemy->pos);
-					}
-					else if (nRand >= 21 && nRand <= 30)
-					{
-						SetItem(ITEMTYPE_BOMB, pEnemy->pos);
-					}
-					else if (nRand >= 31 && nRand <= 40)
-					{
-						SetItem(ITEMTYPE_LASER, pEnemy->pos);
-					}
-					else if (nRand <= 100 && nRand >= 90)
-					{
-						SetItem(ITEMTYPE_HEAL, pEnemy->pos);
-					}
-
-					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
-
-					break;
 				}
 
 				break;
@@ -582,53 +589,6 @@ void UpdateEnemy(void)
 				{
 				case ENEMYSTATE_NORMAL:
 					// 通常時
-					if ((pPlayer->state != PLAYERSTATE_APPEAR && pPlayer->state != PLAYERSTATE_DEATH && pPlayer->state != PLAYERSTATE_WAIT)
-						&& GetFade() == FADE_NONE)
-					{// プレイヤーが生きていて、且つフェードが終わったら
-						if ((g_nCounterEnemyBullet % HOMINGBULLET_COUNT) == 0)
-						{
-							float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
-								(pPlayer->posPlayer.y - pEnemy->pos.y));
-
-							SetBullet(pEnemy->pos,
-								HOMING_SPD * 0.05f,
-								fLength,
-								BULLETLIFE_SLIME * 5,
-								BULLETTYPE_ENEMY_1,
-								SHOTTYPE_HOMING,
-								EnemyBulletCol(pEnemy),
-								true);
-						}
-						else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT >= 100 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= (HOMINGBULLET_COUNT - 1))
-						{
-							pEnemy->size.x -= 1.0f;
-							pEnemy->size.y -= 1.0f;
-						}
-						else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT == 1)
-						{
-							pEnemy->size.x = pSize->x * 2.0f;
-							pEnemy->size.y = pSize->y * 2.0f;
-						}
-						else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT > 1 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= 75)
-						{
-							if (pEnemy->size.x >= pSize->x)
-							{
-								pEnemy->size.x -= 3.0f;
-								pEnemy->size.y -= 3.0f;
-								if (pEnemy->size.x <= pSize->x)
-								{
-									pEnemy->size = *pSize;
-								}
-							}
-						}
-						else
-						{
-							if (pEnemy->size.x != pSize->x)
-							{
-								pEnemy->size = *pSize;
-							}
-						}
-					}
 
 					break;
 
@@ -699,6 +659,57 @@ void UpdateEnemy(void)
 					g_aEnemy[nCntEnemy].bUse = false;						// 未使用にする
 
 					break;
+				}
+
+				if ((pPlayer->state != PLAYERSTATE_APPEAR 
+					&& pPlayer->state != PLAYERSTATE_DEATH 
+					&& pPlayer->state != PLAYERSTATE_WAIT
+					&& pEnemy->state != ENEMYSTATE_APPEAR)
+					&& GetFade() == FADE_NONE)
+				{// プレイヤーが生きていて、且つフェードが終わったら
+					if ((g_nCounterEnemyBullet % (HOMINGBULLET_COUNT + pEnemy->nBulletRand)) == 0)
+					{
+						float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
+							(pPlayer->posPlayer.y - pEnemy->pos.y));
+
+						SetBullet(pEnemy->pos,
+							HOMING_SPD * 0.05f,
+							fLength,
+							BULLETLIFE_SLIME * 5,
+							BULLETTYPE_ENEMY_1,
+							SHOTTYPE_HOMING,
+							EnemyBulletCol(pEnemy),
+							true);
+					}
+					else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT >= 100 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= (HOMINGBULLET_COUNT - 1))
+					{
+						pEnemy->size.x -= 1.0f;
+						pEnemy->size.y -= 1.0f;
+					}
+					else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT == 1)
+					{
+						pEnemy->size.x = pSize->x * 2.0f;
+						pEnemy->size.y = pSize->y * 2.0f;
+					}
+					else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT > 1 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= 75)
+					{
+						if (pEnemy->size.x >= pSize->x)
+						{
+							pEnemy->size.x -= 3.0f;
+							pEnemy->size.y -= 3.0f;
+							if (pEnemy->size.x <= pSize->x)
+							{
+								pEnemy->size = *pSize;
+							}
+						}
+					}
+					else
+					{
+						if (pEnemy->size.x != pSize->x)
+						{
+							pEnemy->size = *pSize;
+						}
+					}
 				}
 
 				break;
@@ -919,7 +930,7 @@ void UpdateEnemy(void)
 			}
 
 			// テクスチャアニメーション
-			if ((int)timeGetTime() % 1000 >= 500)
+			if ((int)timeGetTime() % (1000 + (pEnemy->nBulletRand * 10)) >= 500)
 			{
 				pVtx[0].tex.x = 0.5f;
 				pVtx[1].tex.x = 1.0f;
@@ -1192,6 +1203,7 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type,
 			}
 		
 			pEnemy->nCounterBullet = 0;
+			pEnemy->nBulletRand = rand() % 50;
 			pEnemy->nCounterState = SPOWN_STATE;
 			pEnemy->bUse = true;
 
@@ -1228,11 +1240,6 @@ void HitEnemy(int nCntEnemy, int nCntDamage)
 		{// 体力が尽きた場合
 			PlaySound(SOUND_LABEL_SE_EXPLOSION);
 			SetParticle(g_aEnemy[nCntEnemy].pos, D3DXCOLOR_NULL, 5, D3DX_PI, -D3DX_PI, 10);
-
-			if (g_bUseCollisonBlock == true)
-			{
-				DeleteBlock(g_aEnemy[nCntEnemy].nID);
-			}
 
 			g_aEnemy[nCntEnemy].state = ENEMYSTATE_DEATH;			// 死亡状態に
 			g_nCounterEnemy--;

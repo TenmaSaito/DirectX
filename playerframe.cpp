@@ -5,6 +5,7 @@
 //
 //================================================================================================================
 #include "playerframe.h"
+#include "heart.h"
 
 // グローバル変数
 LPDIRECT3DTEXTURE9		g_pTexturePlayerFrame = NULL;	// テクスチャへのポインタ
@@ -195,7 +196,7 @@ void UpdatePlayerFrame(void)
 		if (g_nCounterStateFrame <= 0)
 		{
 			g_nCounterStateFrame = 0;
-			g_frameState = FRAMESTATE_NORMAL;
+			AddHeart(0);		// 体力の確認
 		}
 
 		break;

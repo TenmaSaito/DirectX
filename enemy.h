@@ -84,7 +84,7 @@ typedef struct
 	ENEMYPHASE phaseMax;		// フェーズの最大数
 	int nCounterState;			// 状態カウンター(状態の経過秒数)
 	int nCounterBullet;			// 弾を発射する間隔
-	int nID;					// 当たり判定のブロックのID
+	int nBulletRand;			// 弾の発射間隔のずらし
 	bool bUse;					// 使用されているか
 } ENEMY, *PENEMY;
 

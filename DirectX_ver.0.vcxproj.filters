@@ -252,6 +252,12 @@
     <ClCompile Include="creditChar.cpp">
       <Filter>ソース ファイル\credit</Filter>
     </ClCompile>
+    <ClCompile Include="nomoretime.cpp">
+      <Filter>ソース ファイル\game\object</Filter>
+    </ClCompile>
+    <ClCompile Include="teleport.cpp">
+      <Filter>ソース ファイル\game\effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h">
@@ -409,6 +415,12 @@
     </ClInclude>
     <ClInclude Include="creditChar.h">
       <Filter>ヘッダー ファイル\credit</Filter>
+    </ClInclude>
+    <ClInclude Include="nomoretime.h">
+      <Filter>ヘッダー ファイル\game\object</Filter>
+    </ClInclude>
+    <ClInclude Include="teleport.h">
+      <Filter>ヘッダー ファイル\game\effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

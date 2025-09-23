@@ -4,8 +4,10 @@
 // Author : TENMA
 //
 //================================================================================================================
+#include "game.h"
 #include "timer.h"
 #include "gauge.h"
+#include "sound.h"
 
 // マクロ定義
 #define NUM_PLACE			(3)				// タイマーの桁数
@@ -18,8 +20,10 @@
 LPDIRECT3DTEXTURE9		g_pTextureTimer = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTimer = NULL;	// 頂点バッファのポインタ
 D3DXVECTOR3 g_posTimer;							// タイマーを表示する位置
+D3DXCOLOR g_colTimer;							// タイマーの色
 int g_nTimer;									// タイマーの値
 int g_nGaugeTimer;								// タイマーのゲージのNo
+int g_nAlphaTimer;								// α値変更
 
 // タイマーの初期化処理
 void InitTimer(void)
@@ -36,7 +40,9 @@ void InitTimer(void)
 		&g_pTextureTimer);
 
 	g_posTimer = D3DXVECTOR3(610.0f, 48.0f, 0.0f);		// 位置を初期化
+	g_colTimer = D3DXCOLOR_NULL;
 	g_nTimer = 0;								// 値を初期化
+	g_nAlphaTimer = 1;
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * NUM_PLACE,			// NUM_PLACE分の頂点を作成
@@ -116,7 +122,32 @@ void UninitTimer(void)
 // タイマーの更新処理
 void UpdateTimer(void)
 {
+	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffTimer->Lock(0, 0, (void**)&pVtx, 0);
+
 	// 後で書きたきゃ書け
+	if (g_nTimer == NOMORE_TIME)
+	{
+		StopSound();
+		PlaySound(SOUND_LABEL_GAME_NOMORETIME);
+	}
+	else if(g_nTimer < NOMORE_TIME)
+	{
+		for (int nCntTimer = 0; nCntTimer < NUM_PLACE; nCntTimer++)
+		{
+			// 頂点カラーの設定
+			pVtx[0].col = g_colTimer;
+			pVtx[1].col = g_colTimer;
+			pVtx[2].col = g_colTimer;
+			pVtx[3].col = g_colTimer;
+
+			pVtx += 4;
+		}
+	}
+
+	g_pVtxBuffTimer->Unlock();
 }
 
 // タイマーの描画処理

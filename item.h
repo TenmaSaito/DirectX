@@ -31,7 +31,9 @@ typedef enum
 typedef struct
 {
 	D3DXVECTOR3 pos;				// ブロックの位置
+	D3DXCOLOR col;					// 色
 	ITEMTYPE type;					// ブロックの種類
+	int nAlphaItem;					// α地
 	bool bUse;						// ブロックが使われているかどうか
 }ITEM;
 

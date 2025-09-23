@@ -47,7 +47,8 @@ void UninitCredit(void)
 void UpdateCredit(void)
 {
 	// Enterでタイトル画面へ進む
-	if ((GetJoypadPress(JOYKEY_START) == true 
+	if ((GetJoypadTrigger(JOYKEY_START) == true 
+		|| GetJoypadTrigger(JOYKEY_A) == true
 		|| GetKeyboardTrigger(DIK_RETURN) == true)
 		&& GetFade() == FADE_NONE)
 	{

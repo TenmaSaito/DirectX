@@ -189,7 +189,7 @@ void AddHeart(int nValue)
 	VERTEX_2D* pVtx;
 
 	if (nValue >= 1 && (g_nLife - 1) < MAX_LIFE)
-	{
+	{ // 回復した場合
 		g_nLife++;
 
 		ChangeModeFrame(FRAMESTATE_HEAL);
@@ -209,7 +209,7 @@ void AddHeart(int nValue)
 		g_pVtxBuffHeart->Unlock();
 	}
 	else if (nValue <= -1 && (g_nLife - 1) > -1)
-	{
+	{ // ダメージを食らった場合
 		// 頂点バッファをロックし、頂点情報へのポインタを取得
 		g_pVtxBuffHeart->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -231,6 +231,17 @@ void AddHeart(int nValue)
 			ChangeModeFrame(FRAMESTATE_DAMAGE);
 		}
 		else if (g_nLife == 1)
+		{
+			ChangeModeFrame(FRAMESTATE_DANGER);
+		}
+	}
+	else
+	{ // 0により現在体力にて何かを判定したい場合
+		if (g_nLife > 1)
+		{
+			ChangeModeFrame(FRAMESTATE_NORMAL);
+		}
+		else
 		{
 			ChangeModeFrame(FRAMESTATE_DANGER);
 		}

@@ -523,12 +523,12 @@ void UpdateTutorial(void)
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_TUTORIAL_COMPLETE, 200);
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
-		else if (g_nCounterTutorialState == 0)
+		else if (g_nCounterTutorialState == 1)
 		{
 			if (pPlayer->nLife > nCnt)
 			{
 				DeleteChar(CHARTEX_TUTORIAL_COMPLETE);
-				SetGameTutorial(false);
+				//SetGameTutorial(false);
 				pPlayer->nCounterState = 0;
 				pPlayer->state = PLAYERSTATE_NORMAL;
 				pPlayer->nLife = MAX_LIFE;

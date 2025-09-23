@@ -27,10 +27,10 @@
 #define MIN_PLAYER_SIZE	(50)						// プレイヤーの大きさの最小値
 #define PLAYER_SPOWN	D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y, 0.0f)	// プレイヤーの初期位置
 #define MAX_PLAYERTEX		(4)						// プレイヤーのテクスチャの最大数
-#define MOVE_ACCELE		(0.5f)						// プレイヤーの加速量
+#define MOVE_ACCELE		(1.55f)						// プレイヤーの加速量
 #define ROT_ACCELE		(0.01f)						// プレイヤーの回転の加速量
 #define SIZE_ACCELE		(1.0f)						// プレイヤーのサイズの増減加速量
-#define MOVE_RESIST		(0.03f)						// プレイヤーの減速係数(抵抗値)
+#define MOVE_RESIST		(0.15f)						// プレイヤーの減速係数(抵抗値)
 #define SHOT_SPD		(5)							// プレイヤーの連射感覚の秒数(ミリ秒)
 #define ENEMY_X			(140.0f)					// 敵のX座標の間隔
 #define ENEMY_Y			(90.0f)						// 敵のY座標の間隔
@@ -43,7 +43,7 @@
 #define WAIT_STATE		(60)						// 出現待機時の状態持続時間
 #define BARRIER_STATE	(600)						// バリアの持続時間
 #define BARRIAR_COOLDOWN	(200)					// バリア使用後のクールタイム
-#define UNMOVE_STATE	(LASER_LIFE)				// レーザーを撃っている間の静止時間
+#define UNMOVE_STATE	(LASER_LIFE - 75)			// レーザーを撃っている間の静止時間
 #define LASER_RECOIL	(-3.0f)						// レーザーの反動
 
 #define GAUGE_COLOR		D3DXCOLOR(0.5f,0.1f,0.0f,0.5f)		// ゲージの色
@@ -61,6 +61,8 @@
 #define BRINK_SPD			(ANIMATION_SPD * 8)		// 瞬きの速度
 #define ANIMATION_START		(30)					// 静止アニメーションの開始フレーム
 
+#define BULLET_TEX			(30)					// 射撃後のテクスチャの持続時間
+
 // テクスチャアニメーションの種類
 typedef enum
 {
@@ -75,7 +77,6 @@ typedef enum
 }TEXTURE_ANIMATION;
 
 // プロトタイプ宣言
-float GetPlayerRot(PLAYER *pPlayer);
 void KeyboardPress(void);
 
 // グローバル変数
@@ -93,7 +94,10 @@ int g_nCntTexYpos;												// テクスチャ座標の増やし方(1 or -1)
 int g_nCounterPlayer;											// 汎用カウンター
 int g_nCounterPlayerStop;										// プレイヤーが静止しているときのアニメーションパターン
 int g_nCounterAnimationPlayer;									// プレイヤーが入力を止めてから何フレームたったか
+int g_nCounterBulletTime;										// 弾を撃ってからの待機時間
+int g_nCounterBulletChargeTime;									// チャージ技を溜めている時間
 bool g_bUseFullburst;											// フルバーストをゲームを開始してから一度でも使ったか
+bool g_bShotBullet;												// 弾を撃ったか
 
 //================================================================================================================
 // プレイヤーの初期化処理
@@ -152,11 +156,14 @@ void InitPlayer(void)
 	g_nCounterPlayer = 0;
 	g_nCounterPlayerStop = 0;
 	g_nCounterAnimationPlayer = 0;
+	g_nCounterBulletTime = 0;
+	g_nCounterBulletChargeTime = 0;
+	g_bShotBullet = false;
 	g_damageMovePlayer = D3DXVECTOR3_NULL;
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-							  "data\\TEXTURE\\CHARACTER\\PLAYER_2.png",
+							  "data\\TEXTURE\\CHARACTER\\PLAYER_3.png",
 							  &g_pTexturePlayer);
 
 	// 頂点バッファの生成
@@ -208,10 +215,10 @@ void InitPlayer(void)
 		g_nCntTexYpos *= -1;
 	}
 
-	pVtx[0].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer));
-	pVtx[1].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.125f * g_nCounterTexAnimationPlayer));
-	pVtx[2].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
-	pVtx[3].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
+	pVtx[0].tex = D3DXVECTOR2((0.125f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer));
+	pVtx[1].tex = D3DXVECTOR2((0.125f * g_player.tex) + 0.125f, (0.125f * g_nCounterTexAnimationPlayer));
+	pVtx[2].tex = D3DXVECTOR2((0.125f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
+	pVtx[3].tex = D3DXVECTOR2((0.125f * g_player.tex) + 0.125f, (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffPlayer->Unlock();
@@ -407,12 +414,13 @@ void UpdatePlayer(void)
 
 	case PLAYERSTATE_BARRIER:
 
+
+		ChangeModeFrame(FRAMESTATE_BARRIAR);
+
 		if (g_subState != PLAYERSTATE_UNMOVE)
 		{
 			KeyboardPress();
 		}
-
-		ChangeModeFrame(FRAMESTATE_BARRIAR);
 
 		// 表示
 		g_player.bDisp = true;
@@ -450,6 +458,17 @@ void UpdatePlayer(void)
 	if (g_subState == PLAYERSTATE_UNMOVE)
 	{
 		g_nCounterAnimationPlayer = 0;
+
+		if (g_nCounterBulletTime >= 0)
+		{
+
+			g_nCounterBulletChargeTime++;
+			if (g_nCounterBulletChargeTime % 12 == 0)
+			{
+				g_nCounterTexAnimationPlayer = (TEXTURE_ANIMATION)(g_nCounterTexAnimationPlayer + (1 * g_nCntTexYpos));
+			}
+		}
+
 		g_nCounterSubState--;
 		if (g_nCounterSubState <= 0)
 		{
@@ -473,7 +492,7 @@ void UpdatePlayer(void)
 		SetParticle(g_player.posPlayer,
 			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 			D3DXVECTOR3(0.0f, 0.0f, 10.0f),
-			BULLET_SIZE * (0.125f * (float)(rand() % 9)),
+			PLAYER_BULLET_SIZE * (0.125f * (float)(rand() % 9)),
 			300,
 			D3DX_PI,
 			-D3DX_PI,
@@ -482,7 +501,7 @@ void UpdatePlayer(void)
 		SetParticle(g_player.posPlayer,
 			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 			D3DXVECTOR3(0.0f, 0.0f, 20.0f),
-			BULLET_SIZE* (0.15f * (float)(rand() % 9)),
+			PLAYER_BULLET_SIZE* (0.15f * (float)(rand() % 9)),
 			200,
 			D3DX_PI,
 			-D3DX_PI,
@@ -573,24 +592,40 @@ void UpdatePlayer(void)
 		g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
 		g_nCntTexYpos *= -1;
 	}
+	
+	if (g_bShotBullet == true && g_nCounterBulletTime <= 0)
+	{
+		g_bShotBullet = false;
+		g_player.tex = (PLAYERTEX)(g_player.tex - 4);
+	}
+	else if (g_nCounterBulletTime > 0)
+	{
+		g_nCounterBulletTime--;
+	}
 
 	if (g_nCounterAnimationPlayer >= ANIMATION_START)
 	{ // プレイヤーの入力が止まり、一定時間たったらテクスチャアニメーションを中止
 		if (g_nCounterPlayer != 0)
 		{
-			if (g_player.tex == PLAYERTEX_LEFT || g_player.tex == PLAYERTEX_RIGHT)
+			if (g_player.tex == PLAYERTEX_LEFT 
+				|| g_player.tex == PLAYERTEX_RIGHT 
+				|| g_player.tex == PLAYERTEX_LEFT_ATK 
+				|| g_player.tex == PLAYERTEX_RIGHT_ATK)
 			{
 				g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_0;
 				g_nCounterPlayer = 0;
 			}
-			else if (g_player.tex == PLAYERTEX_UP || g_player.tex == PLAYERTEX_DOWN)
+			else if (g_player.tex == PLAYERTEX_UP 
+				|| g_player.tex == PLAYERTEX_DOWN
+				|| g_player.tex == PLAYERTEX_UP_ATK
+				|| g_player.tex == PLAYERTEX_DOWN_ATK)
 			{
 				g_nCounterTexAnimationPlayer = TEXTURE_ANIMATION_1;
 				g_nCounterPlayer = 0;
 			}
 		}
 
-		if (g_nCounterAnimationPlayer >= (ANIMATION_START * 1.5))
+		if (g_nCounterAnimationPlayer >= (ANIMATION_START * 2.0f))
 		{
 			// プレイヤーの向きに応じて、静止アニメーションを再生
 			if (g_nCounterAnimationPlayer % (ANIMATION_SPD * 4) == 0)
@@ -624,10 +659,10 @@ void UpdatePlayer(void)
 	pVtx[3].pos.y = WINDOW_MID.y + cosf((g_player.fAnglePlayer)) * g_player.fLengthPlayer;
 	pVtx[3].pos.z = 0.0f;
 
-	pVtx[0].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer));
-	pVtx[1].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.125f * g_nCounterTexAnimationPlayer));
-	pVtx[2].tex = D3DXVECTOR2((0.25f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
-	pVtx[3].tex = D3DXVECTOR2((0.25f * g_player.tex) + 0.25f, (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
+	pVtx[0].tex = D3DXVECTOR2((0.125f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer));
+	pVtx[1].tex = D3DXVECTOR2((0.125f * g_player.tex) + 0.125f, (0.125f * g_nCounterTexAnimationPlayer));
+	pVtx[2].tex = D3DXVECTOR2((0.125f * g_player.tex), (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
+	pVtx[3].tex = D3DXVECTOR2((0.125f * g_player.tex) + 0.125f, (0.125f * g_nCounterTexAnimationPlayer) + 0.125f);
 
 	// 頂点バッファをアンロックする
 	g_pVtxBuffPlayer->Unlock();
@@ -682,8 +717,15 @@ float GetPlayerRot(PLAYER* pPlayer)
 	switch (pPlayer->rotPlayer)
 	{
 	case PLAYERDIRECTION_UP:
-
-		g_player.tex = PLAYERTEX_UP;
+		
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_UP;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_UP_ATK;
+		}
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -699,7 +741,14 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_DOWN:
 
-		g_player.tex = PLAYERTEX_DOWN;
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_DOWN;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_DOWN_ATK;
+		}
 		
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -714,7 +763,14 @@ float GetPlayerRot(PLAYER* pPlayer)
 		
 	case PLAYERDIRECTION_LEFT:
 
-		g_player.tex = PLAYERTEX_LEFT;
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_LEFT;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_LEFT_ATK;
+		}
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -729,7 +785,15 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_RIGHT:
 		// 右向き
-		g_player.tex = PLAYERTEX_RIGHT;
+
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_RIGHT;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_RIGHT_ATK;
+		}
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -743,7 +807,15 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_UPLEFT:
 		// 右向き
-		g_player.tex = PLAYERTEX_UP;
+
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_UP;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_UP_ATK;
+		}
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -758,7 +830,14 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_UPRIGHT:
 		// 右向き
-		g_player.tex = PLAYERTEX_UP;
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_UP;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_UP_ATK;
+		}
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -773,7 +852,14 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_DOWNLEFT:
 		// 右向き
-		g_player.tex = PLAYERTEX_DOWN;
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_DOWN;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_DOWN_ATK;
+		}
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -788,7 +874,14 @@ float GetPlayerRot(PLAYER* pPlayer)
 
 	case PLAYERDIRECTION_DOWNRIGHT:
 		// 右向き
-		g_player.tex = PLAYERTEX_DOWN;
+		if (g_bShotBullet == false)
+		{
+			g_player.tex = PLAYERTEX_DOWN;
+		}
+		else
+		{
+			g_player.tex = PLAYERTEX_DOWN_ATK;
+		}
 
 		if (g_nCounterSubState == UNMOVE_STATE)
 		{
@@ -864,12 +957,12 @@ void KeyboardPress(void)
 		// キーボード入力の各処理
 		if (GetKeyboardPress(DIK_W) == true
 			|| GetJoypadPress(JOYKEY_UP) == true
-			|| (GetJoyThumbLYState() == true && g_pState->Gamepad.sThumbLY >= 10000.0f))
+			|| (GetJoyThumbLYState() == true && g_pState->Gamepad.sThumbLY >= 12500.0f))
 		{// Wを押したとき
 			// 追加入力
 			if (GetKeyboardPress(DIK_A) == true
 				|| GetJoypadPress(JOYKEY_LEFT) == true
-				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX <= -10000.0f))
+				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX <= -12500.0f))
 			{// 左上移動
 				// プレイヤーの移動量を更新
 				g_player.movePlayer.x += sinf(D3DX_PI * -0.75f) * MOVE_ACCELE;
@@ -880,7 +973,7 @@ void KeyboardPress(void)
 			}
 			else if (GetKeyboardPress(DIK_D) == true
 				|| GetJoypadPress(JOYKEY_RIGHT) == true
-				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX >= 10000.0f))
+				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX >= 12500.0f))
 			{// 右上移動
 				// プレイヤーの移動量を更新
 				g_player.movePlayer.x += sinf(D3DX_PI * 0.75f) * MOVE_ACCELE;
@@ -913,12 +1006,12 @@ void KeyboardPress(void)
 		}
 		else if (GetKeyboardPress(DIK_S) == true
 			|| GetJoypadPress(JOYKEY_DOWN) == true
-			|| (GetJoyThumbLYState() == true && g_pState->Gamepad.sThumbLY <= -10000.0f))
+			|| (GetJoyThumbLYState() == true && g_pState->Gamepad.sThumbLY <= -12500.0f))
 		{// Sを押したとき
 			// 追加入力
 			if (GetKeyboardPress(DIK_A) == true
 				|| GetJoypadPress(JOYKEY_LEFT) == true
-				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX <= -10000.0f))
+				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX <= -12500.0f))
 			{// 左下移動
 				// プレイヤーの移動量を更新
 				g_player.movePlayer.x += sinf(D3DX_PI * -0.25f) * MOVE_ACCELE;
@@ -929,7 +1022,7 @@ void KeyboardPress(void)
 			}
 			else if (GetKeyboardPress(DIK_D) == true
 				|| GetJoypadPress(JOYKEY_RIGHT) == true
-				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX >= 10000.0f))
+				|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX >= 12500.0f))
 			{// 右下移動
 				// プレイヤーの移動量を更新
 				g_player.movePlayer.x += sinf(D3DX_PI * 0.25f) * MOVE_ACCELE;
@@ -962,7 +1055,7 @@ void KeyboardPress(void)
 		}
 		else if (GetKeyboardPress(DIK_A) == true
 			|| GetJoypadPress(JOYKEY_LEFT) == true
-			|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX <= -10000.0f))
+			|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX <= -12500.0f))
 		{// Aを押したとき
 
 			// プレイヤーの移動量を更新
@@ -986,7 +1079,7 @@ void KeyboardPress(void)
 		}
 		else if (GetKeyboardPress(DIK_D) == true
 			|| GetJoypadPress(JOYKEY_RIGHT) == true
-			|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX >= 10000.0f))
+			|| (GetJoyThumbLXState() == true && g_pState->Gamepad.sThumbLX >= 12500.0f))
 		{// Dを押したとき
 			// プレイヤーの移動量を更新
 			g_player.movePlayer.x += MOVE_ACCELE;
@@ -1023,6 +1116,7 @@ void KeyboardPress(void)
 				SetBullet(g_player.posPlayer, -15.0f, GetPlayerRot(&g_player), 300, BULLETTYPE_PLAYER, SHOTTYPE_NORMAL, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), false);
 				PlaySound(SOUND_LABEL_SE_SHOT_1);
 				g_player.nCounterBulletCharge++;
+				g_bShotBullet = true;
 			}
 			else if (g_player.nCounterBulletCharge < 6)
 			{
@@ -1033,14 +1127,14 @@ void KeyboardPress(void)
 						g_player.nGaugeNo = SetGauge(D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y, 0.0f), GAUGE_COLOR, GAUGETYPE_HOMING, 0, 50.0f);
 					}
 					g_player.nCounterBulletCharge++;
-
-					PlaySound(SOUND_LABEL_SE_CHARGE);
 				}
 			}
 			else if (g_player.nCounterBulletCharge >= 6 && pGauge[g_player.nGaugeNo].nPercentGauge <= GAUGE_MAX)
 			{ // ゲージを増やす(プレイヤーが使っているゲージのNoのゲージ)
 				if (g_player.aCouldDo[PLAYERDO_CHARGE] == true)
 				{
+					PlaySound(SOUND_LABEL_SE_CHARGE);
+
 					AddGauge(1, g_player.nGaugeNo);
 					g_player.nCounterBulletCharge++;
 
@@ -1048,7 +1142,7 @@ void KeyboardPress(void)
 					SetParticle(D3DXVECTOR3(g_player.posPlayer.x + sinf(fLength) * g_player.fLengthPlayer, g_player.posPlayer.y + cosf(fLength) * g_player.fLengthPlayer, 0.0f),
 						D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 						D3DXVECTOR3(0.0f, 0.0f, -1.0f),
-						BULLET_SIZE * (0.1f * (float)(rand() % 9)),
+						PLAYER_BULLET_SIZE * (0.1f * (float)(rand() % 9)),
 						50,
 						atan2f(sinf(fLength), cosf(fLength)),
 						atan2f(sinf(fLength), cosf(fLength)),
@@ -1059,7 +1153,7 @@ void KeyboardPress(void)
 					SetParticle(D3DXVECTOR3(g_player.posPlayer.x + sinf(fLength) * g_player.fLengthPlayer, g_player.posPlayer.y + cosf(fLength) * g_player.fLengthPlayer, 0.0f),
 						D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
 						D3DXVECTOR3(0.0f, 0.0f, -1.0f),
-						BULLET_SIZE * (0.1f * (float)(rand() % 9)),
+						PLAYER_BULLET_SIZE * (0.1f * (float)(rand() % 9)),
 						50,
 						atan2f(sinf(fLength), cosf(fLength)),
 						atan2f(sinf(fLength), cosf(fLength)),
@@ -1095,6 +1189,14 @@ void KeyboardPress(void)
 				}
 			}
 
+			g_nCounterBulletTime = BULLET_TEX;
+
+			g_nCounterBulletChargeTime++;
+			if (g_nCounterBulletChargeTime % 12 == 0)
+			{
+				g_nCounterTexAnimationPlayer = (TEXTURE_ANIMATION)(g_nCounterTexAnimationPlayer + (1 * g_nCntTexYpos));
+			}
+
 			g_nCounterAnimationPlayer = 0;
 		}
 		else if (GetKeyboardRelease(DIK_SPACE) == true || GetJoypadRelease(JOYKEY_A) == true)
@@ -1110,6 +1212,7 @@ void KeyboardPress(void)
 				{
 					g_nCounterSubState = UNMOVE_STATE;
 					g_subState = PLAYERSTATE_UNMOVE;
+					g_nCounterBulletTime = UNMOVE_STATE;
 
 					GetPlayerRot(&g_player);
 				}
@@ -1140,6 +1243,8 @@ void KeyboardPress(void)
 						AddGauge(-1, g_player.nGaugeNo);
 					}
 				}
+
+				g_nCounterAnimationPlayer = 0;
 
 				g_nCounterAnimationPlayer = 0;
 
@@ -1183,12 +1288,12 @@ void KeyboardPress(void)
 					g_player.nGaugeNo = SetGauge(D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y, 0.0f), GAUGE_COLOR, GAUGETYPE_HOMING, 0, 50.0f);
 				}
 
-				PlaySound(SOUND_LABEL_SE_CHARGE);
-
 				g_player.nCounterBarrier++;
 			}
 			else if (g_player.nCounterBarrier >= 6 && pGauge[g_player.nGaugeNo].nPercentGauge <= GAUGE_MAX)
 			{
+				PlaySound(SOUND_LABEL_SE_CHARGE);
+
 				// ゲージを増やす(プレイヤーが使っているゲージのNoのゲージ)
 				AddGauge(1, g_player.nGaugeNo);
 				g_player.nCounterBarrier++;
@@ -1197,7 +1302,7 @@ void KeyboardPress(void)
 				SetParticle(D3DXVECTOR3(g_player.posPlayer.x + sinf(fLength) * g_player.fLengthPlayer, g_player.posPlayer.y + cosf(fLength) * g_player.fLengthPlayer, 0.0f),
 					D3DXCOLOR(0.0f, 0.5f, 1.0f, 1.0f),
 					D3DXVECTOR3(0.0f, 0.0f, -1.0f),
-					BULLET_SIZE * (0.1f * (float)(rand() % 9)),
+					PLAYER_BULLET_SIZE * (0.1f * (float)(rand() % 9)),
 					50,
 					atan2f(sinf(fLength), cosf(fLength)),
 					atan2f(sinf(fLength), cosf(fLength)),
@@ -1208,7 +1313,7 @@ void KeyboardPress(void)
 				SetParticle(D3DXVECTOR3(g_player.posPlayer.x + sinf(fLength) * g_player.fLengthPlayer, g_player.posPlayer.y + cosf(fLength) * g_player.fLengthPlayer, 0.0f),
 					D3DXCOLOR(0.0f, 0.0f, 0.5f, 1.0f),
 					D3DXVECTOR3(0.0f, 0.0f, -1.0f),
-					BULLET_SIZE * (0.1f * (float)(rand() % 9)),
+					PLAYER_BULLET_SIZE * (0.1f * (float)(rand() % 9)),
 					50,
 					atan2f(sinf(fLength), cosf(fLength)),
 					atan2f(sinf(fLength), cosf(fLength)),
@@ -1232,6 +1337,14 @@ void KeyboardPress(void)
 
 					XInputSetState(0, g_pJoyVibration);
 				}
+
+				g_nCounterBulletTime = BULLET_TEX;
+
+				g_nCounterBulletChargeTime++;
+				if (g_nCounterBulletChargeTime % 12 == 0)
+				{
+					g_nCounterTexAnimationPlayer = (TEXTURE_ANIMATION)(g_nCounterTexAnimationPlayer + (1 * g_nCntTexYpos));
+				}
 			}
 			else if (pGauge[g_player.nGaugeNo].nPercentGauge > GAUGE_MAX)
 			{
@@ -1245,6 +1358,7 @@ void KeyboardPress(void)
 
 				g_player.nCounterBarrier = 0;
 				g_player.nCounterBarrierTime = BARRIER_STATE;
+				g_nCounterBulletTime = 0;
 
 				g_pJoyVibration->wLeftMotorSpeed = 0;
 
@@ -1302,7 +1416,6 @@ void KeyboardPress(void)
 					g_player.state = PLAYERSTATE_NORMAL;
 
 					ChangeModeFrame(FRAMESTATE_NORMAL);
-
 				}
 				else
 				{

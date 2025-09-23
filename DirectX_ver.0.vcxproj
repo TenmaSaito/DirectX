@@ -173,6 +173,7 @@
     <ClCompile Include="mage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="moon.cpp" />
+    <ClCompile Include="nomoretime.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="placeChar.cpp" />
@@ -188,6 +189,7 @@
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="stock.cpp" />
     <ClCompile Include="sun.cpp" />
+    <ClCompile Include="teleport.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="titleanimation.cpp" />
@@ -226,6 +228,7 @@
     <ClInclude Include="mage.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="moon.h" />
+    <ClInclude Include="nomoretime.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="placeChar.h" />
@@ -242,6 +245,7 @@
     <ClInclude Include="stage.h" />
     <ClInclude Include="stock.h" />
     <ClInclude Include="sun.h" />
+    <ClInclude Include="teleport.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="titleanimation.h" />

@@ -61,7 +61,7 @@ void InitRanking(void)
 	// ç\ë¢ëÃÇÃèâä˙âª
 	for (nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 	{
-		pRanking->pos = D3DXVECTOR3(1300.0f, 120.0f * (nCntRanking + 1), 0.0f);
+		pRanking->pos = D3DXVECTOR3(1380.0f, 120.0f * (nCntRanking + 1), 0.0f);
 		pRanking->col = D3DXCOLOR_NULL;
 		pRanking->nScore = 0;
 		pRanking->nRanking = 1;
@@ -176,12 +176,12 @@ void UpdateRanking(void)
 	PRANKING pRanking = &g_aRanking[0];
 	VERTEX_2D* pVtx;
 
-	if ((GetKeyboardTrigger(DIK_R) == true
-		&& GetKeyboardTrigger(DIK_RSHIFT) == true)
-		||(GetJoypadTrigger(JOYKEY_A) == true
-			&& GetJoypadTrigger(JOYKEY_B) == true
-			&& GetJoypadTrigger(JOYKEY_X) == true
-			&& GetJoypadTrigger(JOYKEY_Y) == true))
+	if ((GetKeyboardPress(DIK_R) == true
+		&& GetKeyboardPress(DIK_RSHIFT) == true)
+		||(GetJoypadPress(JOYKEY_A) == true
+			&& GetJoypadPress(JOYKEY_B) == true
+			&& GetJoypadPress(JOYKEY_X) == true
+			&& GetJoypadPress(JOYKEY_Y) == true))
 	{
 		ResetRanking();
 	}

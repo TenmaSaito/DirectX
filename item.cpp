@@ -35,6 +35,8 @@ void InitItem(void)
 	for (nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++,pItem++)
 	{
 		pItem->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pItem->col = D3DXCOLOR_NULL;
+		pItem->nAlphaItem = 1;
 		pItem->type = ITEMTYPE_COIN;
 		pItem->bUse = false;
 	}
@@ -155,6 +157,12 @@ void UpdateItem(void)
 
 			pos = pPlayer->moveposPlayer;
 
+			pItem->col.a += 0.01f * pItem->nAlphaItem;
+			if (pItem->col.a >= 1.0f || pItem->col.a <= 0.2f)
+			{
+				pItem->nAlphaItem *= -1;
+			}
+
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
 			pVtx[0].pos.x = (pItem->pos.x + pos.x) - ITEM_WIDTH;
 			pVtx[0].pos.y = (pItem->pos.y + pos.y) - ITEM_HEIGHT;
@@ -179,10 +187,10 @@ void UpdateItem(void)
 			pVtx[3].rhw = 1.0f;
 
 			// 頂点カラーの設定
-			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pVtx[0].col = pItem->col;
+			pVtx[1].col = pItem->col;
+			pVtx[2].col = pItem->col;
+			pVtx[3].col = pItem->col;
 
 			// テクスチャ座標の設定
 			pVtx[0].tex = D3DXVECTOR2(0.125f * pItem->type, 0.0f);
@@ -250,6 +258,8 @@ void SetItem(ITEMTYPE type, D3DXVECTOR3 pos)
 			Camerapos = pPlayer->moveposPlayer;
 
 			pItem->pos = pos;
+			pItem->col = D3DXCOLOR(1.0f,1.0f,1.0f,0.3f);
+			pItem->nAlphaItem = 1;
 			pItem->type = type;
 
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)

@@ -34,11 +34,15 @@ typedef enum
 // 方向の補正用列挙型
 typedef enum
 {
-	PLAYERTEX_LEFT = 0,
-	PLAYERTEX_RIGHT,
-	PLAYERTEX_UP,
-	PLAYERTEX_DOWN,
-	PLAYERTEX_MAX
+	PLAYERTEX_LEFT = 0,				// 上向き	
+	PLAYERTEX_RIGHT,				// 下向き
+	PLAYERTEX_UP,					// 左向き
+	PLAYERTEX_DOWN,					// 右向き
+	PLAYERTEX_LEFT_ATK,				// 上向きの攻撃
+	PLAYERTEX_RIGHT_ATK,			// 上向きの攻撃
+	PLAYERTEX_UP_ATK,				// 下向きの攻撃
+	PLAYERTEX_DOWN_ATK,				// 下向きの攻撃
+	PLAYERTEX_MAX					
 }PLAYERTEX;
 
 // プレイヤーの状態
@@ -111,6 +115,7 @@ PLAYER *GetPlayer(void);
 void HitPlayer(int nCntDamage);
 void SetPlayerDo(PLAYERDO playerDo, bool bCould);
 
+float GetPlayerRot(PLAYER* pPlayer);
 PLAYERDIRECTION GetPlayerDirection(void);
 void SetPlayerShotType(SHOTTYPE type);
 void SetEnablePlayerFullburst(bool bUse);

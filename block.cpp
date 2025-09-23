@@ -15,6 +15,7 @@
 #include "input.h"
 #include "particle.h"
 #include "heart.h"
+#include "timer.h"
 
 // マクロ定義
 #define MAX_BLOCK		(128)			// ブロックの最大数
@@ -28,7 +29,7 @@ void CollisionBullet(BLOCK *pBlock);
 LPDIRECT3DTEXTURE9		g_pTextureBlock = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBlock = NULL;	// 頂点バッファのポインタ
 BLOCK g_aBlock[MAX_BLOCK];						// ブロック構造体
-
+int g_nAlpha;									// α地変同様変数
 float g_fAngle;
 
 //================================================================================================================
@@ -53,6 +54,8 @@ void InitBlock(void)
 		pBlock->nCounter = 0;
 		pBlock->bUse = false;
 	}
+
+	g_nAlpha = 1;
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
@@ -167,7 +170,7 @@ void UpdateBlock(void)
 			if (pBlock->type == BLOCKTYPE_BATTERY)
 			{
 				pBlock->nCounter++;
-				if ((pBlock->nCounter % 12) == 0)
+				if ((pBlock->nCounter % 36) == 0)
 				{
 					pBlock->fLaunchAngle += D3DX_PI * 0.15f;
 
@@ -189,13 +192,15 @@ void UpdateBlock(void)
 				}
 				else
 				{
-					if (pBlock->col.a <= 1.0f)
+					if (pBlock->col.a == 0.0f)
 					{
-						pBlock->col.a += 0.01f;
-						if (pBlock->col.a >= 1.0f)
-						{
-							pBlock->col.a = 1.0f;
-						}
+						pBlock->col.a = 0.2f;
+					}
+
+					pBlock->col.a += 0.01f * g_nAlpha;
+					if (pBlock->col.a >= 1.0f || pBlock->col.a <= 0.1f)
+					{
+						g_nAlpha *= -1;
 					}
 				}
 			}
@@ -547,7 +552,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0
 				&& nTurnExac == ALREADY_CLEARED
 				&& GetFadeStage() == FADESTAGE_NONE
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& GetTimer() > 0)
 			{
 				pPlayer->movePlayer.x = 0.0f;
 				pPlayer->movePlayer.y = 0.0f;
@@ -556,10 +562,14 @@ void CollisionPlayer(BLOCK* pBlock)
 
 				if (stage == STAGE_GRASS)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_VOLCANO);
 					SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_VOLCANO)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_NORMAL);
 					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 				}
 			}
@@ -571,7 +581,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-			    &&(pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
+			    &&(pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& GetTimer() > 0)
 			{
 				pPlayer->movePlayer.x = 0.0f;
 				pPlayer->movePlayer.y = 0.0f;
@@ -580,10 +591,14 @@ void CollisionPlayer(BLOCK* pBlock)
 
 				if (stage == STAGE_GRASS)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_FOREST);
 					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_FOREST)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_NORMAL);
 					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 				}
 			}
@@ -595,7 +610,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& GetTimer() > 0)
 			{
 				pPlayer->movePlayer.x = 0.0f;
 				pPlayer->movePlayer.y = 0.0f;
@@ -604,10 +620,14 @@ void CollisionPlayer(BLOCK* pBlock)
 
 				if (stage == STAGE_GRASS)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_ICE);
 					SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_ICE)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_NORMAL);
 					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
 				}
 			}
@@ -619,7 +639,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& GetTimer() > 0)
 			{
 				pPlayer->movePlayer.x = 0.0f;
 				pPlayer->movePlayer.y = 0.0f;
@@ -628,10 +649,14 @@ void CollisionPlayer(BLOCK* pBlock)
 
 				if (stage == STAGE_VOLCANO)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_DESERT);
 					SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_DESERT)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_VOLCANO);
 					SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
 				}
 			}
@@ -643,7 +668,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& GetTimer() > 0)
 			{
 				pPlayer->movePlayer.x = 0.0f;
 				pPlayer->movePlayer.y = 0.0f;
@@ -652,10 +678,14 @@ void CollisionPlayer(BLOCK* pBlock)
 
 				if (stage == STAGE_DESERT)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_FOREST);
 					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_FOREST)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_DESERT);
 					SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
 				}
 			}
@@ -667,7 +697,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& GetTimer() > 0)
 			{
 				pPlayer->movePlayer.x = 0.0f;
 				pPlayer->movePlayer.y = 0.0f;
@@ -676,10 +707,14 @@ void CollisionPlayer(BLOCK* pBlock)
 
 				if (stage == STAGE_FOREST)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_SEA);
 					SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_SEA)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_FOREST);
 					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
 				}
 			}
@@ -691,7 +726,8 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE))
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& GetTimer() > 0)
 			{
 				pPlayer->movePlayer.x = 0.0f;
 				pPlayer->movePlayer.y = 0.0f;
@@ -700,10 +736,14 @@ void CollisionPlayer(BLOCK* pBlock)
 
 				if (stage == STAGE_SEA)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_ICE);
 					SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
 				}
 				else if (stage == STAGE_ICE)
 				{
+					PlaySound(SOUND_LABEL_SE_TELEPORT);
+					FadeSound(SOUND_LABEL_GAME_SEA);
 					SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
 				}
 			}
@@ -801,17 +841,35 @@ void CollisionBullet(BLOCK* pBlock)
 	{
 		if (pBullet->bUse == true && pBlock->type == BLOCKTYPE_WALL)
 		{
-			if (pBullet->pos.x >= pBlock->pos.x - BLOCK_WIDTH - (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.x <= pBlock->pos.x + BLOCK_WIDTH + (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.y >= pBlock->pos.y - BLOCK_HEIGHT - (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.y <= pBlock->pos.y + BLOCK_HEIGHT + (BULLET_SIZE * 0.5f))
+			if (pBullet->type == BULLETTYPE_PLAYER)
 			{
-				if (pBullet->type == BULLETTYPE_PLAYER)
+				if (pBullet->pos.x >= pBlock->pos.x - BLOCK_WIDTH - (PLAYER_BULLET_SIZE * 0.5f)
+					&& pBullet->pos.x <= pBlock->pos.x + BLOCK_WIDTH + (PLAYER_BULLET_SIZE * 0.5f)
+					&& pBullet->pos.y >= pBlock->pos.y - BLOCK_HEIGHT - (PLAYER_BULLET_SIZE * 0.5f)
+					&& pBullet->pos.y <= pBlock->pos.y + BLOCK_HEIGHT + (PLAYER_BULLET_SIZE * 0.5f))
 				{
-					SetParticle(pBullet->pos, pBullet->col, 10, D3DX_PI, -D3DX_PI, 5);
-				}
+					if (pBullet->type == BULLETTYPE_PLAYER)
+					{
+						SetParticle(pBullet->pos, pBullet->col, 10, D3DX_PI, -D3DX_PI, 5);
+					}
 
-				pBullet->bUse = false;
+					pBullet->bUse = false;
+				}
+			}
+			else if (pBullet->type == BULLETTYPE_ENEMY_1)
+			{
+				if (pBullet->pos.x >= pBlock->pos.x - BLOCK_WIDTH - (ENEMY_BULLET_SIZE * 0.5f)
+					&& pBullet->pos.x <= pBlock->pos.x + BLOCK_WIDTH + (ENEMY_BULLET_SIZE * 0.5f)
+					&& pBullet->pos.y >= pBlock->pos.y - BLOCK_HEIGHT - (ENEMY_BULLET_SIZE * 0.5f)
+					&& pBullet->pos.y <= pBlock->pos.y + BLOCK_HEIGHT + (ENEMY_BULLET_SIZE * 0.5f))
+				{
+					if (pBullet->type == BULLETTYPE_PLAYER)
+					{
+						SetParticle(pBullet->pos, pBullet->col, 10, D3DX_PI, -D3DX_PI, 5);
+					}
+
+					pBullet->bUse = false;
+				}
 			}
 		}
 	}

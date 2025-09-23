@@ -10,7 +10,6 @@
 
 // マクロ定義
 #define MAX_PHOTO			(3)			// 表示する写真の数
-#define A					#define a
 
 // ロゴ構造体
 typedef struct

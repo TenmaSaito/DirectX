@@ -30,6 +30,8 @@
 #include "playerframe.h"
 #include "mage.h"
 #include "item.h"
+#include "nomoretime.h"
+#include "teleport.h"
 
 // プロトタイプ宣言
 int AddBonusScore(void);
@@ -110,6 +112,8 @@ void InitGame(void)
 	// 自然消滅テクスチャの初期化処理
 	InitPlaceChar();
 
+	InitNomoretime();
+
 	SetScore(NULL);
 
 	SetTimer(GAUGE_MAX);
@@ -118,6 +122,8 @@ void InitGame(void)
 	InitPlayerFrame();
 
 	InitFadeStage();
+
+	InitTeleport();
 
 	if (g_bUseTutorial == true)
 	{
@@ -203,6 +209,10 @@ void UninitGame(void)
 
 	// ゲーム内枠の終了処理
 	UninitPlayerFrame();
+
+	UninitNomoretime();
+
+	UninitTeleport();
 
 	// サウンドの停止
 	StopSound();
@@ -335,6 +345,10 @@ void UpdateGame(void)
 
 		// ゲーム内枠の更新処理
 		UpdatePlayerFrame();
+
+		UpdateNomoretime(); 
+
+		UpdateTeleport();
 	}
 
 	if ((GetKeyboardTrigger(DIK_P) == true || GetJoypadTrigger(JOYKEY_START) == true)
@@ -378,9 +392,6 @@ void DrawGame(void)
 	// ブロックの描画処理
 	DrawBlock();
 
-	// Mage
-	DrawMage();
-
 	// Item
 	DrawItem();
 
@@ -396,12 +407,19 @@ void DrawGame(void)
 	// プレイヤーの描画処理
 	DrawPlayer();
 
+	DrawTeleport();
+
+	// Mage
+	DrawMage();
+
 	// 爆発の描画処理
 	DrawExplosion();	
 
 	// 敵の描画処理
 	DrawEnemy();
 	
+	DrawNomoretime();
+
 	// ゲーム内枠の描画処理
 	DrawPlayerFrame();
 
@@ -431,7 +449,6 @@ void DrawGame(void)
 
 	// ポーズ画面の描画処理
 	DrawPause();
-
 }
 
 //================================================================================================================
@@ -503,6 +520,10 @@ int AddBonusScore(void)
 	else if (nClearedStage == STAGE_MAX)
 	{
 		nScore += 200000;									// 全クリすると+200000
+		if (GetPlayer()->nLife == MAX_LIFE && GetPlayer()->nStock == MAX_STOCK)
+		{
+			nScore += 150000;								// 一度もダメージも食らわずにクリアした場合は+150000
+		}
 	}
 
 	nScore += (nRemainingTime * 20000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)

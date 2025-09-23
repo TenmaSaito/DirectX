@@ -129,11 +129,6 @@ void UpdateFade(void)
 				// ÉÇÅ[Éhê›íË
 				SetMode(g_modeNext);
 			}
-
-			if (GetKeyboardTrigger(DIK_RETURN) == true && g_modeNext == MODE_RESULT)
-			{
-				g_colorFade.a = 1.0f;
-			}
 		}
 
 		VERTEX_2D *pVtx;

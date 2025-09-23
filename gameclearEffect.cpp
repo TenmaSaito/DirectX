@@ -122,21 +122,23 @@ void UpdateGameclearEffect(void)
 {
 	if (g_clearEffectPos.x >= -CHARA_SIZE && GetFade() == FADE_NONE)
 	{
-		if (GetKeyboardTrigger(DIK_RETURN) == true)
+		if (GetKeyboardTrigger(DIK_RETURN) == true
+			|| GetJoypadTrigger(JOYKEY_A) == true
+			|| GetJoypadTrigger(JOYKEY_START) == true)
 		{
 			g_clearEffectPos.x = -CHARA_SIZE;
-			SetResultScore(D3DXVECTOR3(300.0f, 500.0f, 0.0f), GetScore());
+			SetResultScore(D3DXVECTOR3(350.0f, 500.0f, 0.0f), GetScore());
 			g_bMoveClearEffect = false;
 		}
 
 		g_clearEffectPos.x -= 5.0f;
-		if (g_clearEffectPos.x >= 300.0f)
+		if (g_clearEffectPos.x >= 250.0f)
 		{
 			MoveResuktScore(D3DXVECTOR3(-5.0f, 0.0f, 0.0f));
 		}
 		else
 		{
-			SetResultScore(D3DXVECTOR3(300.0f, 500.0f, 0.0f), GetScore());
+			SetResultScore(D3DXVECTOR3(350.0f, 500.0f, 0.0f), GetScore());
 			g_bMoveClearEffect = false;
 		}
 	}

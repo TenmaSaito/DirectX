@@ -10,7 +10,7 @@
 #include "main.h"
 
 // マクロ定義
-#define GAUGE_VERTEX	(102)				// ゲージの頂点数
+#define GAUGE_VERTEX	(152)				// ゲージの頂点数
 #define GAUGE_MAX		(GAUGE_VERTEX - 2)	// ゲージの最大値
 #define NOMORE_GAUGE	(-1)				// 使えるゲージが無い場合に返る値
 		
@@ -41,7 +41,7 @@ void UninitGauge(void);
 void UpdateGauge(void);
 void DrawGauge(void);
 
-int SetGauge(D3DXVECTOR3 pos, D3DXCOLOR col, GAUGETYPE type,int start,float fLength);
+int SetGauge(D3DXVECTOR3 pos, D3DXCOLOR col, GAUGETYPE type, int start, float fLength);
 Gauge *GetGauge(void);
 void AddGauge(int value,int nNo);
 

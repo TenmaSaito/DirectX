@@ -21,7 +21,7 @@
 #define EFFECT_COLOR_ENEMY2		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)		// エフェクトの色2
 #define EFFECT_COLOR_ENEMY3		D3DXCOLOR(0.0f, 0.0f, 0.05f, 1.0f)		// エフェクトの色3
 #define EFFECT_COLOR_ENEMY4		D3DXCOLOR(0.0f, 0.1f, 0.0f, 1.0f)		// エフェクトの色4
-#define PARTICLE_SIZE	BULLET_SIZE * (0.1f * (float)(rand() % 9))		// パーティクルのサイズ
+#define PARTICLE_SIZE(x)		(x * (0.1f * (float)(rand() % 9)))		// パーティクルのサイズ
 #define PARTICLE_LIFE	(100)											// パーティクルの寿命
 #define PARTICLE_COLOR	D3DXCOLOR(0.75f, 0.5f, 0.25f, 1.0f)				// パーティクルの色
 #define PARTICLE_MOVE	D3DXVECTOR3(0.0f, 0.0f, 5.0f)					// パーティクルの移動量(z)
@@ -50,8 +50,6 @@ void CollisionPlayer(BULLET *pBullet);
 LPDIRECT3DTEXTURE9		g_pTextureBullet = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffBullet = NULL;	// 頂点バッファのポインタ
 BULLET g_aBullet[MAX_BULLET];						// 弾の情報
-float g_fLengthBullet;								// 対角線の長さ
-float g_fAngleBullet;								// 対角線の角度
 int g_nCounterBullet;								// 汎用カウンター
 float g_nBulletSPD[MAX_BULLET];						// 弾速
 
@@ -79,6 +77,8 @@ void InitBullet(void)
 		pBullet->type = BULLETTYPE_PLAYER;
 		pBullet->shot = SHOTTYPE_NORMAL;
 		pBullet->col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pBullet->fLength = sqrtf(PLAYER_BULLET_SIZE * PLAYER_BULLET_SIZE + PLAYER_BULLET_SIZE * PLAYER_BULLET_SIZE) * 0.5f;
+		pBullet->fAngle = atan2f(PLAYER_BULLET_SIZE, PLAYER_BULLET_SIZE);
  		pBullet->nEnemy = HOMING_NONE;
 		pBullet->nCounterHoming = 0;
 		pBullet->nCounterHomingtime = 0;
@@ -97,12 +97,6 @@ void InitBullet(void)
 		&g_pVtxBuffBullet,
 		NULL);
 
-	// 対角線の長さを取得
-	g_fLengthBullet = sqrtf(BULLET_SIZE * BULLET_SIZE + BULLET_SIZE * BULLET_SIZE) * 0.5f;
-
-	// 対角線の角度を算出
-	g_fAngleBullet = atan2f(BULLET_SIZE, BULLET_SIZE);
-
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
@@ -113,20 +107,20 @@ void InitBullet(void)
 	for (nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++,pBullet++)
 	{
 		// 頂点座標の設定(座標設定は必ず右回りで！！！)
-		pVtx[0].pos.x = pBullet->pos.x + sinf(D3DX_PI + g_fAngleBullet) * g_fLengthBullet;
-		pVtx[0].pos.y = pBullet->pos.y + cosf(D3DX_PI + g_fAngleBullet) * g_fLengthBullet;
+		pVtx[0].pos.x = pBullet->pos.x + sinf(D3DX_PI + pBullet->fAngle) * pBullet->fLength;
+		pVtx[0].pos.y = pBullet->pos.y + cosf(D3DX_PI + pBullet->fAngle) * pBullet->fLength;
 		pVtx[0].pos.z = 0.0f;
 
-		pVtx[1].pos.x = pBullet->pos.x + sinf(D3DX_PI - g_fAngleBullet) * g_fLengthBullet;
-		pVtx[1].pos.y = pBullet->pos.y + cosf(D3DX_PI - g_fAngleBullet) * g_fLengthBullet;
+		pVtx[1].pos.x = pBullet->pos.x + sinf(D3DX_PI - pBullet->fAngle) * pBullet->fLength;
+		pVtx[1].pos.y = pBullet->pos.y + cosf(D3DX_PI - pBullet->fAngle) * pBullet->fLength;
 		pVtx[1].pos.z = 0.0f;
 
-		pVtx[2].pos.x = pBullet->pos.x + sinf(-g_fAngleBullet) * g_fLengthBullet;
-		pVtx[2].pos.y = pBullet->pos.y + cosf(-g_fAngleBullet) * g_fLengthBullet;
+		pVtx[2].pos.x = pBullet->pos.x + sinf(-pBullet->fAngle) * pBullet->fLength;
+		pVtx[2].pos.y = pBullet->pos.y + cosf(-pBullet->fAngle) * pBullet->fLength;
 		pVtx[2].pos.z = 0.0f;
 
-		pVtx[3].pos.x = pBullet->pos.x + sinf(g_fAngleBullet) * g_fLengthBullet;
-		pVtx[3].pos.y = pBullet->pos.y + cosf(g_fAngleBullet) * g_fLengthBullet;
+		pVtx[3].pos.x = pBullet->pos.x + sinf(pBullet->fAngle) * pBullet->fLength;
+		pVtx[3].pos.y = pBullet->pos.y + cosf(pBullet->fAngle) * pBullet->fLength;
 		pVtx[3].pos.z = 0.0f;
 
 		// rhwの設定
@@ -248,15 +242,15 @@ void UpdateBullet(void)
 				{
 					if (pBullet->shot != SHOTTYPE_LASERBULLET)
 					{
-						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, EFFECT_COLOR1, BULLET_SIZE * 1.25f, 40, false);
-						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, EFFECT_COLOR2, BULLET_SIZE, 40, false);
-						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, EFFECT_COLOR3, BULLET_SIZE * 2.5f, 50, false);
-						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, EFFECT_COLOR4, BULLET_SIZE * 2.5f, 50, false);
+						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, pBullet->col, PLAYER_BULLET_SIZE * 1.25f, 40, false);
+						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, EFFECT_COLOR2, PLAYER_BULLET_SIZE, 40, false);
+						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, EFFECT_COLOR3, PLAYER_BULLET_SIZE * 2.25f, 50, false);
+						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, pBullet->col, PLAYER_BULLET_SIZE * 2.5f, 50, false);
 
 						SetParticle(pBullet->pos,									// パーティクルの設置
 							PARTICLE_COLOR,
 							PARTICLE_MOVE,
-							PARTICLE_SIZE,
+							PARTICLE_SIZE(PLAYER_BULLET_SIZE),
 							PARTICLE_LIFE,
 							D3DX_PI,
 							-D3DX_PI,
@@ -264,9 +258,9 @@ void UpdateBullet(void)
 					}
 					else
 					{
-						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), BULLET_SIZE * 1.25f, 40, true);
-						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f), BULLET_SIZE * 1.75f, 40, true);
-						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), BULLET_SIZE * 1.5f, 40, true);
+						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f), PLAYER_BULLET_SIZE * 1.25f, 40, true);
+						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f), PLAYER_BULLET_SIZE * 1.75f, 40, true);
+						SetEffect(pBullet->pos, D3DXVECTOR3_NULL, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), PLAYER_BULLET_SIZE * 1.5f, 40, true);
 					}
 				}
 
@@ -325,10 +319,10 @@ void UpdateBullet(void)
 
 				if (pBullet->bEffect == true)
 				{
-					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY1, BULLET_SIZE * 1.25f, 40, false);
-					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY2, BULLET_SIZE, 40, false);
-					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY3, BULLET_SIZE * 2.5f, 50, false);
-					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,pBullet->col, BULLET_SIZE * 2.5f, 50, false);
+					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY1, ENEMY_BULLET_SIZE * 1.25f, 40, false);
+					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY2, ENEMY_BULLET_SIZE, 40, false);
+					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,EFFECT_COLOR_ENEMY3, ENEMY_BULLET_SIZE * 2.5f, 50, false);
+					SetEffect(pBullet->pos, D3DXVECTOR3_NULL,pBullet->col, ENEMY_BULLET_SIZE * 2.5f, 50, false);
 				}
 
 				break;
@@ -339,20 +333,20 @@ void UpdateBullet(void)
 			}
 		
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
-			pVtx[0].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z + (D3DX_PI + g_fAngleBullet)) * g_fLengthBullet;
-			pVtx[0].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z + (D3DX_PI + g_fAngleBullet)) * g_fLengthBullet;
+			pVtx[0].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z + (D3DX_PI + pBullet->fAngle)) * pBullet->fLength;
+			pVtx[0].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z + (D3DX_PI + pBullet->fAngle)) * pBullet->fLength;
 			pVtx[0].pos.z = 0.0f;
 
-			pVtx[1].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z + (D3DX_PI - g_fAngleBullet)) * g_fLengthBullet;
-			pVtx[1].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z + (D3DX_PI - g_fAngleBullet)) * g_fLengthBullet;
+			pVtx[1].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z + (D3DX_PI - pBullet->fAngle)) * pBullet->fLength;
+			pVtx[1].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z + (D3DX_PI - pBullet->fAngle)) * pBullet->fLength;
 			pVtx[1].pos.z = 0.0f;
 
-			pVtx[2].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z - g_fAngleBullet) * g_fLengthBullet;
-			pVtx[2].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z - g_fAngleBullet) * g_fLengthBullet;
+			pVtx[2].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z - pBullet->fAngle) * pBullet->fLength;
+			pVtx[2].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z - pBullet->fAngle) * pBullet->fLength;
 			pVtx[2].pos.z = 0.0f;
 
-			pVtx[3].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z + g_fAngleBullet) * g_fLengthBullet;
-			pVtx[3].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z + g_fAngleBullet) * g_fLengthBullet;
+			pVtx[3].pos.x = (pBullet->pos.x + pos.x) + sinf(pBullet->move.z + pBullet->fAngle) * pBullet->fLength;
+			pVtx[3].pos.y = (pBullet->pos.y + pos.y) + cosf(pBullet->move.z + pBullet->fAngle) * pBullet->fLength;
 			pVtx[3].pos.z = 0.0f;
 
 			if (pBullet->shot == SHOTTYPE_FULLBURST)
@@ -405,7 +399,10 @@ void UpdateBullet(void)
 				// 敵の弾の場合
 				PLAYER *pPlayer = GetPlayer();
 
-				if (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_UNMOVE)
+				if (pPlayer->state == PLAYERSTATE_NORMAL
+					|| pPlayer->state == PLAYERSTATE_DAMAGE
+					|| pPlayer->state == PLAYERSTATE_UNMOVE
+					|| pPlayer->state == PLAYERSTATE_BARRIER)
 				{// プレイヤーが生きていれば
 					CollisionPlayer(pBullet);
 				}
@@ -527,6 +524,19 @@ void SetBullet(D3DXVECTOR3 pos, float speed, float rot, int nLife, BULLETTYPE ty
 			pBullet->move.z = rot;			// 弾の向きを代入
 			pBullet->nLife = nLife;			// 弾の寿命を代入
 			pBullet->type = type;			// 弾の種類を代入
+			if (type == BULLETTYPE_PLAYER)
+			{
+				pBullet->fLength = sqrtf(PLAYER_BULLET_SIZE * PLAYER_BULLET_SIZE + PLAYER_BULLET_SIZE * PLAYER_BULLET_SIZE) * 0.5f;
+				pBullet->fAngle = atan2f(PLAYER_BULLET_SIZE, PLAYER_BULLET_SIZE);
+			}
+			else if (type == BULLETTYPE_ENEMY_1)
+			{
+				pBullet->fLength = sqrtf(ENEMY_BULLET_SIZE * ENEMY_BULLET_SIZE + ENEMY_BULLET_SIZE * ENEMY_BULLET_SIZE) * 0.5f;
+				pBullet->fAngle = atan2f(ENEMY_BULLET_SIZE, ENEMY_BULLET_SIZE);
+				pBullet->move.y = speed * 0.4f;		// 弾の速度を代入
+				g_nBulletSPD[nCntBullet] = speed * 0.4f;
+			}
+
 			pBullet->col = col;				// 弾の色を代入
 			pBullet->nEnemy = HOMING_NONE;	// ホーミング対象をリセット
 			pBullet->nCounterHoming = NULL;	// ホーミング弾の動作カウントをリセット
@@ -560,20 +570,20 @@ void SetBullet(D3DXVECTOR3 pos, float speed, float rot, int nLife, BULLETTYPE ty
 			}
 
 			// 頂点座標の設定(座標設定は必ず右回りで！！！)
-			pVtx[0].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z + (D3DX_PI + g_fAngleBullet)) * g_fLengthBullet;
-			pVtx[0].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z + (D3DX_PI + g_fAngleBullet)) * g_fLengthBullet;
+			pVtx[0].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z + (D3DX_PI + pBullet->fAngle)) * pBullet->fLength;
+			pVtx[0].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z + (D3DX_PI + pBullet->fAngle)) * pBullet->fLength;
 			pVtx[0].pos.z = 0.0f;
 
-			pVtx[1].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z + (D3DX_PI - g_fAngleBullet)) * g_fLengthBullet;
-			pVtx[1].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z + (D3DX_PI - g_fAngleBullet)) * g_fLengthBullet;
+			pVtx[1].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z + (D3DX_PI - pBullet->fAngle)) * pBullet->fLength;
+			pVtx[1].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z + (D3DX_PI - pBullet->fAngle)) * pBullet->fLength;
 			pVtx[1].pos.z = 0.0f;
 
-			pVtx[2].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z - g_fAngleBullet) * g_fLengthBullet;
-			pVtx[2].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z - g_fAngleBullet) * g_fLengthBullet;
+			pVtx[2].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z - pBullet->fAngle) * pBullet->fLength;
+			pVtx[2].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z - pBullet->fAngle) * pBullet->fLength;
 			pVtx[2].pos.z = 0.0f;
 
-			pVtx[3].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z + g_fAngleBullet) * g_fLengthBullet;
-			pVtx[3].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z + g_fAngleBullet) * g_fLengthBullet;
+			pVtx[3].pos.x = (pBullet->pos.x + Camerapos.x) + sinf(pBullet->move.z + pBullet->fAngle) * pBullet->fLength;
+			pVtx[3].pos.y = (pBullet->pos.y + Camerapos.y) + cosf(pBullet->move.z + pBullet->fAngle) * pBullet->fLength;
 			pVtx[3].pos.z = 0.0f;
 
 			// 頂点カラーの設定
@@ -613,10 +623,10 @@ void CollisionEnemy(BULLET *pBullet)
 		if (pEnemy->bUse == true)
 		{// 敵が使われていれば
 
-			if (pBullet->pos.x > pEnemy->pos.x - (pEnemy->size.x * 0.5f) - (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.x < pEnemy->pos.x + (pEnemy->size.x * 0.5f) + (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.y > pEnemy->pos.y - (pEnemy->size.y * 0.5f) - (BULLET_SIZE * 0.5f)
-				&& pBullet->pos.y < pEnemy->pos.y + (pEnemy->size.y * 0.5f) + (BULLET_SIZE * 0.5f)
+			if (pBullet->pos.x > pEnemy->pos.x - (pEnemy->size.x * 0.5f) - (PLAYER_BULLET_SIZE * 0.5f)
+				&& pBullet->pos.x < pEnemy->pos.x + (pEnemy->size.x * 0.5f) + (PLAYER_BULLET_SIZE * 0.5f)
+				&& pBullet->pos.y > pEnemy->pos.y - (pEnemy->size.y * 0.5f) - (PLAYER_BULLET_SIZE * 0.5f)
+				&& pBullet->pos.y < pEnemy->pos.y + (pEnemy->size.y * 0.5f) + (PLAYER_BULLET_SIZE * 0.5f)
 				&& pBullet->shot != SHOTTYPE_LASER)
 			{
 				switch (pBullet->shot)
@@ -667,16 +677,30 @@ void CollisionEnemy(BULLET *pBullet)
 void CollisionPlayer(BULLET* pBullet)
 {
 	PLAYER *pPlayer = GetPlayer();			// プレイヤーの情報のポインタ
+	float fSpeed;							// 弾の速度
+	float fAngle = GetPlayerRot(pPlayer);
 
-	if (pBullet->pos.x > pPlayer->posPlayer.x - (PLAYER_SIZE * 0.25f) - (BULLET_SIZE * 0.5f)
-		&& pBullet->pos.x < pPlayer->posPlayer.x + (PLAYER_SIZE * 0.25f) + (BULLET_SIZE * 0.5f)
-		&& pBullet->pos.y > pPlayer->posPlayer.y - (PLAYER_SIZE * 0.40f) - (BULLET_SIZE * 0.5f)
-		&& pBullet->pos.y < pPlayer->posPlayer.y + (PLAYER_SIZE * 0.40f) + (BULLET_SIZE * 0.5f)
-		&& pPlayer->state == PLAYERSTATE_NORMAL)
+	if (pBullet->pos.x > pPlayer->posPlayer.x - (PLAYER_SIZE * 0.225f) - (ENEMY_BULLET_SIZE * 0.5f)
+		&& pBullet->pos.x < pPlayer->posPlayer.x + (PLAYER_SIZE * 0.225f) + (ENEMY_BULLET_SIZE * 0.5f)
+		&& pBullet->pos.y > pPlayer->posPlayer.y - (PLAYER_SIZE * 0.35f) - (ENEMY_BULLET_SIZE * 0.5f)
+		&& pBullet->pos.y < pPlayer->posPlayer.y + (PLAYER_SIZE * 0.35f) + (ENEMY_BULLET_SIZE * 0.5f)
+		&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_BARRIER))
 	{
-		HitPlayer(1);
+		if (pPlayer->state == PLAYERSTATE_NORMAL)
+		{
+			HitPlayer(1);
 
-		pBullet->bUse = false;
+			pBullet->bUse = false;
+		}
+		else
+		{
+			pBullet->move.z = fAngle;
+			pBullet->move.y = -7.0f;
+			pBullet->pos.x += sinf(fAngle) * pBullet->move.y;
+			pBullet->pos.y += cosf(fAngle) * pBullet->move.y;
+			pBullet->type = BULLETTYPE_PLAYER;
+			pBullet->col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+		}
 	}
 }
 

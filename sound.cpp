@@ -6,6 +6,7 @@
 //=============================================================================
 #include "sound.h"
 #include "fade.h"
+#include "fade_stage.h"
 
 //*****************************************************************************
 // サウンド情報の構造体定義
@@ -42,8 +43,13 @@ int g_nCounterSound;										// 汎用カウンター
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
 	{"data/BGM/BGM_TITLE.wav", -1},					// タイトル画面のBGM
-	{"data/BGM/BGM_GAME_NORMAL.wav", -1},			// ゲームプレイ時の通常BGM
-	{"data/BGM/BGM_GAME_NOMORETIME.wav", -1},		// 制限時間が迫った時のBGM
+	{"data/BGM/BGM_GAME_NORMAL.wav", -1},			// ゲームプレイ時の草原BGM
+	{"data/BGM/BGM_GAME_DESERT.wav", -1},			// ゲームプレイ時の砂漠BGM
+	{"data/BGM/BGM_GAME_ICE.wav", -1},				// ゲームプレイ時の氷河BGM
+	{"data/BGM/BGM_GAME_FOREST.wav", -1},			// ゲームプレイ時の森林BGM
+	{"data/BGM/BGM_GAME_VOLCANO.wav", -1},			// ゲームプレイ時の火山BGM
+	{"data/BGM/BGM_GAME_SEA.wav", -1},				// ゲームプレイ時の海洋BGM
+	{"data/BGM/BGM_GAME_NOTIME.wav", -1},		// 制限時間が迫った時のBGM
 	{"data/BGM/BGM_GAMECLEAR.wav",-1},				// ゲームクリア時のBGM
 	{"data/BGM/BGM_GAMEOVER.wav",-1},				// ゲームオーバー時のBGM
 	{"data/BGM/BGM_GAME_TUTORIAL.wav",-1},			// チュートリアル時のBGM
@@ -64,6 +70,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/ChargeShotSE.wav", 0},	// チャージ技の射撃音
 	{"data/SE/HEAL_SE.wav", 0},			// 回復の取得音
 	{"data/SE/POWERITEM_SE.wav", 0},	// チャージ技の取得音
+	{"data/SE/TELEPORT_SE.wav", 0},		// ステージ移動音
 };
 
 //=============================================================================
@@ -308,7 +315,7 @@ void UpdateSound(void)
 {
 	if (g_CurrentFadeSound != FADE_NONE)
 	{
-		if (g_CurrentFadeSound == FADE_IN && GetFade() == FADE_IN)
+		if (g_CurrentFadeSound == FADE_IN && (GetFade() == FADE_IN || GetFadeStage() == FADESTAGE_IN))
 		{
 			g_fVolumeAudio += 0.01f;
 			if (g_nCounterSound == 0)

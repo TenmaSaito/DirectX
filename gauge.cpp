@@ -5,9 +5,11 @@
 //
 //================================================================================================================
 #include "main.h"
+#include "game.h"
 #include "player.h"
 #include "gauge.h"
 #include "sound.h"
+#include "timer.h"
 
 // マクロ定義
 #define MAX_GAUGE			(16)				// ゲージの最大数
@@ -101,6 +103,11 @@ void UpdateGauge(void)
 	{
 		if (pGauge->bUse == true)
 		{// ゲージが使われていれば
+			if (GetTimer() == NOMORE_TIME && pGauge->type == GAUGETYPE_TIMER)
+			{
+				pGauge->col = D3DXCOLOR(1.0f,0.0f,0.0f,1.0f);
+			}
+
 			float fAngleGauge = 0;
 			pVtx[0].pos.x = pGauge->pos.x;
 			pVtx[0].pos.y = pGauge->pos.y;

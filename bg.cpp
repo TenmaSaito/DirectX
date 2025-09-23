@@ -196,8 +196,8 @@ void DrawBG(void)
 
 			// ポリゴンの描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
-				0,						// 描画する最初の頂点インデックス
-				2);						// 描画するプリミティブの数
+				4 * nCnt,									// 描画する最初の頂点インデックス
+				2);											// 描画するプリミティブの数
 		}
 	}
 }

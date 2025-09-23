@@ -9,6 +9,9 @@
 
 #include "main.h"
 
+// マクロ定義
+#define NOMORE_TIME			(30)			// 残り時間が少ない基準
+
 // ステージの種類
 typedef enum
 {

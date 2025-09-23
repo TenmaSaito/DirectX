@@ -46,7 +46,7 @@ void InitScoreRank(void)
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\CHARACTER\\RANK\\RANK.png",
+		"data\\TEXTURE\\CHARACTER\\RANK\\RANK_P.png",
 		&g_pTextureScoreRank);
 
 	g_posScoreRank = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 位置を初期化
@@ -98,9 +98,9 @@ void InitScoreRank(void)
 
 	// テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(0.2f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(0.125f, 0.0f);
 	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(0.2f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(0.125f, 1.0f);
 
 	g_pVtxBuffScoreRank->Unlock();
 }
@@ -199,7 +199,7 @@ void SetScoreRank(D3DXVECTOR3 pos, int nScoreRank)
 	{
 		g_Rank = RANKTYPE_B;
 	}
-	else if (nScoreRank < RANK_C_SCORE)
+	else if (nScoreRank < RANK_C_SCORE && GetKillcountEnemy() > 0)
 	{
 		g_Rank = RANKTYPE_C;
 	}
@@ -229,10 +229,10 @@ void SetScoreRank(D3DXVECTOR3 pos, int nScoreRank)
 	pVtx[3].pos.z = 0.0f;
 
 	// テクスチャ座標の設定
-	pVtx[0].tex = D3DXVECTOR2((0.2f * g_Rank), 0.0f);
-	pVtx[1].tex = D3DXVECTOR2((0.2f * g_Rank) + 0.2f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2((0.2f * g_Rank), 1.0f);
-	pVtx[3].tex = D3DXVECTOR2((0.2f * g_Rank) + 0.2f, 1.0f);
+	pVtx[0].tex = D3DXVECTOR2((0.125f * g_Rank), 0.0f);
+	pVtx[1].tex = D3DXVECTOR2((0.125f * g_Rank) + 0.125f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2((0.125f * g_Rank), 1.0f);
+	pVtx[3].tex = D3DXVECTOR2((0.125f * g_Rank) + 0.125f, 1.0f);
 
 	g_pVtxBuffScoreRank->Unlock();
 }
