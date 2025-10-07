@@ -6,6 +6,7 @@
 //================================================================================================================
 #include "ranking.h"
 #include "score.h"
+#include "game.h"
 #include "input.h"
 
 // マクロ定義
@@ -16,8 +17,10 @@
 #define FIRSTMOVE_RANKING	(4)				// 最初に右から出て来る順位
 #define MOVE_SPD			D3DXVECTOR3(15.0f,0.0f,0.0f)								// 移動する速さ
 #define GOAL_POS			D3DXVECTOR3(700.0f, 120.0f * (nCntRanking + 1), 0.0f)		// 最終的なスコアの位置
-#define FILENAME_RANKING	"data\\RANKING\\Ranking.bin"			// ランキング保存用ファイル名
-#define FILENAME_RESET		"data\\RANKING\\Ranking_Reset.bin"		// リセット用バイナリファイル名
+#define FILENAME_RANKING_EASY	"data\\RANKING\\Ranking_E.bin"			// ランキング保存用ファイル名(EASY)
+#define FILENAME_RANKING_NORMAL	"data\\RANKING\\Ranking_N.bin"			// ランキング保存用ファイル名(NORMAL)
+#define FILENAME_RANKING_HARD	"data\\RANKING\\Ranking_H.bin"			// ランキング保存用ファイル名(HARD)
+#define FILENAME_RESET		"data\\RANKING\\Ranking_Reset.bin"			// リセット用バイナリファイル名
 #define RESET_COMMAND_NUM	(7)				// スコアリセット時に入力するキーの合計数
 
 // ランキング構造体の定義
@@ -38,13 +41,14 @@ int Compare(const void* a, const void* b);
 void ResetRanking(void);
 
 // グローバル変数
-LPDIRECT3DTEXTURE9		g_pTextureRanking = NULL;	// テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRanking = NULL;	// 頂点バッファのポインタ
-RANKING g_aRanking[MAX_RANKING];					// ランキング構造体の宣言
-int g_nScoreCurrent;								// 今回のスコア
-int g_nCounterRanking;								// 汎用カウンター
-int g_nCurrentMoveRanking;							// 現在動いている順位
-bool g_aTrigger[RESET_COMMAND_NUM];					// 指定のキーが入力されたか
+LPDIRECT3DTEXTURE9		g_pTextureRanking = NULL;						// テクスチャへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffRanking = NULL;						// 頂点バッファのポインタ
+RANKING g_aRanking[GAMEDIFFICULTY_MAX][MAX_RANKING];					// ランキング構造体の宣言
+int g_nScoreCurrent;													// 今回のスコア
+int g_nCounterRanking;													// 汎用カウンター
+int g_nCurrentMoveRanking;												// 現在動いている順位
+char g_aRankingFileName[STRING_MAX];									// ランキングのファイル名
+bool g_aTrigger[RESET_COMMAND_NUM];										// 指定のキーが入力されたか
 	
 //================================================================================================================
 // ランキングの初期化処理
@@ -53,7 +57,7 @@ void InitRanking(void)
 {
 	LPDIRECT3DDEVICE9 pDevice;			// デバイスのポインタ
 	int nCntRanking;
-	PRANKING pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[GetGameDifficulty()][0];
 
 	// デバイスの取得
 	pDevice = GetDevice();
@@ -67,6 +71,33 @@ void InitRanking(void)
 		pRanking->nRanking = 1;
 		pRanking->bAdd = false;
 		pRanking->bUse = false;
+	}
+
+	switch (GetGameDifficulty())
+	{
+	case GAMEDIFFICULTY_EASY:
+
+		strcpy(g_aRankingFileName, FILENAME_RANKING_EASY);
+
+		break;
+
+	case GAMEDIFFICULTY_NORMAL:
+
+		strcpy(g_aRankingFileName, FILENAME_RANKING_NORMAL);
+
+		break;
+
+	case GAMEDIFFICULTY_HARD:
+
+		strcpy(g_aRankingFileName, FILENAME_RANKING_HARD);
+
+		break;
+
+	default:
+
+		strcpy(g_aRankingFileName, FILENAME_RANKING_NORMAL);
+
+		break;
 	}
 
 	g_nCounterRanking = 0;
@@ -90,7 +121,7 @@ void InitRanking(void)
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffRanking->Lock(0, 0, (void**)&pVtx, 0);
 
-	pRanking = &g_aRanking[0];
+	pRanking = &g_aRanking[GetGameDifficulty()][0];
 
 	for (nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 	{
@@ -143,7 +174,7 @@ void InitRanking(void)
 	}
 	else if (GetModeExac() == MODE_TITLE)
 	{
-		CheckRanking(&g_aRanking[0]);
+		CheckRanking(&g_aRanking[GetGameDifficulty()][0]);
 	}
 }
 
@@ -173,7 +204,7 @@ void UninitRanking(void)
 void UpdateRanking(void)
 {
 	// 後で書きたきゃ書け
-	PRANKING pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[GetGameDifficulty()][0];;
 	VERTEX_2D* pVtx;
 
 	if ((GetKeyboardPress(DIK_R) == true
@@ -196,7 +227,7 @@ void UpdateRanking(void)
 		}
 
 		g_nCurrentMoveRanking = -1;
-		pRanking = &g_aRanking[0];
+		pRanking = &g_aRanking[GetGameDifficulty()][0];
 	}
 
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
@@ -292,7 +323,7 @@ void DrawRanking(void)
 	{
 		// ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP,		// プリミティブの種類
-			4 * nCntRanking,								// 描画する最初の頂点インデックス
+			4 * nCntRanking,							// 描画する最初の頂点インデックス
 			2);											// 描画するプリミティブの数
 	}
 }
@@ -303,7 +334,7 @@ void DrawRanking(void)
 void SetRanking(void)
 {
 	VERTEX_2D* pVtx;					// 頂点情報へのポインタ
-	PRANKING pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[GetGameDifficulty()][0];
 	int aTexU[MAX_RANKING][NUM_PLACE];				//各桁の数字を収納
 
 	for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++,pRanking++)
@@ -317,7 +348,7 @@ void SetRanking(void)
 	// 頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffRanking->Lock(0, 0, (void**)&pVtx, 0);
 
-	pRanking = &g_aRanking[0];
+	pRanking = &g_aRanking[GetGameDifficulty()][0];
 
 	for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 	{
@@ -349,7 +380,7 @@ int GetRanking(void)
 //================================================================================================================
 void AddRanking(int nScore)
 {
-	PRANKING pRanking = &g_aRanking[0];
+	PRANKING pRanking = &g_aRanking[GetGameDifficulty()][0];
 	FILE* pFile;
 	HWND hWnd = GetActiveWindow();
 	int aScore[MAX_RANKING + 1] = {};
@@ -367,14 +398,16 @@ void AddRanking(int nScore)
 
 	qsort(&aScore[0], MAX_RANKING + 1, sizeof(int), Compare);
 
-	pRanking = &g_aRanking[0];
+	pRanking = &g_aRanking[GetGameDifficulty()][0];
+
 	for (nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 	{
 		pRanking->nRanking = nCntRanking;
 		pRanking->nScore = aScore[nCntRanking];
 	}
 
-	pRanking = &g_aRanking[0];
+	pRanking = &g_aRanking[GetGameDifficulty()][0];
+
 	for (nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 	{
 		if (pRanking->nScore == g_nScoreCurrent)
@@ -384,7 +417,7 @@ void AddRanking(int nScore)
 		}
 	}
 
-	pFile = fopen("data\\RANKING\\Ranking.bin", "wb");
+	pFile = fopen(&g_aRankingFileName[0], "wb");
 	if (pFile == NULL) 
 	{
 		MessageBox(hWnd, "ランキングデータの書き出しに失敗！", "警告", MB_ICONWARNING);
@@ -405,14 +438,14 @@ void CheckRanking(PRANKING pRanking)
 	HWND hWnd = NULL;
 	int aBuffer[MAX_RANKING];		// スコアの一時保管場所
 
-	pFile = fopen("data\\RANKING\\Ranking.bin", "rb");
+	pFile = fopen(&g_aRankingFileName[0], "rb");
 	if (pFile == NULL) 
 	{ 
 		// ファイルの読み込みに失敗した場合、既定のランキングデータを代入
 		for (int nCntRanking = 0; nCntRanking < MAX_RANKING; nCntRanking++, pRanking++)
 		{
 			pRanking->nRanking = nCntRanking;
-			pRanking->nScore = 600000 * (0.5f * nCntRanking);
+			pRanking->nScore = 155000 * (MAX_RANKING - nCntRanking);
 			if (pRanking->nScore == 0) pRanking->bUse = false;
 		}
 
@@ -459,7 +492,33 @@ int Compare(const void* a, const void* b)
 void ResetRanking(void)
 {
 	HWND hWnd; 
-	BOOL BSUCCEED = CopyFileA(FILENAME_RESET, FILENAME_RANKING, FALSE);		// リセット用のバイナリファイルで現在のスコアファイルを上書き
+	BOOL BSUCCEED;
+	switch (GetGameDifficulty())
+	{
+	case GAMEDIFFICULTY_EASY:
+
+		BSUCCEED = CopyFileA(FILENAME_RESET, FILENAME_RANKING_EASY, FALSE);		// リセット用のバイナリファイルで現在のスコアファイルを上書き
+
+		break;
+
+	case GAMEDIFFICULTY_NORMAL:
+
+		BSUCCEED = CopyFileA(FILENAME_RESET, FILENAME_RANKING_EASY, FALSE);		// リセット用のバイナリファイルで現在のスコアファイルを上書き
+
+		break;
+
+	case GAMEDIFFICULTY_HARD:
+
+		BSUCCEED = CopyFileA(FILENAME_RESET, FILENAME_RANKING_EASY, FALSE);		// リセット用のバイナリファイルで現在のスコアファイルを上書き
+
+		break;
+
+	default:
+
+		BSUCCEED = FALSE;
+
+		break;
+	}
 
 	GetHandleWindow(&hWnd);
 #ifdef _DEBUG

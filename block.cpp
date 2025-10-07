@@ -16,6 +16,7 @@
 #include "particle.h"
 #include "heart.h"
 #include "timer.h"
+#include "caution.h"
 
 // マクロ定義
 #define MAX_BLOCK		(128)			// ブロックの最大数
@@ -552,25 +553,34 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0
 				&& nTurnExac == ALREADY_CLEARED
 				&& GetFadeStage() == FADESTAGE_NONE
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_BARRIER)
 				&& GetTimer() > 0)
 			{
-				pPlayer->movePlayer.x = 0.0f;
-				pPlayer->movePlayer.y = 0.0f;
-
-				pPlayer->state = PLAYERSTATE_UNMOVE;
-
-				if (stage == STAGE_GRASS)
+				if (pPlayer->state == PLAYERSTATE_BARRIER)
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_VOLCANO);
-					SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
+					SetCaution();
 				}
-				else if (stage == STAGE_VOLCANO)
+				else
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_NORMAL);
-					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
+					pPlayer->movePlayer.x = 0.0f;
+					pPlayer->movePlayer.y = 0.0f;
+
+					pPlayer->state = PLAYERSTATE_UNMOVE;
+
+					if (stage == STAGE_GRASS)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_VOLCANO);
+					}
+					else if (stage == STAGE_VOLCANO)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_NORMAL);
+					}
 				}
 			}
 
@@ -581,25 +591,34 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-			    &&(pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+			    &&(pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_BARRIER)
 				&& GetTimer() > 0)
 			{
-				pPlayer->movePlayer.x = 0.0f;
-				pPlayer->movePlayer.y = 0.0f;
-
-				pPlayer->state = PLAYERSTATE_UNMOVE;
-
-				if (stage == STAGE_GRASS)
+				if (pPlayer->state == PLAYERSTATE_BARRIER)
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_FOREST);
-					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
+					SetCaution();
 				}
-				else if (stage == STAGE_FOREST)
+				else
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_NORMAL);
-					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
+					pPlayer->movePlayer.x = 0.0f;
+					pPlayer->movePlayer.y = 0.0f;
+
+					pPlayer->state = PLAYERSTATE_UNMOVE;
+
+					if (stage == STAGE_GRASS)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_FOREST);
+					}
+					else if (stage == STAGE_FOREST)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_NORMAL);
+					}
 				}
 			}
 
@@ -610,25 +629,34 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_BARRIER)
 				&& GetTimer() > 0)
 			{
-				pPlayer->movePlayer.x = 0.0f;
-				pPlayer->movePlayer.y = 0.0f;
-
-				pPlayer->state = PLAYERSTATE_UNMOVE;
-
-				if (stage == STAGE_GRASS)
+				if (pPlayer->state == PLAYERSTATE_BARRIER)
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_ICE);
-					SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
+					SetCaution();
 				}
-				else if (stage == STAGE_ICE)
+				else
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_NORMAL);
-					SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
+					pPlayer->movePlayer.x = 0.0f;
+					pPlayer->movePlayer.y = 0.0f;
+
+					pPlayer->state = PLAYERSTATE_UNMOVE;
+
+					if (stage == STAGE_GRASS)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_ICE);
+					}
+					else if (stage == STAGE_ICE)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_GRASS, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_NORMAL);
+					}
 				}
 			}
 
@@ -639,25 +667,35 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_BARRIER)
 				&& GetTimer() > 0)
 			{
-				pPlayer->movePlayer.x = 0.0f;
-				pPlayer->movePlayer.y = 0.0f;
 
-				pPlayer->state = PLAYERSTATE_UNMOVE;
-
-				if (stage == STAGE_VOLCANO)
+				if (pPlayer->state == PLAYERSTATE_BARRIER)
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_DESERT);
-					SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
+					SetCaution();
 				}
-				else if (stage == STAGE_DESERT)
+				else
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_VOLCANO);
-					SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
+					pPlayer->movePlayer.x = 0.0f;
+					pPlayer->movePlayer.y = 0.0f;
+
+					pPlayer->state = PLAYERSTATE_UNMOVE;
+
+					if (stage == STAGE_VOLCANO)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_DESERT);
+					}
+					else if (stage == STAGE_DESERT)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_VOLCANO, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_VOLCANO);
+					}
 				}
 			}
 
@@ -668,25 +706,35 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_BARRIER) 
 				&& GetTimer() > 0)
 			{
-				pPlayer->movePlayer.x = 0.0f;
-				pPlayer->movePlayer.y = 0.0f;
-
-				pPlayer->state = PLAYERSTATE_UNMOVE;
-
-				if (stage == STAGE_DESERT)
+				if (pPlayer->state == PLAYERSTATE_BARRIER)
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_FOREST);
-					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
+					SetCaution();
 				}
-				else if (stage == STAGE_FOREST)
+				else
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_DESERT);
-					SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
+
+					pPlayer->movePlayer.x = 0.0f;
+					pPlayer->movePlayer.y = 0.0f;
+
+					pPlayer->state = PLAYERSTATE_UNMOVE;
+
+					if (stage == STAGE_DESERT)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_FOREST);
+					}
+					else if (stage == STAGE_FOREST)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_DESERT, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_DESERT);
+					}
 				}
 			}
 
@@ -697,25 +745,34 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_BARRIER)
 				&& GetTimer() > 0)
 			{
-				pPlayer->movePlayer.x = 0.0f;
-				pPlayer->movePlayer.y = 0.0f;
-
-				pPlayer->state = PLAYERSTATE_UNMOVE;
-
-				if (stage == STAGE_FOREST)
+				if (pPlayer->state == PLAYERSTATE_BARRIER)
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_SEA);
-					SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
+					SetCaution();
 				}
-				else if (stage == STAGE_SEA)
+				else
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_FOREST);
-					SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
+					pPlayer->movePlayer.x = 0.0f;
+					pPlayer->movePlayer.y = 0.0f;
+
+					pPlayer->state = PLAYERSTATE_UNMOVE;
+
+					if (stage == STAGE_FOREST)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_SEA);
+					}
+					else if (stage == STAGE_SEA)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_FOREST, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_FOREST);
+					}
 				}
 			}
 
@@ -726,25 +783,34 @@ void CollisionPlayer(BLOCK* pBlock)
 			if (nCntEnemy <= 0 
 				&& nTurnExac == ALREADY_CLEARED 
 				&& GetFadeStage() == FADESTAGE_NONE 
-				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE)
+				&& (pPlayer->state == PLAYERSTATE_NORMAL || pPlayer->state == PLAYERSTATE_DAMAGE || pPlayer->state == PLAYERSTATE_BARRIER)
 				&& GetTimer() > 0)
 			{
-				pPlayer->movePlayer.x = 0.0f;
-				pPlayer->movePlayer.y = 0.0f;
-
-				pPlayer->state = PLAYERSTATE_UNMOVE;
-
-				if (stage == STAGE_SEA)
+				if (pPlayer->state == PLAYERSTATE_BARRIER)
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_ICE);
-					SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
+					SetCaution();
 				}
-				else if (stage == STAGE_ICE)
+				else
 				{
-					PlaySound(SOUND_LABEL_SE_TELEPORT);
-					FadeSound(SOUND_LABEL_GAME_SEA);
-					SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
+					pPlayer->movePlayer.x = 0.0f;
+					pPlayer->movePlayer.y = 0.0f;
+
+					pPlayer->state = PLAYERSTATE_UNMOVE;
+
+					if (stage == STAGE_SEA)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_ICE, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_ICE);
+					}
+					else if (stage == STAGE_ICE)
+					{
+						PlaySound(SOUND_LABEL_SE_TELEPORT);
+						SetFadeStage(STAGE_SEA, FADESTAGE_OUT);
+						if (GetTimer() <= NOMORE_TIME) break;
+						FadeSound(SOUND_LABEL_GAME_SEA);
+					}
 				}
 			}
 

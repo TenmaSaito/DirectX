@@ -27,11 +27,14 @@
 #include "ranking.h"
 #include "placeChar.h"
 #include "tutorial.h"
+#include "tutorial_gate.h"
 #include "playerframe.h"
 #include "mage.h"
 #include "item.h"
 #include "nomoretime.h"
 #include "teleport.h"
+#include "showDifficulty.h"
+#include "caution.h"
 
 // プロトタイプ宣言
 int AddBonusScore(void);
@@ -41,13 +44,14 @@ bool g_bPause;										// ポーズ状態のON/OFF
 int g_nCounter;
 float g_fVolume ;									// 音量
 GAMESTATE g_gameState = GAMESTATE_NONE;				// ゲーム状態
+GAMEDIFFICULTY g_gameDifficulty;					// ゲームの難易度
 int g_nCounterState;								// 状態カウンター
 bool g_bUseTutorial;								// チュートリアルの有無
 
 //================================================================================================================
 // ゲームの初期化処理
 //================================================================================================================
-void InitGame(void)
+void InitGame(GAMEDIFFICULTY difficulty)
 {
 	/*グローバル変数の初期化*/
 	g_bPause = false;
@@ -55,79 +59,93 @@ void InitGame(void)
 	g_nCounter = 0;
 	g_gameState = GAMESTATE_NORMAL;
 	g_nCounterState = 0;
+	g_gameDifficulty = difficulty;
 
 	/*各種オブジェクトの初期化処理*/
 	
-	// ブロックの初期化処理
+	// 1ブロックの初期化処理
 	InitBlock();
 
-	// Mage
+	// 2Mage
 	InitMage();
 
-	// Item
+	// 3Item
 	InitItem();
 
-	// 背景の初期化処理
+	// 4背景の初期化処理
 	InitBG();				
 
-	// ステージの初期化処理
+	// 5ステージの初期化処理
 	InitStage();
 
-	// プレイヤーの初期化処理
+	// 6プレイヤーの初期化処理
 	InitPlayer();
 
-	// 体力表示の初期化処理
+	// 7体力表示の初期化処理
 	InitHeart();
 
-	// 残機表示の初期化処理
+	// 8残機表示の初期化処理
 	InitStock();
 
-	// 弾の初期化
+	// 9弾の初期化
 	InitBullet();		
 	
-	// 爆発の初期化処理
+	// 10爆発の初期化処理
 	InitExplosion();	
 
-	// 敵の初期化処理
+	// 11敵の初期化処理
 	InitEnemy();			
 
-	// スコアの初期化処理
+	// 12スコアの初期化処理
 	InitScore();
 
-	// エフェクトの初期化処理
+	// 13エフェクトの初期化処理
 	InitEffect();
 
-	// 弾の初期化
+	// 14弾の初期化
 	InitParticle();
 
-	// ゲージの初期化処理
+	// 15ゲージの初期化処理
 	InitGauge();
 
-	// タイマーの初期化処理
+	// 16タイマーの初期化処理
 	InitTimer();
 
-	// ポーズ画面の初期化処理
+	// 17ポーズ画面の初期化処理
 	InitPause();
 
-	// 自然消滅テクスチャの初期化処理
+	// 18自然消滅テクスチャの初期化処理
 	InitPlaceChar();
 
+	//19
 	InitNomoretime();
+
+	//20
+	InitShowDifficulty();
 
 	SetScore(NULL);
 
 	SetTimer(GAUGE_MAX);
 
-	// ゲーム内枠の初期化処理
+	// 21ゲーム内枠の初期化処理
 	InitPlayerFrame();
 
+	//22
 	InitFadeStage();
 
+	//23
 	InitTeleport();
+
+	//24
+	InitCaution();
 
 	if (g_bUseTutorial == true)
 	{
+		//25
 		InitTutorial();
+
+		//26
+		InitTutorialGate();
 
 		SetTutorial();
 	}
@@ -148,71 +166,83 @@ void UninitGame(void)
 
 	// 各種オブジェクトの終了処理
 
-	// ゲージの終了処理
+	// 1ゲージの終了処理
 	UninitGauge();
 
-	// 背景の終了処理
+	// 2背景の終了処理
 	UninitBG();
 
-	// Mage
+	// 3Mage
 	UninitMage();
 
-	// Item
+	// 4Item
 	UninitItem();
 
-	// ステージの終了処理
+	// 5ステージの終了処理
 	UninitStage();
 
-	// プレイヤーの終了処理
+	// 6プレイヤーの終了処理
 	UninitPlayer();
 
-	// 体力表示の終了処理
+	// 7体力表示の終了処理
 	UninitHeart();
 
-	// 残機表示の終了処理
+	// 8残機表示の終了処理
 	UninitStock();
 
-	// 弾の終了処理
+	// 9弾の終了処理
 	UninitBullet();
 
-	// パーティクルの初期化
+	// 10パーティクルの初期化
 	UninitParticle();
 
-	// 敵の終了処理
+	// 11敵の終了処理
 	UninitEnemy();			
 
-	// 爆発の終了処理
+	// 12爆発の終了処理
 	UninitExplosion();		
 
-	// エフェクトの終了処理
+	// 13エフェクトの終了処理
 	UninitEffect();
 
-	// スコアの終了処理
+	// 14スコアの終了処理
 	UninitScore();			
 
-	// タイマーの終了処理
+	// 15タイマーの終了処理
 	UninitTimer();
 
-	// ブロックの終了処理
+	// 16ブロックの終了処理
 	UninitBlock();
 
-	// ステージフェードの終了処理
+	// 17ステージフェードの終了処理
 	UninitFadeStage();
 
-	// ポーズ画面の終了処理
+	// 18ポーズ画面の終了処理
 	UninitPause();
 
-	// 自然消滅テクスチャの終了処理
+	// 19自然消滅テクスチャの終了処理
 	UninitPlaceChar();
 
+	//20
+	UninitShowDifficulty();
+
+	//21
 	UninitTutorial();
 
-	// ゲーム内枠の終了処理
+	//22
+	UninitTutorialGate();
+
+	// 23ゲーム内枠の終了処理
 	UninitPlayerFrame();
 
+	//24
 	UninitNomoretime();
 
+	//25
 	UninitTeleport();
+
+	//26
+	UninitCaution();
 
 	// サウンドの停止
 	StopSound();
@@ -285,6 +315,8 @@ void UpdateGame(void)
 		if (g_bUseTutorial == true)
 		{
 			UpdateTutorial();
+
+			UpdateTutorialGate();
 		}
 		else
 		{
@@ -343,12 +375,16 @@ void UpdateGame(void)
 		// 自然消滅テクスチャの更新処理
 		UpdatePlaceChar();
 
+		UpdateShowDifficulty();
+
 		// ゲーム内枠の更新処理
 		UpdatePlayerFrame();
 
 		UpdateNomoretime(); 
 
 		UpdateTeleport();
+
+		UpdateCaution();
 	}
 
 	if ((GetKeyboardTrigger(DIK_P) == true || GetJoypadTrigger(JOYKEY_START) == true)
@@ -382,12 +418,16 @@ void DrawGame(void)
 	if (g_bUseTutorial == true)
 	{
 		DrawTutorial();
+
+		DrawTutorialGate();
 	}
 	else
 	{
 		 //ステージの描画処理
 		DrawStage();
 	}
+
+	DrawShowDifficulty();
 
 	// ブロックの描画処理
 	DrawBlock();
@@ -418,6 +458,8 @@ void DrawGame(void)
 	// 敵の描画処理
 	DrawEnemy();
 	
+	DrawCaution();
+
 	DrawNomoretime();
 
 	// ゲーム内枠の描画処理
@@ -513,20 +555,67 @@ int AddBonusScore(void)
 	int nKillcountEnemy = GetKillcountEnemy();
 	bool bHaveSecretItem = GetHaveSecret();
 
-	if (nClearedStage < STAGE_MAX)
+	switch (g_gameDifficulty)
 	{
-		nScore += (nClearedStage * 20000);					// 1ステージクリアすると+20000
-	}
-	else if (nClearedStage == STAGE_MAX)
-	{
-		nScore += 200000;									// 全クリすると+200000
-		if (GetPlayer()->nLife == MAX_LIFE && GetPlayer()->nStock == MAX_STOCK)
+	case GAMEDIFFICULTY_EASY:
+
+		if (nClearedStage < STAGE_MAX)
 		{
-			nScore += 150000;								// 一度もダメージも食らわずにクリアした場合は+150000
+			nScore += (nClearedStage * 5000);					// 1ステージクリアすると+20000
 		}
+		else if (nClearedStage == STAGE_MAX)
+		{
+			nScore += 60000;									// 全クリすると+200000
+			if (GetPlayer()->nLife == MAX_LIFE && GetPlayer()->nStock == MAX_STOCK)
+			{
+				nScore += 15000;								// 一度もダメージも食らわずにクリアした場合は+15000
+			}
+		}
+
+		nScore += (nRemainingTime * 500) * nRemainingStock;		// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
+
+		break;
+
+	case GAMEDIFFICULTY_NORMAL:
+
+		if (nClearedStage < STAGE_MAX)
+		{
+			nScore += (nClearedStage * 15000);					// 1ステージクリアすると+20000
+		}
+		else if (nClearedStage == STAGE_MAX)
+		{
+			nScore += 150000;									// 全クリすると+200000
+			if (GetPlayer()->nLife == MAX_LIFE && GetPlayer()->nStock == MAX_STOCK)
+			{
+				nScore += 150000;								// 一度もダメージも食らわずにクリアした場合は+150000
+			}
+		}
+
+		nScore += (nRemainingTime * 4000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
+
+		break;
+
+	case GAMEDIFFICULTY_HARD:
+
+		if (nClearedStage < STAGE_MAX)
+		{
+			nScore += (nClearedStage * 20000);					// 1ステージクリアすると+20000
+		}
+		else if (nClearedStage == STAGE_MAX)
+		{
+			nScore += 200000;									// 全クリすると+200000
+			if (GetPlayer()->nLife == MAX_LIFE && GetPlayer()->nStock == MAX_STOCK)
+			{
+				nScore += 200000;								// 一度もダメージも食らわずにクリアした場合は+150000
+			}
+		}
+
+		nScore += (nRemainingTime * 10000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
+
+		break;
 	}
 
-	nScore += (nRemainingTime * 20000) * nRemainingStock;	// 終了時、余っていた時間×残り残機数×+1000 (死んだ場合はノーカウント)
+	
 
 	if (nKillcountEnemy == 0)
 	{

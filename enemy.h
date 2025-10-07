@@ -108,8 +108,9 @@ void LoadEnemy(char* pFileName, int nTurn);
 /// @param bullet 発射する弾の種類
 /// @param tex 敵のテクスチャ
 /// @param nLife 敵の体力
+/// @param nCounterBullet 敵の弾薬の発射間隔
 /// @return 無し
-void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife);
+void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife, int nCounterBullet);
 
 /// @brief 敵構造体の先頭アドレスを取得します。
 /// @return 敵構造体の先頭アドレスのポインタ

@@ -36,15 +36,16 @@ void DrawDebug(void);
 void ToggleFullscreen(HWND hWnd);
 
 // グローバル変数
-LPDIRECT3D9				g_pD3D = NULL;				// Direct3Dオブジェクトへのポインタ
-LPDIRECT3DDEVICE9		g_pD3DDevice = NULL;		// Direct3Dデバイスへのポインタ
-MODE g_mode = MODE_TITLE;							// 現在の画面
-MODE g_modeExac = MODE_TITLE;						// ひとつ前の過去の画面
-LPD3DXFONT g_pFont = NULL;							// フォントへのポインタ
-HWND g_hWnd = NULL;									// 獲得したウィンドウハンドル
-int g_nCountFPS = 0;								// FPSカウンタ
-bool g_isFullscreen = false;						// フルスクリーンの使用状況
-RECT g_windowRect;									// ウィンドウサイズ
+LPDIRECT3D9				g_pD3D = NULL;					// Direct3Dオブジェクトへのポインタ
+LPDIRECT3DDEVICE9		g_pD3DDevice = NULL;			// Direct3Dデバイスへのポインタ
+MODE g_mode = MODE_TITLE;								// 現在の画面
+MODE g_modeExac = MODE_TITLE;							// ひとつ前の過去の画面
+LPD3DXFONT g_pFont = NULL;								// フォントへのポインタ
+HWND g_hWnd = NULL;										// 獲得したウィンドウハンドル
+int g_nCountFPS = 0;									// FPSカウンタ
+bool g_isFullscreen = false;							// フルスクリーンの使用状況
+RECT g_windowRect;										// ウィンドウサイズ
+GAMEDIFFICULTY g_Difficulty = GAMEDIFFICULTY_NORMAL;	// ゲームの難易度
 
 //================================================================================================================
 // メイン関数
@@ -364,7 +365,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		OUT_DEFAULT_PRECIS,
 		DEFAULT_QUALITY,
 		DEFAULT_PITCH,
-		"terminal",
+		"PixelMplus12",
 		&g_pFont);
 
 	AddFunctionLog("END : D3DXCreateFont Create");
@@ -409,9 +410,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	AddFunctionLog("END : Fade Init");
 
-	return S_OK;
-
 	SetEnablePlayerFullburst(false);
+
+	return S_OK;
 }
 
 //================================================================================================================
@@ -670,7 +671,7 @@ void SetMode(MODE mode)
 		break;
 
 	case MODE_GAME:
-		InitGame();
+		InitGame(g_Difficulty);
 		AddFunctionLog("END : Game Init");
 		break;
 
@@ -804,4 +805,20 @@ void ToggleFullscreen(HWND hWnd)
 	}
 
 	g_isFullscreen = !g_isFullscreen;
+}
+
+//================================================
+// ゲームの難易度設定処理
+//================================================
+void SetGameDifficulty(GAMEDIFFICULTY difficulty)
+{
+	g_Difficulty = difficulty;
+}
+
+//================================================
+// ゲームの難易度設定処理
+//================================================
+GAMEDIFFICULTY GetGameDifficulty(void)
+{
+	return g_Difficulty;
 }

@@ -97,6 +97,12 @@
     <Filter Include="ヘッダー ファイル\credit">
       <UniqueIdentifier>{a42e4158-03c4-4df0-891f-4021a1e8273f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\game\stage\tutorial">
+      <UniqueIdentifier>{ecfff7f5-7fb0-405e-b23b-2c32bacd1502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\game\stage\tutorial">
+      <UniqueIdentifier>{eaf3f1cb-e0f9-4ef6-b70f-19ac856a676a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp">
@@ -183,9 +189,6 @@
     <ClCompile Include="placeChar.cpp">
       <Filter>ソース ファイル\game\object</Filter>
     </ClCompile>
-    <ClCompile Include="tutorial.cpp">
-      <Filter>ソース ファイル\game\stage</Filter>
-    </ClCompile>
     <ClCompile Include="titlebg.cpp">
       <Filter>ソース ファイル\title</Filter>
     </ClCompile>
@@ -257,6 +260,18 @@
     </ClCompile>
     <ClCompile Include="teleport.cpp">
       <Filter>ソース ファイル\game\effect</Filter>
+    </ClCompile>
+    <ClCompile Include="tutorial.cpp">
+      <Filter>ソース ファイル\game\stage\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="tutorial_gate.cpp">
+      <Filter>ソース ファイル\game\stage\tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="showDifficulty.cpp">
+      <Filter>ソース ファイル\main</Filter>
+    </ClCompile>
+    <ClCompile Include="caution.cpp">
+      <Filter>ソース ファイル\game\object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,9 +362,6 @@
     <ClInclude Include="placeChar.h">
       <Filter>ヘッダー ファイル\game\object</Filter>
     </ClInclude>
-    <ClInclude Include="tutorial.h">
-      <Filter>ヘッダー ファイル\game\stage</Filter>
-    </ClInclude>
     <ClInclude Include="titlebg.h">
       <Filter>ヘッダー ファイル\title</Filter>
     </ClInclude>
@@ -421,6 +433,18 @@
     </ClInclude>
     <ClInclude Include="teleport.h">
       <Filter>ヘッダー ファイル\game\effect</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial.h">
+      <Filter>ヘッダー ファイル\game\stage\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial_gate.h">
+      <Filter>ヘッダー ファイル\game\stage\tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="showDifficulty.h">
+      <Filter>ヘッダー ファイル\main</Filter>
+    </ClInclude>
+    <ClInclude Include="caution.h">
+      <Filter>ヘッダー ファイル\game\object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

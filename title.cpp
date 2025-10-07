@@ -82,6 +82,8 @@ void UninitTitle(void)
 //================================================================================================================
 void UpdateTitle(void)
 {
+	int nDifficulty = GAMEDIFFICULTY_EASY;
+
 	if (GetFade() == FADE_NONE
 		&& g_bEnableTitleLogo == false)
 	{
@@ -98,12 +100,23 @@ void UpdateTitle(void)
 		g_bEnableTitleSelect = true;
 	}
 
-
 	g_dwCurrentTimeTitle = timeGetTime();
 	if ((g_dwCurrentTimeTitle - g_dwExacLastTimeTitle) >= 15000)
 	{
 		if (GetFade() == FADE_NONE)
 		{
+			nDifficulty = rand() % GAMEDIFFICULTY_MAX;
+			if (nDifficulty < GAMEDIFFICULTY_EASY)
+			{
+				nDifficulty = GAMEDIFFICULTY_EASY;
+			}
+			else if (nDifficulty >= GAMEDIFFICULTY_MAX)
+			{
+				nDifficulty = GAMEDIFFICULTY_HARD;
+			}
+
+			SetGameDifficulty((GAMEDIFFICULTY)nDifficulty);
+
 			SetFade(MODE_RESULT, FADE_TYPE_NORMAL);
 		}
 	}

@@ -54,6 +54,7 @@ typedef enum
 	SOUND_LABEL_SE_HEAL,		// 回復音
 	SOUND_LABEL_SE_POWER_CHANGE,	// チャージ技アイテムを取った時の音
 	SOUND_LABEL_SE_TELEPORT,		// テレポート音
+	SOUND_LABEL_SE_MIRROR,			// 反射音
 	SOUND_LABEL_MAX,
 } SOUND_LABEL;
 

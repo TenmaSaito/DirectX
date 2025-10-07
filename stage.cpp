@@ -44,6 +44,7 @@ STAGE g_stageExac = STAGE_GRASS;											// 現在のステージ
 int g_aTurn[STAGE_MAX];										// 各ステージの現在のターン
 float g_fLengthStage;										// ステージの対角線の長さ
 float g_fAngleStage;										// ステージの対角線の角度
+char g_aEnemyFileName[STRING_MAX];							// 難易度別のファイル名
 char g_aFileName[STRING_MAX];			
 bool g_bAllClear;											// 完全クリアしたか
 
@@ -58,6 +59,35 @@ void InitStage(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();			// デバイスのポインタ
 	HWND hWnd = NULL;
+	memset(g_aEnemyFileName, NULL, sizeof(g_aEnemyFileName));
+	memset(g_aFileName, NULL, sizeof(g_aEnemyFileName));
+
+	switch (GetGameDifficulty())
+	{
+	case GAMEDIFFICULTY_EASY:
+
+		strcpy(&g_aEnemyFileName[0], ENEMY_FILETYPE_EASY);
+
+		break;
+
+	case GAMEDIFFICULTY_NORMAL:
+
+		strcpy(&g_aEnemyFileName[0], ENEMY_FILETYPE_NORMAL);
+
+		break;
+
+	case GAMEDIFFICULTY_HARD:
+
+		strcpy(&g_aEnemyFileName[0], ENEMY_FILETYPE_HARD);
+
+		break;
+
+	default:
+
+		strcpy(&g_aEnemyFileName[0], ENEMY_FILETYPE_NORMAL);
+
+		break;
+	}
 
 	for (int nCntStage = 0; nCntStage < STAGE_MAX; nCntStage++)
 	{
@@ -100,7 +130,6 @@ void InitStage(void)
 
 	for (int nCntStage = 0; nCntStage < STAGE_MAX; nCntStage++)
 	{
-
 		// 頂点座標の設定(座標設定は必ず右回りで！！！)
 		pVtx[0].pos.x = g_posStage.x + sinf(D3DX_PI + g_fAngleStage) * g_fLengthStage;
 		pVtx[0].pos.y = g_posStage.y + cosf(D3DX_PI + g_fAngleStage) * g_fLengthStage;
@@ -200,42 +229,42 @@ void UpdateStage(void)
 		{
 		case STAGE_GRASS:
 
-			UniteFileName(GRASS_FILENAME, ENEMY_FILETYPE);
+			UniteFileName(GRASS_FILENAME, &g_aEnemyFileName[0]);
 			LoadEnemy(&g_aFileName[0], g_aStageMap[g_stageExac].nTurn);
 
 			break;
 
 		case STAGE_DESERT:
 
-			UniteFileName(DESERT_FILENAME, ENEMY_FILETYPE);
+			UniteFileName(DESERT_FILENAME, &g_aEnemyFileName[0]);
 			LoadEnemy(&g_aFileName[0], g_aStageMap[g_stageExac].nTurn);
 
 			break;
 
 		case STAGE_ICE:
 
-			UniteFileName(ICE_FILENAME, ENEMY_FILETYPE);
+			UniteFileName(ICE_FILENAME, &g_aEnemyFileName[0]);
 			LoadEnemy(&g_aFileName[0], g_aStageMap[g_stageExac].nTurn);
 
 			break;
 
 		case STAGE_FOREST:
 
-			UniteFileName(FOREST_FILENAME, ENEMY_FILETYPE);
+			UniteFileName(FOREST_FILENAME, &g_aEnemyFileName[0]);
 			LoadEnemy(&g_aFileName[0], g_aStageMap[g_stageExac].nTurn);
 
 			break;
 
 		case STAGE_VOLCANO:
 
-			UniteFileName(VOLCANO_FILENAME, ENEMY_FILETYPE);
+			UniteFileName(VOLCANO_FILENAME, &g_aEnemyFileName[0]);
 			LoadEnemy(&g_aFileName[0], g_aStageMap[g_stageExac].nTurn);
 
 			break;
 
 		case STAGE_SEA:
 
-			UniteFileName(SEA_FILENAME, ENEMY_FILETYPE);
+			UniteFileName(SEA_FILENAME, &g_aEnemyFileName[0]);
 			LoadEnemy(&g_aFileName[0], g_aStageMap[g_stageExac].nTurn);
 
 			break;

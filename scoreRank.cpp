@@ -10,10 +10,10 @@
 
 // マクロ定義
 #define RANK_SIZE			(70)				// ランクのサイズ
-#define RANK_SS_SCORE		(1200000)			// SSランクのスコアの基準
-#define RANK_S_SCORE		(900000)			// Sランクのスコア基準
-#define RANK_A_SCORE		(700000)			// Aランクのスコア基準
-#define RANK_B_SCORE		(400000)			// Bランクのスコア基準
+#define RANK_SS_SCORE		(1400000)			// SSランクのスコアの基準
+#define RANK_S_SCORE		(1000000)			// Sランクのスコア基準
+#define RANK_A_SCORE		(800000)			// Aランクのスコア基準
+#define RANK_B_SCORE		(500000)			// Bランクのスコア基準
 #define RANK_C_SCORE		(200000)			// Cランクのスコア基準
 
 // ランクの種類

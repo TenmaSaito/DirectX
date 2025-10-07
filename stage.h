@@ -29,7 +29,9 @@
 #define TUTORIAL_FILENAME	"data\\STAGE\\TUTORIAL\\"					// チュートリアルのファイルアドレス
 
 #define BLOCK_FILETYPE		"BLOCK.txt"											// ブロック用アドレス末尾
-#define ENEMY_FILETYPE		"ENEMY.txt"											// エネミー用アドレス末尾
+#define ENEMY_FILETYPE_EASY		"ENEMY_EASY.txt"								// エネミー用アドレス末尾(EASY)
+#define ENEMY_FILETYPE_NORMAL	"ENEMY_NORMAL.txt"								// エネミー用アドレス末尾(NORMAL)
+#define ENEMY_FILETYPE_HARD		"ENEMY_HARD.txt"								// エネミー用アドレス末尾(HARD)
 #define FRAME_LEFT_FILETYPE		"FRAME_LEFT.txt"								// 左フレーム用アドレス末尾
 #define FRAME_RIGHT_FILETYPE	"FRAME_RIGHT.txt"								// 右フレーム用アドレス末尾
 #define FRAME_UP_FILETYPE		"FRAME_UP.txt"									// 上フレーム用アドレス末尾

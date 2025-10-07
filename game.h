@@ -35,7 +35,7 @@ typedef enum
 }GAMESTATE;
 
 // プロトタイプ宣言
-void InitGame(void);
+void InitGame(GAMEDIFFICULTY difficulty);
 void UninitGame(void);
 void UpdateGame(void);
 void DrawGame(void);

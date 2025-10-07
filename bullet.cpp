@@ -5,12 +5,14 @@
 //
 //================================================================================================================
 #include "bullet.h"
+#include "sound.h"
 #include "explosion.h"
 #include "player.h"
 #include "enemy.h"
 #include "effect.h"
 #include "stage.h"
 #include "particle.h"
+#include "input.h"
 
 // マクロ定義
 #define EFFECT_COLOR1	D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)				// エフェクトの色1
@@ -627,7 +629,7 @@ void CollisionEnemy(BULLET *pBullet)
 				&& pBullet->pos.x < pEnemy->pos.x + (pEnemy->size.x * 0.5f) + (PLAYER_BULLET_SIZE * 0.5f)
 				&& pBullet->pos.y > pEnemy->pos.y - (pEnemy->size.y * 0.5f) - (PLAYER_BULLET_SIZE * 0.5f)
 				&& pBullet->pos.y < pEnemy->pos.y + (pEnemy->size.y * 0.5f) + (PLAYER_BULLET_SIZE * 0.5f)
-				&& pBullet->shot != SHOTTYPE_LASER)
+				&& (pBullet->shot != SHOTTYPE_LASER && pBullet->shot != SHOTTYPE_BOMB))
 			{
 				switch (pBullet->shot)
 				{
@@ -649,12 +651,6 @@ void CollisionEnemy(BULLET *pBullet)
 
 					break;
 
-				case SHOTTYPE_BOMB:
-
-					HitEnemy(nCntEnemy, BOMB_DAMAGE);
-
-					break;
-
 				case SHOTTYPE_BOMBBULLET:
 
 					HitEnemy(nCntEnemy, BOMBBULLET_DAMAGE);
@@ -663,7 +659,7 @@ void CollisionEnemy(BULLET *pBullet)
 
 				}
 
-				if (pBullet->shot != SHOTTYPE_LASERBULLET && pBullet->shot != SHOTTYPE_BOMBBULLET)
+				if (pBullet->shot != SHOTTYPE_LASERBULLET)
 				pBullet->bUse = false;
 			}
 			
@@ -694,12 +690,24 @@ void CollisionPlayer(BULLET* pBullet)
 		}
 		else
 		{
-			pBullet->move.z = fAngle;
-			pBullet->move.y = -7.0f;
-			pBullet->pos.x += sinf(fAngle) * pBullet->move.y;
-			pBullet->pos.y += cosf(fAngle) * pBullet->move.y;
+			if (GetKeyboardWASD()
+				|| GetJoypadWASD()
+				|| GetJoyThumbWASD())
+			{
+				pBullet->move.z = fAngle;
+				pBullet->move.y = -7.0f;
+			}
+			else
+			{
+				pBullet->move.z += D3DX_PI;
+				pBullet->move.y = 7.0f;
+			}
+			
+			pBullet->pos.x += sinf(pBullet->move.z) * pBullet->move.y;
+			pBullet->pos.y += cosf(pBullet->move.z) * pBullet->move.y;
 			pBullet->type = BULLETTYPE_PLAYER;
 			pBullet->col = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+			PlaySound(SOUND_LABEL_SE_MIRROR);
 		}
 	}
 }

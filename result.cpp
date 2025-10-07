@@ -11,6 +11,7 @@
 #include "fade.h"
 #include "resultbg.h"
 #include "ranking.h"
+#include "showDifficulty.h"
 
 // グローバル変数
 DWORD g_dwCurrentTimeResult;						// 現在の時間
@@ -27,11 +28,15 @@ void InitResult(void)
 	// ランキングの初期化処理
 	InitRanking();
 
+	InitShowDifficulty();
+
 	g_dwCurrentTimeResult = timeGetTime();
 	g_dwExacLastTimeTitleResult = timeGetTime();
 
 	// ランキングの表示
 	SetRanking();
+
+	SetShowDifficulty(D3DXVECTOR3(WINDOW_MID.x, 50.0f, 0.0f), GetGameDifficulty());
 }
 
 //================================================================================================================
@@ -44,6 +49,8 @@ void UninitResult(void)
 
 	// ランキングの終了処理
 	UninitRanking();
+
+	UninitShowDifficulty();
 }
 
 //================================================================================================================
@@ -56,6 +63,8 @@ void UpdateResult(void)
 
 	// リザルト背景の更新処理
 	UpdateResultBg();
+
+	UpdateShowDifficulty();
 
 	// Enterでタイトル画面へ進む
 	if ((GetJoypadTrigger(JOYKEY_A) == true
@@ -74,6 +83,7 @@ void UpdateResult(void)
 		if (GetFade() == FADE_NONE)
 		{
 			SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
+			FadeSound(SOUND_LABEL_TITLE);
 		}
 	}
 }
@@ -88,4 +98,6 @@ void DrawResult(void)
 
 	// ランキングの描画処理
 	DrawRanking();
+
+	DrawShowDifficulty();
 }

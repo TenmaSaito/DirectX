@@ -33,7 +33,7 @@
 #define FVF_VERTEX_2D	(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)		// 頂点フォーマット
 #define D3DXVECTOR3_NULL	D3DXVECTOR3(0.0f,0.0f,0.0f)						// D3DXVECTOR3のNULL
 #define D3DXCOLOR_NULL		D3DXCOLOR(1.0f,1.0f,1.0f,1.0f)					// COLORのNULL
-#define STRING_MAX		(256)						// 文字列の最大文字数
+#define STRING_MAX		(1024)						// 文字列の最大文字数
 #define WINDOW_MID		D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0.0f)	// ウィンドウの中心
 #define SWAP(a,b)		a^=b^=a^=b
 
@@ -49,6 +49,15 @@ typedef enum
 	MODE_CREDIT,			// クレジット画面
 	MODE_MAX
 }MODE;
+
+// ゲームの難易度
+typedef enum
+{
+	GAMEDIFFICULTY_EASY = 0,		// EASY
+	GAMEDIFFICULTY_NORMAL,			// NORMAL
+	GAMEDIFFICULTY_HARD,			// HARD
+	GAMEDIFFICULTY_MAX
+}GAMEDIFFICULTY;
 
 // 頂点情報(2D)の構造体を定義
 typedef struct
@@ -81,5 +90,7 @@ void SetMode(MODE mode);
 MODE GetMode(void);
 MODE GetModeExac(void);
 HRESULT GetHandleWindow(HWND *phWnd);
+void SetGameDifficulty(GAMEDIFFICULTY difficulty);
+GAMEDIFFICULTY GetGameDifficulty(void);
 
 #endif

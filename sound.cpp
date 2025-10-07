@@ -29,6 +29,8 @@ HRESULT ReadChunkData(HANDLE hFile, void *pBuffer, DWORD dwBuffersize, DWORD dwB
 IXAudio2 *g_pXAudio2 = NULL;								// XAudio2オブジェクトへのインターフェイス
 IXAudio2MasteringVoice *g_pMasteringVoice = NULL;			// マスターボイス
 IXAudio2SourceVoice *g_apSourceVoice[SOUND_LABEL_MAX] = {};	// ソースボイス
+XAUDIO2_VOICE_DETAILS g_MasterVoiceDetails = {};						// マスターボイスの音声情報
+XAUDIO2_VOICE_DETAILS g_aSourceVoiceDetails[SOUND_LABEL_MAX] = {};		// ソースボイスの音声情報
 BYTE *g_apDataAudio[SOUND_LABEL_MAX] = {};					// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 bool g_aPlayAudio[SOUND_LABEL_MAX] = {};					// 再生状況
@@ -71,6 +73,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{"data/SE/HEAL_SE.wav", 0},			// 回復の取得音
 	{"data/SE/POWERITEM_SE.wav", 0},	// チャージ技の取得音
 	{"data/SE/TELEPORT_SE.wav", 0},		// ステージ移動音
+	{"data/SE/MirrorSE.wav", 0},		// 反射音
 };
 
 //=============================================================================
@@ -223,6 +226,7 @@ HRESULT InitSound(HWND hWnd)
 
 		// バッファの値設定
 		memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
+		memset(g_aSourceVoiceDetails, 0, sizeof(XAUDIO2_VOICE_DETAILS));
 		buffer.AudioBytes = g_aSizeAudio[nCntSound];
 		buffer.pAudioData = g_apDataAudio[nCntSound];
 		buffer.Flags      = XAUDIO2_END_OF_STREAM;
@@ -231,9 +235,13 @@ HRESULT InitSound(HWND hWnd)
 		// オーディオバッファの登録
 		g_apSourceVoice[nCntSound]->SubmitSourceBuffer(&buffer);
 
+		g_apSourceVoice[nCntSound]->GetVoiceDetails(&g_aSourceVoiceDetails[nCntSound]);
+
 		// ファイルをクローズ
 		CloseHandle(hFile);
 	}
+
+	g_pMasteringVoice->GetVoiceDetails(&g_MasterVoiceDetails);
 
 	for (int nCntSound = 0; nCntSound < SOUND_LABEL_MAX; nCntSound++)
 	{
@@ -286,6 +294,7 @@ void UninitSound(void)
 			// ソースボイスの破棄
 			g_apSourceVoice[nCntSound]->DestroyVoice();
 			g_apSourceVoice[nCntSound] = NULL;
+			g_aSourceVoiceDetails[nCntSound] = {};
 	
 			// オーディオデータの開放
 			free(g_apDataAudio[nCntSound]);
@@ -296,6 +305,7 @@ void UninitSound(void)
 	// マスターボイスの破棄
 	g_pMasteringVoice->DestroyVoice();
 	g_pMasteringVoice = NULL;
+	g_MasterVoiceDetails = {};
 	
 	if(g_pXAudio2 != NULL)
 	{
@@ -374,6 +384,20 @@ void UpdateSound(void)
 						// 音量を設定
 						g_apSourceVoice[nCntSound]->SetVolume(g_fVolumeAudio, XAUDIO2_COMMIT_NOW);
 					}
+					//float af[12] = { 0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0,0.0f,0.0f };
+					//g_apSourceVoice[nCntSound]->GetVoiceDetails(&g_apSourceVoiceDetails[nCntSound]);
+					//float f[51] = {};
+
+					/* Set,GetOutputMatrixの引数(1 : SourceVoiceの宛先(MasterVoice)。複数のMasterVoiceが存在する場合のみ使用。一つのみの場合はNULL
+												   2 : SourceVoiceのチャンネル数。初期化時にg_apSourceVoiceDetailsに取得済み。InputChannelsを参照する。
+												   3 : MasterVoiceのチャンネル数。初期化時にg_pMasterVoiceDetailsに取得済み。InputChannelsを参照する。複数のMasterVoiceが存在する場合、宛先のMasterVoiceDetailsを使用すること。
+												   4 : 各チャンネルの音量。浮動小数の配列のポインタを渡す。数は12だが、オーバーフロー防止に24にしている。
+													   配列の各番号がスピーカーの場所を示す(例 : 0 = 左側, 3 = 右側)。Getの場合は配列に現在の音量の状態が代入される。
+													   Setの場合は、配列の値を基にSourceVoiceの音量が調整される。)
+					*/
+
+					//g_apSourceVoice[nCntSound]->GetOutputMatrix(NULL, g_aSourceVoiceDetails[nCntSound].InputChannels, g_MasterVoiceDetails.InputChannels, &f[0]);
+					//g_apSourceVoice[nCntSound]->SetOutputMatrix(g_aSourceVoice[nCntSound], g_aSourceVoiceDetails[nCntSound].InputChannels, g_MasterVoiceDetails.InputChannels, &af[0]);
 				}
 
 				g_nCounterSound = 6;
@@ -420,7 +444,7 @@ HRESULT PlaySound(SOUND_LABEL label)
 	g_aPlayAudio[label] = true;
 
 	if (label >= SOUND_BGMSTART && label < SOUND_SESTART)
-	{
+	{// 再生するのがBGMだった場合
 		g_PlaySound = label;
 	}
 

@@ -95,7 +95,6 @@ void InitEnemy(void)
 			&g_apTextureEnemy[nCntEnemy]);
 	}
 	
-
 	// 弾の情報の初期化
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++,pEnemy++,pSize++)
 	{
@@ -435,7 +434,7 @@ void UpdateEnemy(void)
 					&& pEnemy->state != ENEMYSTATE_APPEAR)
 					&& GetFade() == FADE_NONE)
 				{// プレイヤーが生きていて、且つフェードが終わったら
-					if ((g_nCounterEnemyBullet % (BULLET_COUNT + pEnemy->nBulletRand)) == 0)
+					if ((g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand)) == 0)
 					{
 						float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
 							(pPlayer->posPlayer.y - pEnemy->pos.y));
@@ -530,13 +529,13 @@ void UpdateEnemy(void)
 					break;
 				}
 
-				if ((pPlayer->state != PLAYERSTATE_APPEAR 
-					&& pPlayer->state != PLAYERSTATE_DEATH 
+				if ((pPlayer->state != PLAYERSTATE_APPEAR
+					&& pPlayer->state != PLAYERSTATE_DEATH
 					&& pPlayer->state != PLAYERSTATE_WAIT
 					&& pEnemy->state != ENEMYSTATE_APPEAR)
 					&& GetFade() == FADE_NONE)
 				{// プレイヤーが生きていて、且つフェードが終わったら
-					if ((g_nCounterEnemyBullet % (BOMBBULLET_COUNT + pEnemy->nBulletRand)) == 0)
+					if ((g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand)) == 0)
 					{
 						float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
 							(pPlayer->posPlayer.y - pEnemy->pos.y));
@@ -550,22 +549,24 @@ void UpdateEnemy(void)
 							EnemyBulletCol(pEnemy),
 							true);
 					}
-					else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT >= 150 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= (BOMBBULLET_COUNT - 1))
+					else if (g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) >= (pEnemy->nCounterBullet + pEnemy->nBulletRand) * 0.75f 
+						&& g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) <= ((pEnemy->nCounterBullet + pEnemy->nBulletRand) - 1))
 					{
 						pEnemy->size.x += 1.0f;
 						pEnemy->size.y += 1.0f;
 					}
-					else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT == 1)
+					else if (g_nCounterEnemyBullet % pEnemy->nCounterBullet == 1)
 					{
 						pEnemy->size.x = pSize->x * 0.5f;
 						pEnemy->size.y = pSize->y * 0.5f;
 					}
-					else if (g_nCounterEnemyBullet % BOMBBULLET_COUNT > 1 && g_nCounterEnemyBullet % BOMBBULLET_COUNT <= 75)
+					else if (g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) > 1 
+						&& g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) < (pEnemy->nCounterBullet + pEnemy->nBulletRand) * 0.5f)
 					{
 						if (pEnemy->size.x <= pSize->x)
 						{
-							pEnemy->size.x += 3.0f;
-							pEnemy->size.y += 3.0f;
+							pEnemy->size.x += 250.0f / (pEnemy->nCounterBullet + pEnemy->nBulletRand);
+							pEnemy->size.y += 250.0f / (pEnemy->nCounterBullet + pEnemy->nBulletRand);
 							if (pEnemy->size.x >= pSize->x)
 							{
 								pEnemy->size = *pSize;
@@ -667,7 +668,7 @@ void UpdateEnemy(void)
 					&& pEnemy->state != ENEMYSTATE_APPEAR)
 					&& GetFade() == FADE_NONE)
 				{// プレイヤーが生きていて、且つフェードが終わったら
-					if ((g_nCounterEnemyBullet % (HOMINGBULLET_COUNT + pEnemy->nBulletRand)) == 0)
+					if ((g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand)) == 0)
 					{
 						float fLength = atan2f((pPlayer->posPlayer.x - pEnemy->pos.x),
 							(pPlayer->posPlayer.y - pEnemy->pos.y));
@@ -681,22 +682,27 @@ void UpdateEnemy(void)
 							EnemyBulletCol(pEnemy),
 							true);
 					}
-					else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT >= 100 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= (HOMINGBULLET_COUNT - 1))
+					else if (g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) >= (pEnemy->nCounterBullet + pEnemy->nBulletRand) * 0.75f
+						&& g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) <= ((pEnemy->nCounterBullet + pEnemy->nBulletRand) - 1))
 					{
-						pEnemy->size.x -= 1.0f;
-						pEnemy->size.y -= 1.0f;
+						if (pEnemy->size.x >= pSize->x * 0.2f)
+						{
+							pEnemy->size.x -= 1.0f;
+							pEnemy->size.y -= 1.0f;
+						}
 					}
-					else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT == 1)
+					else if (g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) == 1)
 					{
 						pEnemy->size.x = pSize->x * 2.0f;
 						pEnemy->size.y = pSize->y * 2.0f;
 					}
-					else if (g_nCounterEnemyBullet % HOMINGBULLET_COUNT > 1 && g_nCounterEnemyBullet % HOMINGBULLET_COUNT <= 75)
+					else if (g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) > 1 
+						&& g_nCounterEnemyBullet % (pEnemy->nCounterBullet + pEnemy->nBulletRand) < (pEnemy->nCounterBullet + pEnemy->nBulletRand) * 0.5f)
 					{
 						if (pEnemy->size.x >= pSize->x)
 						{
-							pEnemy->size.x -= 3.0f;
-							pEnemy->size.y -= 3.0f;
+							pEnemy->size.x -= 250.0f / (pEnemy->nCounterBullet + pEnemy->nBulletRand);
+							pEnemy->size.y -= 250.0f / (pEnemy->nCounterBullet + pEnemy->nBulletRand);
 							if (pEnemy->size.x <= pSize->x)
 							{
 								pEnemy->size = *pSize;
@@ -1087,10 +1093,15 @@ void LoadEnemy(char* pFileName, int nTurn)
 											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
 											(void)fscanf(pFile, "%d", &lEnemy.nLife);
 										}
+										else if (strcmp(&aStr[0], "BULLET_INTERVAL") == 0)
+										{
+											fread(&aTrash[0], 1, sizeof(aTrash), pFile);
+											(void)fscanf(pFile, "%d", &lEnemy.nCounterBullet);
+										}
 
 										if (strcmp(&aStr[0], "END_SETENEMY") == 0)
 										{// 敵を配置して配置の終了
-											SetEnemy(lEnemy.pos, lEnemy.move, lEnemy.size, lEnemy.type, lEnemy.bullet, lEnemy.tex, lEnemy.nLife);
+											SetEnemy(lEnemy.pos, lEnemy.move, lEnemy.size, lEnemy.type, lEnemy.bullet, lEnemy.tex, lEnemy.nLife, lEnemy.nCounterBullet);
 											break;
 										}
 									}
@@ -1125,7 +1136,7 @@ void LoadEnemy(char* pFileName, int nTurn)
 //================================================================================================================
 // 敵の設定処理
 //================================================================================================================
-void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife)
+void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type, ENEMYBULLET bullet, ENEMYTEX tex,  int nLife, int nCounterBullet)
 {
 	VERTEX_2D* pVtx;
 	ENEMY *pEnemy = &g_aEnemy[0];
@@ -1202,7 +1213,7 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, POLY_SIZE size, ENEMYTYPE type,
 				pEnemy->phaseMax = ENEMYPHASE_1;
 			}
 		
-			pEnemy->nCounterBullet = 0;
+			pEnemy->nCounterBullet = nCounterBullet;
 			pEnemy->nBulletRand = rand() % 50;
 			pEnemy->nCounterState = SPOWN_STATE;
 			pEnemy->bUse = true;

@@ -128,9 +128,9 @@ void UpdateTimer(void)
 	g_pVtxBuffTimer->Lock(0, 0, (void**)&pVtx, 0);
 
 	// å„Ç≈èëÇ´ÇΩÇ´Ç·èëÇØ
-	if (g_nTimer == NOMORE_TIME)
+	if (g_nTimer == NOMORE_TIME && GetPlaySound() != SOUND_LABEL_GAME_NOMORETIME)
 	{
-		StopSound();
+		StopSound(GetPlaySound());
 		PlaySound(SOUND_LABEL_GAME_NOMORETIME);
 	}
 	else if(g_nTimer < NOMORE_TIME)

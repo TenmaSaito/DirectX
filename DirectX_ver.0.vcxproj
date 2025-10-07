@@ -148,6 +148,7 @@
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="bullet.cpp" />
+    <ClCompile Include="caution.cpp" />
     <ClCompile Include="credit.cpp" />
     <ClCompile Include="creditBg.cpp" />
     <ClCompile Include="creditChar.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="ResultScore.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="scoreRank.cpp" />
+    <ClCompile Include="showDifficulty.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="stock.cpp" />
@@ -198,11 +200,13 @@
     <ClCompile Include="titleSelect.cpp" />
     <ClCompile Include="title_Mage.cpp" />
     <ClCompile Include="tutorial.cpp" />
+    <ClCompile Include="tutorial_gate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="bullet.h" />
+    <ClInclude Include="caution.h" />
     <ClInclude Include="credit.h" />
     <ClInclude Include="creditBg.h" />
     <ClInclude Include="creditChar.h" />
@@ -241,6 +245,7 @@
     <ClInclude Include="ResultScore.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="scoreRank.h" />
+    <ClInclude Include="showDifficulty.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="stage.h" />
     <ClInclude Include="stock.h" />
@@ -254,6 +259,7 @@
     <ClInclude Include="titleSelect.h" />
     <ClInclude Include="title_Mage.h" />
     <ClInclude Include="tutorial.h" />
+    <ClInclude Include="tutorial_gate.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX_ver.0.rc" />

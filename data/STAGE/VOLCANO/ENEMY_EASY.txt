@@ -1,6 +1,6 @@
 #========================================
 #
-# 敵の配置用テキストファイル(ENEMY.txt)
+# 敵の配置用テキストファイル(ENEMY_EASY.txt)
 # Author : TENMA SAITO
 #
 #========================================
@@ -22,10 +22,11 @@ START_SETENEMY
 POS = 1290.0 10.0 0.0
 TYPE = 0
 SIZE = 100.0 100.0
-BULLET = 2
+BULLET = 1
 TEX = 2
 MOVE = 0.0 0.0 0.0
 LIFE = 5
+BULLET_INTERVAL = 300
 
 END_SETENEMY
 #========================================
@@ -38,10 +39,11 @@ START_SETENEMY
 POS = -10.0 710.0 0.0
 TYPE = 0
 SIZE = 100.0 100.0
-BULLET = 2
+BULLET = 1
 TEX = 2
 MOVE = 0.0 0.0 0.0
 LIFE = 5
+BULLET_INTERVAL = 300
 
 END_SETENEMY
 #========================================

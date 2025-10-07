@@ -71,6 +71,7 @@ bool GetKeyboardTrigger(int nKey);
 bool GetKeyboardRelease(int nKey);
 bool GetKeyboardRepeat(int nKey);
 bool GetKeyboardAny(void);
+bool GetKeyboardWASD(void);
 
 //***************************************************
 // ジョイパッドのプロトタイプ宣言
@@ -83,6 +84,7 @@ bool GetJoypadTrigger(JOYKEY Key);
 bool GetJoypadRelease(JOYKEY Key);
 bool GetJoypadRepeat(JOYKEY Key);
 bool GetJoypadAny(void);
+bool GetJoypadWASD(void);
 
 XINPUT_VIBRATION *GetJoyVibration(void);
 XINPUT_STATE *GetJoypadState(void);
@@ -92,6 +94,7 @@ bool GetJoyThumbRXState(void);
 bool GetJoyThumbRYState(void);
 bool GetJoyThumbSlow(JOYTHUMB Thumb);
 bool GetJoyThumbRepeat(JOYTHUMB Thumb);
+bool GetJoyThumbWASD(void);
 
 //***************************************************
 // マウスのプロトタイプ宣言

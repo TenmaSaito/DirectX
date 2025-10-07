@@ -15,6 +15,7 @@
 #include "bg.h"
 #include "stage.h"
 #include "effect.h"
+#include "particle.h"
 #include "block.h"
 #include "heart.h"
 #include "stock.h"
@@ -26,7 +27,7 @@
 #define MAX_PLAYER_SIZE	(300)						// プレイヤーの大きさの最大値
 #define MIN_PLAYER_SIZE	(50)						// プレイヤーの大きさの最小値
 #define PLAYER_SPOWN	D3DXVECTOR3(PLAYER_SPOWN_X, PLAYER_SPOWN_Y, 0.0f)	// プレイヤーの初期位置
-#define MAX_PLAYERTEX		(4)						// プレイヤーのテクスチャの最大数
+#define MAX_PLAYERTEX	(4)							// プレイヤーのテクスチャの最大数
 #define MOVE_ACCELE		(1.55f)						// プレイヤーの加速量
 #define ROT_ACCELE		(0.01f)						// プレイヤーの回転の加速量
 #define SIZE_ACCELE		(1.0f)						// プレイヤーのサイズの増減加速量
@@ -50,7 +51,7 @@
 #define BARRIER_COLOR	D3DXCOLOR(0.0f,0.2f,0.8f,0.3f)		// バリアの色
 
 #define HEART_POS		D3DXVECTOR3((float)(HEART_WIDTH * 1.75f) * (nCntPlayer + 1), (float)HEART_HEIGHT, 0.0f)		// ハートの位置
-#define STOCK_POS		D3DXVECTOR3((float)BLOCK_WIDTH, (float)(BLOCK_HEIGHT * 3), 0.0f)					// ストックの位置
+#define STOCK_POS		D3DXVECTOR3((float)BLOCK_WIDTH, (float)(BLOCK_HEIGHT * 3), 0.0f)							// ストックの位置
 #define STOCK_NUMBER_POS	D3DXVECTOR3(STOCK_POS.x + 100.0f,STOCK_POS.y,0.0f)
 
 #define PARTICLE_COUNTER	(30)					// チャージショット後のパーティクルの発生し続ける時間
@@ -546,10 +547,19 @@ void UpdatePlayer(void)
 
 	if (g_posPast != g_player.posPlayer 
 		&& g_player.state != PLAYERSTATE_WAIT 
-		&& g_player.state != PLAYERSTATE_DEATH)
+		&& g_player.state != PLAYERSTATE_DEATH
+		&& (GetKeyboardWASD() == true
+		|| GetJoypadWASD() == true
+		|| GetJoyThumbWASD() == true))
 	{
+		float fAngle[2] = {};
+		D3DXVECTOR3 particlePlayer = D3DXVECTOR3(g_player.posPlayer.x, g_player.posPlayer.y + (PLAYER_SIZE * 0.45f), g_player.posPlayer.z);
+		fAngle[0] = GetPlayerRot(&g_player) - (D3DX_PI * 0.25f);
+		fAngle[1] = GetPlayerRot(&g_player) + (D3DX_PI * 0.25f);
 		// プレイヤーの軌跡を放出
-		SetEffect(g_player.posPlayer, D3DXVECTOR3_NULL, D3DXCOLOR_NULL, EFFECT_SIZE, EFFECT_COUNTER, true);
+		SetParticle(particlePlayer, D3DXCOLOR(0.85f, 0.81f, 0.51f, 1.0f), D3DXVECTOR3(2.0f, 2.0f, 2.0f), 7.0f, 30, D3DX_PI, -D3DX_PI, true);
+		SetParticle(particlePlayer, D3DXCOLOR(0.85f, 0.81f, 0.51f, 1.0f), D3DXVECTOR3(2.0f, 2.0f, 2.0f), 7.0f, 30, D3DX_PI, -D3DX_PI, true);
+		SetParticle(particlePlayer, D3DXCOLOR(0.85f, 0.81f, 0.51f, 1.0f), D3DXVECTOR3(2.0f, 2.0f, 2.0f), 7.0f, 30, D3DX_PI, -D3DX_PI, true);
 	}
 
 	// 頂点座標の設定(座標設定は必ず右回りで！！！)
@@ -1133,7 +1143,10 @@ void KeyboardPress(void)
 			{ // ゲージを増やす(プレイヤーが使っているゲージのNoのゲージ)
 				if (g_player.aCouldDo[PLAYERDO_CHARGE] == true)
 				{
-					PlaySound(SOUND_LABEL_SE_CHARGE);
+					if (g_player.nCounterBulletCharge == 6)
+					{
+						PlaySound(SOUND_LABEL_SE_CHARGE);
+					}
 
 					AddGauge(1, g_player.nGaugeNo);
 					g_player.nCounterBulletCharge++;
@@ -1238,6 +1251,8 @@ void KeyboardPress(void)
 			{
 				if (g_player.nCounterBulletCharge >= 4)
 				{
+					StopSound(SOUND_LABEL_SE_CHARGE);
+
 					if (pGauge[g_player.nGaugeNo].nPercentGauge > 0)
 					{// ゲージを減少
 						AddGauge(-1, g_player.nGaugeNo);
@@ -1292,7 +1307,10 @@ void KeyboardPress(void)
 			}
 			else if (g_player.nCounterBarrier >= 6 && pGauge[g_player.nGaugeNo].nPercentGauge <= GAUGE_MAX)
 			{
-				PlaySound(SOUND_LABEL_SE_CHARGE);
+				if (g_player.nCounterBarrier == 6)
+				{
+					PlaySound(SOUND_LABEL_SE_CHARGE);
+				}
 
 				// ゲージを増やす(プレイヤーが使っているゲージのNoのゲージ)
 				AddGauge(1, g_player.nGaugeNo);
@@ -1377,6 +1395,8 @@ void KeyboardPress(void)
 				{
 					if (g_player.nCounterBarrier >= 4)
 					{
+						StopSound(SOUND_LABEL_SE_CHARGE);
+
 						if (pGauge[g_player.nGaugeNo].nPercentGauge > 0)
 						{// ゲージを減少
 							AddGauge(-1, g_player.nGaugeNo);
@@ -1415,7 +1435,7 @@ void KeyboardPress(void)
 
 					g_player.state = PLAYERSTATE_NORMAL;
 
-					ChangeModeFrame(FRAMESTATE_NORMAL);
+					AddHeart(0);
 				}
 				else
 				{

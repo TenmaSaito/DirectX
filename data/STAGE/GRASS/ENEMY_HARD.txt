@@ -1,6 +1,6 @@
 #========================================
 #
-# 敵の配置用テキストファイル(ENEMY.txt)
+# 敵の配置用テキストファイル(ENEMY_HARD.txt)
 # Author : TENMA SAITO
 #
 #========================================
@@ -25,7 +25,8 @@ SIZE = 100.0 100.0
 BULLET = 0
 TEX = 0
 MOVE = 2.0 3.0 0.0
-LIFE = 5
+LIFE = 8
+BULLET_INTERVAL = 0
 
 END_SETENEMY
 #========================================
@@ -41,7 +42,8 @@ SIZE = 100.0 100.0
 BULLET = 0
 TEX = 0
 MOVE = 2.0 3.0 0.0
-LIFE = 5
+LIFE = 8
+BULLET_INTERVAL = 0
 
 END_SETENEMY
 #========================================
@@ -57,7 +59,8 @@ SIZE = 100.0 100.0
 BULLET = 0
 TEX = 0
 MOVE = 2.0 3.0 0.0
-LIFE = 5
+LIFE = 8
+BULLET_INTERVAL = 0
 
 END_SETENEMY
 #========================================
@@ -83,7 +86,8 @@ SIZE = 150.0 150.0
 BULLET = 1
 TEX = 2
 MOVE = 0.0 10.0 0.0
-LIFE = 8
+LIFE = 12
+BULLET_INTERVAL = 75
 
 END_SETENEMY
 #========================================
@@ -99,7 +103,8 @@ SIZE = 150.0 150.0
 BULLET = 1
 TEX = 2
 MOVE = 0.0 10.0 0.0
-LIFE = 8
+LIFE = 12
+BULLET_INTERVAL = 75
 
 END_SETENEMY
 #========================================
@@ -125,7 +130,8 @@ SIZE = 100.0 100.0
 BULLET = 3
 TEX = 1
 MOVE = 0.0 0.0 0.0
-LIFE = 10
+LIFE = 15
+BULLET_INTERVAL = 150
 
 END_SETENEMY
 #========================================
@@ -141,7 +147,8 @@ SIZE = 100.0 100.0
 BULLET = 3
 TEX = 1
 MOVE = 0.0 0.0 0.0
-LIFE = 10
+LIFE = 15
+BULLET_INTERVAL = 150
 
 END_SETENEMY
 #========================================

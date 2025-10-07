@@ -195,6 +195,33 @@ bool GetKeyboardAny(void)
 }
 
 //================================================================================================================
+// キーボードの基本動作情報(WASD)を取得
+//================================================================================================================
+bool GetKeyboardWASD(void)
+{
+	if ((g_aKeyState[DIK_W] & 0x80))
+	{
+		return true;
+	}
+	else if ((g_aKeyState[DIK_A] & 0x80))
+	{
+		return true;
+	}
+	else if ((g_aKeyState[DIK_S] & 0x80))
+	{
+		return true;
+	}
+	else if ((g_aKeyState[DIK_D] & 0x80))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//================================================================================================================
 // ジョイパッドの初期化処理
 //================================================================================================================
 HRESULT InitJoypad(void)
@@ -344,6 +371,33 @@ bool GetJoypadRepeat(JOYKEY Key)
 bool GetJoypadAny(void)
 {
 	return g_bUseJoykeyAny;
+}
+
+//================================================================================================================
+// ジョイパッドの基本動作情報(WASD)を取得
+//================================================================================================================
+bool GetJoypadWASD(void)
+{
+	if (g_joykeyState.Gamepad.wButtons & (0x01 << JOYKEY_UP))
+	{
+		return true;
+	}
+	else if (g_joykeyState.Gamepad.wButtons & (0x01 << JOYKEY_DOWN))
+	{
+		return true;
+	}
+	else if (g_joykeyState.Gamepad.wButtons & (0x01 << JOYKEY_LEFT))
+	{
+		return true;
+	}
+	else if (g_joykeyState.Gamepad.wButtons & (0x01 << JOYKEY_RIGHT))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 //================================================================================================================
@@ -690,6 +744,33 @@ bool GetJoyThumbRepeat(JOYTHUMB Thumb)
 	}
 
 	return false;
+}
+
+//================================================================================================================
+// ジョイパッドのスティック基本動作情報(WASD)を取得
+//================================================================================================================
+bool GetJoyThumbWASD(void)
+{
+	if (g_joykeyState.Gamepad.sThumbLX > UP_DEADZONE)
+	{
+		return true;
+	}
+	else if (g_joykeyState.Gamepad.sThumbLX < DOWN_DEADZONE)
+	{
+		return true;
+	}
+	else if (g_joykeyState.Gamepad.sThumbLY > UP_DEADZONE)
+	{
+		return true;
+	}
+	else if (g_joykeyState.Gamepad.sThumbLY < DOWN_DEADZONE)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 //================================================================================================================

@@ -5,6 +5,7 @@
 //
 //================================================================================================================
 #include "main.h"
+#include "game.h"
 #include "fade.h"
 #include "stage.h"
 #include "tutorial.h"
@@ -17,6 +18,7 @@
 #include "gauge.h"
 #include "heart.h"
 #include "sound.h"
+#include "tutorial_gate.h"
 
 // マクロ定義
 #define MAX_TURN		(3)				// 草原ステージのターン数
@@ -27,6 +29,7 @@
 #define SUCCESS_WAIT			(200)	// 成功判定の待機する時間
 #define TUTORIAL_TITLEPOS		D3DXVECTOR3(640.0f, 540.0f, 0.0f)		// 各タイトルの位置
 #define TUTORIAL_BRIEFPOS		D3DXVECTOR3(640.0f, 600.0f, 0.0f)		// 各タイトルの位置
+#define GATE_FILENAME			"data\\STAGE\\TUTORIAL\\GATE.txt"		// ゲートのアドレス
 
 // チュートリアルの列挙型定義
 typedef enum
@@ -53,6 +56,7 @@ LPDIRECT3DTEXTURE9		g_pTextureTutorial = NULL;	// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTutorial = NULL;				// 頂点バッファのポインタ
 D3DXVECTOR3 g_posTutorial;										// ステージの現在位置
 TUTORIAL g_TutorialExac;										// 現在のチュートリアル段階
+CHARTEX g_CharTexExac;											// 表示中のchartex
 float g_fLengthTutorial;										// ステージの対角線の長さ
 float g_fAngleTutorial;											// ステージの対角線の角度
 int g_nCounterTutorial;											// 汎用カウンター
@@ -172,6 +176,14 @@ void UpdateTutorial(void)
 
 	D3DXVECTOR3 pos = pPlayer->moveposPlayer;		// プレイヤーの移動量を代入
 
+	if ((GetKeyboardTrigger(DIK_M) == true
+		|| GetJoypadTrigger(JOYKEY_BACK) == true)
+		&& g_TutorialExac != TUTORIAL_STEP_COMPLETE)
+	{
+		DeleteChar(g_CharTexExac);
+		NextTutorial(TUTORIAL_STEP_ITEM);
+	}
+
 	switch (g_TutorialExac)
 	{
 	case TUTORIAL_START:
@@ -179,11 +191,13 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_TUTORIAL_START, 100);
+			g_CharTexExac = CHARTEX_TUTORIAL_START;
 			g_nCounterTutorialState = 200;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_TUTORIAL_START_BRIEF, 100);
+			g_CharTexExac = CHARTEX_TUTORIAL_START_BRIEF;
 		}
 
 		if (g_nCounterTutorialState > 0)
@@ -214,11 +228,13 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP1, TUTORIAL_TITLESTATE);
+			g_CharTexExac = CHARTEX_STEP1;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP1_BRIEF, TUTORIAL_BRIEFSTATE);
+			g_CharTexExac = CHARTEX_STEP1_BRIEF;
 			SetPlayerDo(PLAYERDO_MOVE, true);
 		}
 
@@ -239,6 +255,7 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_STEP1_BRIEF);
 				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+				g_CharTexExac = CHARTEX_SUCCESS;
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
@@ -258,11 +275,13 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP2, TUTORIAL_TITLESTATE);
+			g_CharTexExac = CHARTEX_STEP2;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_STEP2_BRIEF, TUTORIAL_BRIEFSTATE);
+			g_CharTexExac = CHARTEX_STEP2_BRIEF;
 			SetPlayerDo(PLAYERDO_SHOT, true);
 		}
 
@@ -279,10 +298,11 @@ void UpdateTutorial(void)
 			if ((GetKeyboardTrigger(DIK_SPACE) == true || GetJoypadTrigger(JOYKEY_A) == true))
 			{
 				nCnt++;
-				if (nCnt >= 15)
+				if (nCnt >= 10)
 				{
 					DeleteChar(CHARTEX_STEP2_BRIEF);
 					SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+					g_CharTexExac = CHARTEX_SUCCESS;
 					g_nCounterTutorial = SUCCESS_WAIT;
 				}
 			}
@@ -304,11 +324,13 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP3, TUTORIAL_TITLESTATE);
+			g_CharTexExac = CHARTEX_STEP3;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP3_BRIEF, TUTORIAL_BRIEFSTATE);
+			g_CharTexExac = CHARTEX_STEP3_BRIEF;
 			SetPlayerDo(PLAYERDO_CHARGE, true);
 		}
 
@@ -326,6 +348,7 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_STEP3_BRIEF);
 				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+				g_CharTexExac = CHARTEX_SUCCESS;
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
@@ -345,11 +368,13 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP4, TUTORIAL_TITLESTATE);
+			g_CharTexExac = CHARTEX_STEP4;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP4_BRIEF, TUTORIAL_BRIEFSTATE);
+			g_CharTexExac = CHARTEX_STEP4_BRIEF;
 			SetPlayerDo(PLAYERDO_SP, true);
 		}
 
@@ -367,6 +392,7 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_STEP4_BRIEF);
 				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+				g_CharTexExac = CHARTEX_SUCCESS;
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
@@ -386,11 +412,13 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP5, TUTORIAL_TITLESTATE);
+			g_CharTexExac = CHARTEX_STEP5;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP5_BRIEF, TUTORIAL_BRIEFSTATE);
+			g_CharTexExac = CHARTEX_STEP5_BRIEF;
 			SetPlayerDo(PLAYERDO_BARRIAR, true);
 		}
 
@@ -408,6 +436,7 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_STEP5_BRIEF);
 				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+				g_CharTexExac = CHARTEX_SUCCESS;
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
@@ -427,13 +456,15 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP6, TUTORIAL_TITLESTATE);
+			g_CharTexExac = CHARTEX_STEP6;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP6_BRIEF, TUTORIAL_BRIEFSTATE);
+			g_CharTexExac = CHARTEX_STEP6_BRIEF;
 			// 敵を配置
-			UniteFileName(TUTORIAL_FILENAME, ENEMY_FILETYPE, &aStr[0]);
+			UniteFileName(TUTORIAL_FILENAME, ENEMY_FILETYPE_NORMAL, &aStr[0]);
 			LoadEnemy(&aStr[0], 0);
 			pPlayer->state = PLAYERSTATE_BARRIER;
 			pPlayer->nCounterBarrierTime = 1000000;
@@ -453,6 +484,7 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_STEP6_BRIEF);
 				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+				g_CharTexExac = CHARTEX_SUCCESS;
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
@@ -472,11 +504,13 @@ void UpdateTutorial(void)
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
 			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP7, TUTORIAL_TITLESTATE);
+			g_CharTexExac = CHARTEX_STEP7;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
 		{
 			SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_STEP7_BRIEF, TUTORIAL_BRIEFSTATE);
+			g_CharTexExac = CHARTEX_STEP7_BRIEF;
 			// アイテムを配置
 			UniteFileName(TUTORIAL_FILENAME, BLOCK_FILETYPE, &aStr[0]);
 			SetItem(ITEMTYPE_HEAL, D3DXVECTOR3(640.0f, 360.0f, 0.0f));
@@ -501,6 +535,7 @@ void UpdateTutorial(void)
 			{
 				DeleteChar(CHARTEX_STEP7_BRIEF);
 				SetPlaceChar(TUTORIAL_BRIEFPOS, POLY_SIZE(1200.0f, 200.0f), CHARTEX_SUCCESS, SUCCESS_STATE);
+				g_CharTexExac = CHARTEX_SUCCESS;
 				g_nCounterTutorial = SUCCESS_WAIT;
 			}
 		}
@@ -520,7 +555,8 @@ void UpdateTutorial(void)
 
 		if (g_nCounterTutorialState == TUTORIAL_TITLEWAIT)
 		{
-			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_TUTORIAL_COMPLETE, 200);
+			SetPlaceChar(TUTORIAL_TITLEPOS, POLY_SIZE(1000.0f, 200.0f), CHARTEX_TUTORIAL_COMPLETE, 20000);
+			g_CharTexExac = CHARTEX_TUTORIAL_COMPLETE;
 			g_nCounterTutorialState = TUTORIAL_TITLEWAIT;
 		}
 		else if (g_nCounterTutorialState == 1)
@@ -528,14 +564,16 @@ void UpdateTutorial(void)
 			if (pPlayer->nLife > nCnt)
 			{
 				DeleteChar(CHARTEX_TUTORIAL_COMPLETE);
-				//SetGameTutorial(false);
 				pPlayer->nCounterState = 0;
 				pPlayer->state = PLAYERSTATE_NORMAL;
 				pPlayer->nLife = MAX_LIFE;
 				SetHeart();
-				FadeSound(SOUND_LABEL_TITLE);
-				SetFade(MODE_TITLE, FADE_TYPE_NORMAL);
 			}
+
+			SetGameDifficulty(GAMEDIFFICULTY_NORMAL);
+
+			char aStr[STRING_MAX] = GATE_FILENAME;
+			LoadTutorialGate(&aStr[0]);
 		}
 
 		if (g_nCounterTutorialState > 0)

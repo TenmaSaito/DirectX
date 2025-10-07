@@ -71,7 +71,7 @@ void InitTitleSelect(void)
 
 	for (nCntTitleSelect = TITLESELECTTYPE_BOOKSTART; nCntTitleSelect < TITLESELECTTYPE_START_SHADOW; nCntTitleSelect++, pTitleSelect++)
 	{
-		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.3f + (50.0f * (nCntTitleSelect + 1)), 0.0f);
+		pTitleSelect->pos = D3DXVECTOR3(SCREEN_WIDTH * 0.7f, SCREEN_HEIGHT * 0.4f + (50.0f * (nCntTitleSelect + 1)), 0.0f);
 		pTitleSelect->col = D3DXCOLOR_NULL;
 		pTitleSelect->type = (TITLESELECTTYPE)nCntTitleSelect;
 		pTitleSelect->bSelect = false;
@@ -87,7 +87,7 @@ void InitTitleSelect(void)
 
 
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\CHARACTER\\TITLE\\TITLE_SELECT_V2.png",
+		TITLE_FILENAME,
 		&g_pTextureTitleSelect);
 
 	// 頂点バッファの生成
@@ -321,12 +321,12 @@ void UpdateTitleSelect(void)
 		|| GetJoypadTrigger(JOYKEY_START) == true)
 		&& GetEnableTitleSelect() == false)
 	{
-		g_aTitleSelect[(g_nTitleSelect + 1) % TITLESELECTTYPE_BOOKSTART].pos.y = SELECT_LOWER;
-		g_aTitleSelect[(g_nTitleSelect + 1) % TITLESELECTTYPE_BOOKSTART].col.a = 0.0f;
-		g_aTitleSelect[(g_nTitleSelect + 2) % TITLESELECTTYPE_BOOKSTART].pos.y = SELECT_LOWER;
-		g_aTitleSelect[(g_nTitleSelect + 2) % TITLESELECTTYPE_BOOKSTART].col.a = 0.0f;
-		g_aTitleSelect[(g_nTitleSelect + 3) % TITLESELECTTYPE_BOOKSTART].pos.y = SELECT_LOWER;
-		g_aTitleSelect[(g_nTitleSelect + 3) % TITLESELECTTYPE_BOOKSTART].col.a = 0.0f;
+		for (int nCntSelect = (g_nTitleSelect + 1); nCntSelect < TITLESELECTTYPE_BOOKSTART; nCntSelect++)
+		{
+			g_aTitleSelect[(g_nTitleSelect + nCntSelect) % TITLESELECTTYPE_BOOKSTART].pos.y = SELECT_LOWER;
+			g_aTitleSelect[(g_nTitleSelect + nCntSelect) % TITLESELECTTYPE_BOOKSTART].col.a = 0.0f;
+		}
+
 		for (int nCntTitle = TITLESELECTTYPE_BOOKSTART; nCntTitle < TITLESELECTTYPE_START_SHADOW; nCntTitle++)
 		{
 			g_aTitleSelect[nCntTitle].col.a = 0.3f;
@@ -346,9 +346,13 @@ void UpdateTitleSelect(void)
 			{
 				if (GetFade() == FADE_NONE)
 				{ // ゲームへ進む
+#ifdef SELECTTYPETUTORIAL_TRUE
 					SetGameTutorial(false);
+#else
+					SetGameTutorial(true);
+#endif
 					SetFade(MODE_GAME, FADE_TYPE_TEXTURE);
-					FadeSound(SOUND_LABEL_GAME_NORMAL);
+					FadeSound(SOUND_LABEL_GAME_TUTORIAL);
 				}
 			}
 			else
@@ -367,6 +371,7 @@ void UpdateTitleSelect(void)
 
 			break;
 
+#ifdef SELECTTYPETUTORIAL_TRUE
 		case TITLESELECTTYPE_TUTORIAL:
 
 			if (g_nCounterSelectState <= 0)
@@ -393,14 +398,14 @@ void UpdateTitleSelect(void)
 			g_nCounterSelectState--;
 
 			break;
+#endif
 
 		case TITLESELECTTYPE_CREDIT:
 
 			if (g_nCounterSelectState <= 0)
 			{
 				if (GetFade() == FADE_NONE)
-				{ // チュートリアルへ進む
-					SetGameTutorial(true);
+				{ // クレジットへ進む
 					SetFade(MODE_CREDIT, FADE_TYPE_TEXTURE);
 					FadeSound(SOUND_LABEL_CREDIT);
 				}
